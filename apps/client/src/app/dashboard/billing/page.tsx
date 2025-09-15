@@ -1,6 +1,5 @@
 "use client"
 
-import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -88,15 +87,12 @@ export default function BillingPage() {
   const [selectedPackage, setSelectedPackage] = useState("medium")
 
   return (
-    <DashboardLayout credits={{ current: 649, total: 1000 }}>
       <div className="space-y-8">
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Billing</h1>
           <p className="text-muted-foreground">Manage your credits and billing information</p>
         </div>
 
-        {/* Available Credits */}
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
             <div className="w-full h-full bg-primary rounded-full transform translate-x-8 -translate-y-8" />
@@ -114,7 +110,6 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* Purchase Credits */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -161,7 +156,6 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* Credits Consumed Chart */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -186,7 +180,6 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        {/* Transaction History */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -224,6 +217,5 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

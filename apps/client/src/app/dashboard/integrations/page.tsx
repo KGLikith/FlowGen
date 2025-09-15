@@ -1,4 +1,3 @@
-import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -41,15 +40,12 @@ const integrations = [
 
 export default function IntegrationsPage() {
   return (
-    <DashboardLayout credits={{ current: 649, total: 1000 }}>
       <div className="space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Integrations</h1>
           <p className="text-muted-foreground">Connect your favorite apps and services to automate your workflows</p>
         </div>
 
-        {/* Integrations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {integrations.map((integration) => (
             <Card key={integration.id} className="relative overflow-hidden hover:shadow-md transition-shadow">
@@ -88,7 +84,6 @@ export default function IntegrationsPage() {
           ))}
         </div>
 
-        {/* Popular Integrations */}
         <Card>
           <CardHeader>
             <CardTitle>Popular Integrations</CardTitle>
@@ -111,6 +106,5 @@ export default function IntegrationsPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

@@ -1,4 +1,3 @@
-import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,16 +9,13 @@ import { User, Mail, Calendar, Shield, Bell, Key } from "lucide-react"
 
 export default function ProfilePage() {
   return (
-    <DashboardLayout credits={{ current: 649, total: 1000 }}>
       <div className="space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Profile</h1>
           <p className="text-muted-foreground">Manage your account settings and preferences</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Profile Information */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
@@ -101,7 +97,6 @@ export default function ProfilePage() {
             </Card>
           </div>
 
-          {/* Account Overview */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -163,6 +158,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
-  )
+
+)
 }

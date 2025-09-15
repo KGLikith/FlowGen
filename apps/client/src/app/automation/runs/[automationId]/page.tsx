@@ -79,7 +79,6 @@ export default function AutomationsPage() {
   return (
     <DashboardLayout credits={{ current: 649, total: 1000 }}>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Workflows</h1>
@@ -88,13 +87,11 @@ export default function AutomationsPage() {
           <Button className="bg-primary hover:bg-primary/90">Create workflow</Button>
         </div>
 
-        {/* Workflows List */}
         <div className="space-y-4">
           {workflows.map((workflow) => (
             <Card key={workflow.id} className="transition-all hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  {/* Left side - Workflow info */}
                   <div className="flex items-center gap-4 flex-1">
                     <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", workflow.color)}>
                       <span className="text-white font-semibold text-sm">{workflow.name.charAt(0).toUpperCase()}</span>
@@ -121,7 +118,6 @@ export default function AutomationsPage() {
                     </div>
                   </div>
 
-                  {/* Right side - Actions */}
                   <div className="flex items-center gap-2">
                     <Button size="sm" variant="outline" className="gap-1 bg-transparent">
                       <Play className="h-3 w-3" />
@@ -151,7 +147,6 @@ export default function AutomationsPage() {
           ))}
         </div>
 
-        {/* Empty state for when no workflows exist */}
         {workflows.length === 0 && (
           <Card className="p-12 text-center">
             <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
