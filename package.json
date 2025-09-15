@@ -1,0 +1,36 @@
+{
+  "name": "flowgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "db:generate": "npm run generate --workspace=@automation/db",
+    "db:migrate": "npm run migrate --workspace=@automation/db",
+    "db:studio": "npm run studio --workspace=@automation/db",
+    "client:dev": "npm run dev --workspace=@automation/client",
+    "client:build": "npm run build --workspace=@automation/client",
+    "client:start": "npm run start --workspace=@automation/client",
+    "server:dev": "npm run dev --workspace=@automation/server",
+    "server:build": "npm run build --workspace=@automation/server",
+    "server:start": "npm run start --workspace=@automation/server",
+    "worker:dev": "npm run dev --workspace=@automation/worker",
+    "processor:dev": "npm run dev --workspace=@automation/processor"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KGLikith/FlowGen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/KGLikith/FlowGen/issues"
+  },
+  "homepage": "https://github.com/KGLikith/FlowGen#readme"
+}
