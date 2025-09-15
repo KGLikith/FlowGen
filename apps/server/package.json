@@ -2,9 +2,9 @@
   "name": "@automation/server",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "index.js",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node dist/index.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "build": "tsc -b"
   },

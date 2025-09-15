@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-
 async function init() {
   const { app, httpServer } = await initServer(); 
 

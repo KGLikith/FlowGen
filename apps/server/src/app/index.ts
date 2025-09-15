@@ -23,9 +23,6 @@ export default async function initServer() {
         hello: String!
       }
 
-      type Mutation {
-        ping(message: String!): String!
-      }
     `,
     resolvers: {
       DateTime: DateTimeResolver,
@@ -34,9 +31,6 @@ export default async function initServer() {
         hello: () => "Hello from GraphQL 🚀",
       },
 
-      Mutation: {
-        ping: (_: any, { message }: { message: string }) => `Pong: ${message}`,
-      },
     },
   });
 

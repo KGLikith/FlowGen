@@ -2,9 +2,9 @@
   "name": "@automation/worker",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node dist/index.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "build": "tsc -b"
   },
