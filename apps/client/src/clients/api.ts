@@ -1,4 +1,5 @@
 "use client";
+
 import {
   ApolloClient,
   InMemoryCache,
@@ -6,32 +7,68 @@ import {
   ApolloLink,
 } from "@apollo/client";
 import { SetContextLink } from "@apollo/client/link/context";
+import { useAuth } from "@clerk/nextjs";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { Client, createClient } from "graphql-ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 
-const createApolloClient = () => {
+let wsClient: Client | null = null;
+
+export const createApolloClient = (getToken: () => Promise<string | null>) => {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_API_URL,
   });
 
-  const authLink = new SetContextLink(() => {
-    const token = window.localStorage.getItem("__twitter_token");
+  const authLink = new SetContextLink(async (prevContext, operation) => {
+    const token = await getToken(); 
     return {
+      ...prevContext,
       headers: {
-        authorization: token ? `Bearer ${token}` : "",
+        ...(prevContext.headers || {}),
+        Authorization: token ? `Bearer ${token}` : "",
       },
     };
   });
 
+  const wsLink =
+    typeof window !== "undefined"
+      ? new GraphQLWsLink(
+          (wsClient = createClient({
+            url: process.env.NEXT_PUBLIC_WS_URL!,
+            connectionParams: async () => {
+              const token = await getToken(); 
+              return {
+                headers: {
+                  authorization: token ? `Bearer ${token}` : "",
+                },
+              };
+            },
+          }))
+        )
+      : null;
 
-  const splitLink = authLink.concat(httpLink);
+    const splitLink = wsLink
+    ? ApolloLink.split(
+        ({ query }) => {
+          const definition = getMainDefinition(query);
+          return (
+            definition.kind === "OperationDefinition" &&
+            definition.operation === "subscription"
+          );
+        },
+        wsLink,
+        authLink.concat(httpLink)
+      )
+    : authLink.concat(httpLink);
 
-  const client = new ApolloClient({
-    link: splitLink,
+  return new ApolloClient({
+    link: ApolloLink.from([authLink, httpLink]),
     cache: new InMemoryCache(),
   });
-
-  return client;
 };
 
-
-export const apolloClient = createApolloClient();
+export function useApollo() {
+  const { getToken } = useAuth();
+  return createApolloClient(getToken);
+}

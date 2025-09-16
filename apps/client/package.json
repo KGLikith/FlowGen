@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^4.0.5",
     "@clerk/nextjs": "^6.32.0",
+    "@clerk/themes": "^2.4.19",
     "@graphql-codegen/introspection": "^5.0.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.15",

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,4 +5,224 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  clerkId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  UserBalance        UserBalance?
+  Workflows          Workflow[]
+  WorkflowExecutions WorkflowExecution[]
+  ExecutionPhases    ExecutionPhase[]
+  Credentials        Credential[]
+  Purchases          UserPurchase[]
+
+  connections Connections[]
+  Discord     DiscordWebhook[]
+  Slack       Slack[]
+  Notion      Notion[]
+  GoogleDocs  GoogleDocs[]
+}
+
+model UserBalance {
+  id      String @id @default(cuid())
+  userId  String @unique
+  credits Int
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Workflow {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  description   String?
+  definition    String?
+  executionPlan String?
+  cron          String?
+  status        String
+  creditsCost   Int
+  lastRunAt     DateTime?
+  lastRunId     String?
+  lastRunStatus String?
+  nextRunAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user       User                @relation(fields: [userId], references: [id])
+  executions WorkflowExecution[]
+}
+
+model WorkflowExecution {
+  id              String    @id @default(cuid())
+  workflowId      String
+  userId          String
+  trigger         String
+  status          String
+  createdAt       DateTime  @default(now())
+  startedAt       DateTime?
+  completedAt     DateTime?
+  creditsConsumed Int
+
+  workflow Workflow         @relation(fields: [workflowId], references: [id])
+  user     User             @relation(fields: [userId], references: [id])
+  phases   ExecutionPhase[]
+}
+
+model AvailableTrigger {
+  id        String   @id @default(cuid())
+  name      String
+  key       String   @unique // e.g. "google_docs" or "instagram"
+  image     String?
+  category  String // e.g. "Docs", "Social"
+  createdAt DateTime @default(now())
+
+  // Relations
+  actions        AvailableTriggerAction[]
+  ExecutionPhase ExecutionPhase[]
+}
+
+model AvailableAction {
+  id        String   @id @default(cuid())
+  name      String
+  key       String   @unique // e.g. "notion", "slack", "comment", "ai"
+  image     String?
+  category  String // e.g. "Productivity", "Messaging", "AI"
+  createdAt DateTime @default(now())
+
+  // Relations
+  triggers       AvailableTriggerAction[]
+  ExecutionPhase ExecutionPhase[]
+}
+
+model AvailableTriggerAction {
+  id        String @id @default(cuid())
+  triggerId String
+  actionId  String
+
+  trigger AvailableTrigger @relation(fields: [triggerId], references: [id])
+  action  AvailableAction  @relation(fields: [actionId], references: [id])
+
+  @@unique([triggerId, actionId])
+}
+
+model ExecutionPhase {
+  id                  String    @id @default(cuid())
+  userId              String
+  status              String
+  number              Int
+  node                String
+  name                String
+  startedAt           DateTime?
+  completedAt         DateTime?
+  inputs              String?
+  outputs             String?
+  creditsConsumed     Int
+  workflowExecutionId String
+
+  user              User              @relation(fields: [userId], references: [id])
+  workflowExecution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
+  logs              ExecutionLog[]
+
+  triggerId String?
+  actionId  String?
+  trigger   AvailableTrigger? @relation(fields: [triggerId], references: [id])
+  action    AvailableAction?  @relation(fields: [actionId], references: [id])
+}
+
+model ExecutionLog {
+  id               String   @id @default(cuid())
+  executionPhaseId String
+  logLevel         String
+  message          String
+  timestamp        DateTime @default(now())
+
+  phase ExecutionPhase @relation(fields: [executionPhaseId], references: [id])
+}
+
+model Credential {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  value     String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UserPurchase {
+  id          String   @id @default(cuid())
+  userId      String
+  stripeId    String
+  description String?
+  amount      Int
+  currency    String
+  date        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model DiscordWebhook {
+  id          String        @id @default(uuid())
+  webhookId   String        @unique
+  url         String        @unique
+  name        String
+  guildName   String
+  guildId     String
+  channelId   String        @unique
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  Connections Connections[]
+}
+
+model Slack {
+  id               String        @id @default(uuid())
+  teamId           String
+  teamName         String
+  botUserId        String
+  authedUserId     String
+  slackAccessToken String        @unique
+  userId           String
+  user             User          @relation(fields: [userId], references: [id])
+  Connections      Connections[]
+}
+
+model Notion {
+  id            String        @id @default(uuid())
+  accessToken   String        @unique
+  workspaceId   String        @unique
+  workspaceName String
+  workspaceIcon String
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  Connections   Connections[]
+}
+
+model GoogleDocs {
+  id           String        @id @default(uuid())
+  accessToken  String        @unique
+  refreshToken String?
+  folderId     String?
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  Connections  Connections[]
+}
+
+model Connections {
+  id             String          @id @default(uuid())
+  type           String // "slack" | "discord" | "notion" | "googleDocs"
+  discordId      String?
+  slackId        String?
+  notionId       String?
+  googleDocsId   String?
+  userId         String?
+  user           User?           @relation(fields: [userId], references: [id])
+  DiscordWebhook DiscordWebhook? @relation(fields: [discordId], references: [id])
+  Slack          Slack?          @relation(fields: [slackId], references: [id])
+  Notion         Notion?         @relation(fields: [notionId], references: [id])
+  GoogleDocs     GoogleDocs?     @relation(fields: [googleDocsId], references: [id])
 }

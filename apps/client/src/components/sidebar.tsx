@@ -6,52 +6,36 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
-import { Home, Zap, Plug, Settings, User, FileText, Menu, DollarSign } from "lucide-react"
-
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Automations", href: "/dashboard/automations", icon: Zap },
-  { name: "Integrations", href: "/dashboard/integrations", icon: Plug },
-  { name: "Billing", href: "/dashboard/billing", icon: DollarSign },
-]
-
-const profileNavigation = [
-  { name: "Profile", href: "/dashboard/profile", icon: User },
-  { name: "Logs", href: "/dashboard/logs", icon: FileText },
-]
+import { navigation, profileNavigation } from "@/constants/sidebar"
+import { Menu, LogOut } from "lucide-react"
+import Logo from "./logo"
+import { SignOutButton } from "@clerk/nextjs"
 
 interface SidebarProps {
   credits?: { current: number; total: number }
-  appName?: string
 }
 
-export function Sidebar({ credits = { current: 649, total: 1000 }, appName = "FlowGen" }: SidebarProps) {
+export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProps) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
-  // 👇 Auto handle sidebar open/close on screen resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        setIsOpen(false) // Desktop -> close sheet, rely on fixed sidebar
+        setIsOpen(false) 
       } else {
-        setIsOpen(false) // Mobile -> sheet closed by default
+        setIsOpen(false) 
       }
     }
 
-    handleResize() // run on mount
+    handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800">
-      <div className="flex items-center gap-3 h-16 px-4 border-b border-neutral-200 dark:border-neutral-800">
-        <div className="h-9 w-9 rounded-lg bg-neutral-900 dark:bg-white flex items-center justify-center">
-          <span className="text-white dark:text-neutral-900 font-bold text-lg">F</span>
-        </div>
-        <span className="font-semibold text-lg text-neutral-900 dark:text-white">{appName}</span>
-      </div>
+      <Logo />
 
       <div className="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
         <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-2">
@@ -113,6 +97,18 @@ export function Sidebar({ credits = { current: 649, total: 1000 }, appName = "Fl
           )
         })}
       </nav>
+
+      <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-800 ">
+        <SignOutButton redirectUrl="/dashboard">
+          <Button
+            variant="ghost"
+            className="w-full flex cursor-pointer items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+          >
+            <LogOut className="h-5 w-5" />
+            Logout
+          </Button>
+        </SignOutButton>
+      </div>
     </div>
   )
 

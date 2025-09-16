@@ -1,7 +1,12 @@
-import { DashboardLayout } from "@/components/dashboard-layout"
+'use client'
 import { Button } from "@/components/ui/button"
+import { HELLO_QUERY } from "@/graphql/query";
+import { useQuery } from "@apollo/client/react";
+import { useAuth } from "@clerk/nextjs";
+import { useEffect } from "react";
 
 export default function HomePage() {
+  
   return (
       <div className="space-y-8">
         <div>
