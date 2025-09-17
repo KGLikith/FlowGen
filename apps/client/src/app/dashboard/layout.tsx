@@ -9,7 +9,7 @@ type Props = {
 export default async function layout({ children }: Props) {
     
     return (
-        <DashboardLayout credits={{ current: 649, total: 1000 }}>
+        <DashboardLayout >
             {children}
         </DashboardLayout>
     )

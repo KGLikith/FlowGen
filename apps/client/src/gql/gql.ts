@@ -14,10 +14,18 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n    query Hello {\n      hello\n    }\n  ": typeof types.HelloDocument,
+    "\n    #graphql\n    mutation CreateWorkflow($payload: createWorkflowPayload!) {\n        createWorkflow(payload: $payload) {\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": typeof types.CreateWorkflowDocument,
+    "\n    #graphql\n    mutation DeleteWorkflow($id: ID!) {\n        deleteWorkflow(id: $id)\n    }\n": typeof types.DeleteWorkflowDocument,
+    "\n    query GetWorkflows{\n        getWorkflows{\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": typeof types.GetWorkflowsDocument,
+    "\n    query GetWorkflow($id: ID!){\n        getWorkflow(id: $id){\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": typeof types.GetWorkflowDocument,
+    "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n": typeof types.CurrentUserDocument,
 };
 const documents: Documents = {
-    "\n    query Hello {\n      hello\n    }\n  ": types.HelloDocument,
+    "\n    #graphql\n    mutation CreateWorkflow($payload: createWorkflowPayload!) {\n        createWorkflow(payload: $payload) {\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": types.CreateWorkflowDocument,
+    "\n    #graphql\n    mutation DeleteWorkflow($id: ID!) {\n        deleteWorkflow(id: $id)\n    }\n": types.DeleteWorkflowDocument,
+    "\n    query GetWorkflows{\n        getWorkflows{\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": types.GetWorkflowsDocument,
+    "\n    query GetWorkflow($id: ID!){\n        getWorkflow(id: $id){\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n": types.GetWorkflowDocument,
+    "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n": types.CurrentUserDocument,
 };
 
 /**
@@ -37,7 +45,23 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query Hello {\n      hello\n    }\n  "): (typeof documents)["\n    query Hello {\n      hello\n    }\n  "];
+export function graphql(source: "\n    #graphql\n    mutation CreateWorkflow($payload: createWorkflowPayload!) {\n        createWorkflow(payload: $payload) {\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"): (typeof documents)["\n    #graphql\n    mutation CreateWorkflow($payload: createWorkflowPayload!) {\n        createWorkflow(payload: $payload) {\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    #graphql\n    mutation DeleteWorkflow($id: ID!) {\n        deleteWorkflow(id: $id)\n    }\n"): (typeof documents)["\n    #graphql\n    mutation DeleteWorkflow($id: ID!) {\n        deleteWorkflow(id: $id)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query GetWorkflows{\n        getWorkflows{\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"): (typeof documents)["\n    query GetWorkflows{\n        getWorkflows{\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query GetWorkflow($id: ID!){\n        getWorkflow(id: $id){\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"): (typeof documents)["\n    query GetWorkflow($id: ID!){\n        getWorkflow(id: $id){\n            id\n            name\n            status\n            definition\n            description\n            createdAt\n            updatedAt\n            creditsCost\n            lastRunAt\n            lastRunId\n            nextRunAt\n            userId\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n"): (typeof documents)["\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

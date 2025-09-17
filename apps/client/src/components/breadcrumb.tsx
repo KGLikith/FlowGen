@@ -9,7 +9,7 @@ const dashboardRoot = "/dashboard"
 
 const routeNames: Record<string, string> = {
   [dashboardRoot]: "Home",
-  [dashboardRoot + "/automations"]: "Automations",
+  [dashboardRoot + "/workflows"]: "Workflows",
   [dashboardRoot + "/integrations"]: "Integrations",
   [dashboardRoot + "/billing"]: "Billing",
   [dashboardRoot + "/profile"]: "Profile",

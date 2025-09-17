@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/provider/theme-provider";
 import QueryClientProvider from "@/components/provider/ClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark, neobrutalism, } from '@clerk/themes'
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,7 @@ export default function RootLayout({
             >
               <QueryClientProvider>
                 {children}
-                {/* <Toaster /> */}
+                <Toaster />
               </QueryClientProvider>
             </ThemeProvider>
           </ProviderApollo>

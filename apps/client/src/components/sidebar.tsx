@@ -22,9 +22,9 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        setIsOpen(false) 
+        setIsOpen(false)
       } else {
-        setIsOpen(false) 
+        setIsOpen(false)
       }
     }
 
@@ -61,7 +61,7 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
               className={cn(
                 "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                  ? "bg-neutral-900 text-white dark:bg-blue-400 dark:text-black"
                   : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
               )}
             >
@@ -85,7 +85,7 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
               className={cn(
                 "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-green-600 text-white dark:bg-green-400 dark:text-neutral-900"
+                  ? "bg-neutral-900 text-white dark:bg-blue-400 dark:text-black"
                   : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
               )}
             >
@@ -123,7 +123,7 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden fixed top-4 left-4 z-50 h-10 w-10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border border-neutral-300 dark:border-neutral-700"
+            className="md:hidden cursor-pointer fixed top-4 left-4 z-50 h-10 w-10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border border-neutral-300 dark:border-neutral-700"
           >
             <Menu className="h-5 w-5 text-neutral-900 dark:text-white" />
           </Button>

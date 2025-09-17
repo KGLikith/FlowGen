@@ -21,7 +21,10 @@ export const createApolloClient = (getToken: () => Promise<string | null>) => {
   });
 
   const authLink = new SetContextLink(async (prevContext, operation) => {
-    const token = await getToken(); 
+    if (typeof window === "undefined") return {};
+
+    const token = await (window as any).Clerk?.session?.getToken();
+    // const token = await getToken(); 
     return {
       ...prevContext,
       headers: {
@@ -37,7 +40,7 @@ export const createApolloClient = (getToken: () => Promise<string | null>) => {
           (wsClient = createClient({
             url: process.env.NEXT_PUBLIC_WS_URL!,
             connectionParams: async () => {
-              const token = await getToken(); 
+              const token = await (window as any).Clerk?.session?.getToken();
               return {
                 headers: {
                   authorization: token ? `Bearer ${token}` : "",
@@ -72,3 +75,5 @@ export function useApollo() {
   const { getToken } = useAuth();
   return createApolloClient(getToken);
 }
+
+export const client = createApolloClient(async () => null);

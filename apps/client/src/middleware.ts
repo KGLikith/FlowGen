@@ -11,7 +11,6 @@ export default clerkMiddleware(async (auth, req) => {
       signInUrl.searchParams.set("redirect_url", "/dashboard");
       return NextResponse.redirect(signInUrl);
     }
-    // console.log(`User ID: ${userId}`);
   }
 });
 
