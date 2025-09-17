@@ -12,7 +12,8 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
 import { execute, subscribe } from "graphql";
 import { pubsub } from "../clients/pubsub";
-import { prisma } from "@org/db";
+import { prisma } from "@automation/db";
+import { GraphqlData } from "./graphql";
 
 EventEmitter.defaultMaxListeners = 100;
 
@@ -22,12 +23,23 @@ export default async function initServer() {
   app.use(express.json());
   app.use(clerkMiddleware());
 
+  // type Mutation {
+      //   ${User.mutations}
+      // }
+
   const schema = makeExecutableSchema({
     typeDefs: `
       scalar DateTime
+      scalar JSON
+
+      ${GraphqlData.types}
 
       type Query {
-        hello: String!
+        ${GraphqlData.queries}
+      }
+
+      type Mutation {
+        ${GraphqlData.mutations}
       }
 
     `,
@@ -35,13 +47,11 @@ export default async function initServer() {
       DateTime: DateTimeResolver,
 
       Query: {
-        hello: (_: any, __: any, { auth }) => {
-          console.log("Auth: ", auth);
-          console.log("UserId: ", auth.userId);
-
-          return "Hello world!";
-        },
+        ...GraphqlData.resolvers.queries
       },
+      Mutation: {
+        ...GraphqlData.resolvers.mutations
+      }
     },
   });
 
@@ -65,7 +75,7 @@ export default async function initServer() {
           auth = getAuth({ headers: { authorization: token } } as any);
         }
 
-        return { auth, pubsub };
+        return { clerkId: auth?.userId, pubsub };
       },
     },
     wsServer
@@ -95,10 +105,28 @@ export default async function initServer() {
       context: async ({ req, res }) => {
         const auth = getAuth(req);
 
+        let user = null;
+
+        if (auth.userId) {
+          user = await prisma.user.upsert({
+            where: { clerkId: auth.userId },
+            update: {},
+            create: {
+              clerkId: auth.userId,
+              UserBalance: {
+                create: {
+                  credits: 10,
+                },
+              },
+            },
+          });
+        }
+
         return {
           req,
           res,
-          auth,
+          clerkId: auth.userId,
+          pubsub
         };
       },
     })
