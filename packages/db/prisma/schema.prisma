@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
-  email     String   @unique
+  // email     String   @unique
   clerkId   String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,10 +41,10 @@ model Workflow {
   userId        String
   name          String
   description   String?
-  definition    String?
+  definition    String
   executionPlan String?
   cron          String?
-  status        String
+  status        WorkflowStatus @default(DRAFT)
   creditsCost   Int
   lastRunAt     DateTime?
   lastRunId     String?
@@ -55,6 +55,13 @@ model Workflow {
 
   user       User                @relation(fields: [userId], references: [id])
   executions WorkflowExecution[]
+
+  @@unique([userId, name])
+}
+
+enum WorkflowStatus {
+  ACTIVE
+  DRAFT
 }
 
 model WorkflowExecution {
