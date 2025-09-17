@@ -15,8 +15,8 @@
     "client:dev": "npm run dev --workspace=@automation/client",
     "client:build": "npm run build --workspace=@automation/client",
     "client:start": "npm run start --workspace=@automation/client",
-    "codegen":"npm run codegen --workspace=@automation/client",
-    "codegen:check":"npm run codegen:check --workspace=@automation/client",
+    "codegen": "npm run codegen --workspace=@automation/client",
+    "codegen:check": "npm run codegen:check --workspace=@automation/client",
     "server:dev": "npm run dev --workspace=@automation/server",
     "server:build": "npm run build --workspace=@automation/server",
     "server:start": "npm run start --workspace=@automation/server",
@@ -34,5 +34,9 @@
   "bugs": {
     "url": "https://github.com/KGLikith/FlowGen/issues"
   },
-  "homepage": "https://github.com/KGLikith/FlowGen#readme"
+  "homepage": "https://github.com/KGLikith/FlowGen#readme",
+  "dependencies": {
+    "@automation/client": "^0.1.0",
+    "zod": "^4.1.8"
+  }
 }
