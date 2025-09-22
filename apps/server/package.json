@@ -17,7 +17,7 @@
     "@as-integrations/express4": "^1.1.2",
     "@clerk/express": "^1.7.31",
     "@graphql-tools/schema": "^8.5.1",
-    "@org/db": "*",
+    "@automation/db": "*",
     "altair-express-middleware": "^8.2.7",
     "apollo-server": "^3.13.0",
     "cors": "^2.8.5",

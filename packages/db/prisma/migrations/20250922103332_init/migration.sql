@@ -1,7 +1,9 @@
+-- CreateEnum
+CREATE TYPE "public"."WorkflowStatus" AS ENUM ('ACTIVE', 'DRAFT');
+
 -- CreateTable
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
     "clerkId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -24,10 +26,10 @@ CREATE TABLE "public"."Workflow" (
     "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "definition" TEXT,
+    "definition" TEXT NOT NULL,
     "executionPlan" TEXT,
     "cron" TEXT,
-    "status" TEXT NOT NULL,
+    "status" "public"."WorkflowStatus" NOT NULL DEFAULT 'DRAFT',
     "creditsCost" INTEGER NOT NULL,
     "lastRunAt" TIMESTAMP(3),
     "lastRunId" TEXT,
@@ -206,13 +208,13 @@ CREATE TABLE "public"."Connections" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_clerkId_key" ON "public"."User"("clerkId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserBalance_userId_key" ON "public"."UserBalance"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Workflow_userId_name_key" ON "public"."Workflow"("userId", "name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AvailableTrigger_key_key" ON "public"."AvailableTrigger"("key");
