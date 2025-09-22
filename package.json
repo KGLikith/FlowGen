@@ -34,9 +34,5 @@
   "bugs": {
     "url": "https://github.com/KGLikith/FlowGen/issues"
   },
-  "homepage": "https://github.com/KGLikith/FlowGen#readme",
-  "dependencies": {
-    "@automation/client": "^0.1.0",
-    "zod": "^4.1.8"
-  }
+  "homepage": "https://github.com/KGLikith/FlowGen#readme"
 }
