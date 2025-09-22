@@ -9,17 +9,22 @@ import { useGetWorkflows } from "@/hooks/workflows"
 import { formatDate, getStatusBadge, getStatusIcon } from "./helpers"
 import DeleteWorkflowDialog from "./deleteWorkflowDialog"
 import CreateWorkflowDialog from "./createWorkflowDialog"
+import WorkflowSkeleton from "@/components/skeletons/Workflow"
 
 export default function UserWorkflows() {
   const [workflows, setWorkflows] = useState<Workflow[]>([])
 
   const { workflowData, isLoading, error } = useGetWorkflows()
-
+ 
   useEffect(() => {
     if (workflowData) {
       setWorkflows(workflowData)
     }
   }, [workflowData])
+
+  if (isLoading) {
+    return <WorkflowSkeleton />
+  }
 
   return (
     <>

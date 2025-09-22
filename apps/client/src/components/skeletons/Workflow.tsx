@@ -3,9 +3,9 @@ import React from 'react'
 
 export default function WorkflowSkeleton() {
   return (
-    <div className='space-y-2'>
+    <div className='space-y-3'>
         {
-            [1,2,3].map((item) => (
+            [1,2,3,4,5].map((item) => (
                 <div key={item} className="animate-pulse flex space-x-4">
                     <div className="rounded-md bg-muted h-10 w-10"></div>
                     <div className="flex-1 space-y-4 py-1">

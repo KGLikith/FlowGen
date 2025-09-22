@@ -5,6 +5,7 @@ import Loader from "@/components/loader"
 import { User, FileX } from "lucide-react"
 import FlowEditor from "./flowEditor"
 import { User as UserType } from "@/gql/graphql"
+import Editor from "./editor"
 
 type Props = {
   workflowId: string
@@ -59,5 +60,5 @@ export default function WorkflowPage({ workflowId }: Props) {
     )
   }
 
-  return <FlowEditor workflow={workflow} currentUser={user} />
+  return <Editor workflow={workflow} currentUser={user} />
 }

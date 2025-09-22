@@ -2,6 +2,7 @@ import { User, Workflow } from '@/gql/graphql'
 import React from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import FlowEditor from './flowEditor'
+import TopBar from '@/app/workflow/_components/topBar/TopBar'
 
 type Props = {
     workflow: Workflow
@@ -12,6 +13,7 @@ export default function Editor({ workflow, currentUser }: Props) {
     return (
         <ReactFlowProvider>
             <div className='flex flex-col h-full w-full overflow-hidden'>
+                <TopBar />
                 <section className='flex h-full overflow-auto'>
                     <FlowEditor workflow={workflow} currentUser={currentUser} />
                 </section>

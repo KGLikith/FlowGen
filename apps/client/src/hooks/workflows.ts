@@ -94,7 +94,6 @@ export const useGetWorkflow = (workflowId: string) => {
     queryKey: ["workflow", workflowId],
     queryFn: async () => {
       try {
-        console.log(workflowId, "workflowId in useGetWorkflow")
         const res = await client.query({
           query: GET_WORKFLOW,
           variables: { id: workflowId },
