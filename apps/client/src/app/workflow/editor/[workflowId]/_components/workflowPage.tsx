@@ -3,8 +3,6 @@ import { useGetCurrentUser } from "@/hooks/user"
 import { useGetWorkflow } from "@/hooks/workflows"
 import Loader from "@/components/loader"
 import { User, FileX } from "lucide-react"
-import FlowEditor from "./flowEditor"
-import { User as UserType } from "@/gql/graphql"
 import Editor from "./editor"
 
 type Props = {
@@ -33,7 +31,7 @@ export default function WorkflowPage({ workflowId }: Props) {
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-foreground">Authentication Required</h3>
             <p className="text-muted-foreground">
-              Please log in to view this workflow. You need to be authenticated to access workflow details.
+              Please log in  view this workflow. You need to be authenticated to access workflow details.
             </p>
           </div>
         </div>

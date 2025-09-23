@@ -8,11 +8,17 @@ export const LaunchBrowserTask = {
     isEntryPoint: true,
     inputs: [
         {
-        name: "Website URL",
-        type: TaskParamType.STRING,
-        placeholder: "https://example.com",
-        required: true,
-        hideHandle: true
+            name: "Website URL",
+            type: TaskParamType.STRING,
+            placeholder: "https://example.com",
+            required: true,
+            hideHandle: true
         }
-    ]   
+    ],
+    outputs: [
+        {
+            name: "Web page",
+            type: TaskParamType.BROWSER_INSTANCE
+        }
+    ]
 }

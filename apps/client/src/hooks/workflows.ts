@@ -119,15 +119,9 @@ export const useDeleteWorkflow = () => {
   return { ...mutation, deleteWorkflow: mutation.mutateAsync };
 };
 
-export const useUpdateWorkflow = () => {
+export const useUpdateWorkflow = (workflowId: string) => {
   const mutation = useMutation({
-    mutationFn: async ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: UpdateWorkflowPayload;
-    }) => {
+    mutationFn: async ({id,payload}: {id: string; payload: UpdateWorkflowPayload;}) => {
       try {
         const { data } = await client.mutate({
           mutation: UPDATE_WORKFLOW,
@@ -139,9 +133,10 @@ export const useUpdateWorkflow = () => {
         return null;
       }
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      console.log(data)
       await client.resetStore();
-      await queryclient.invalidateQueries({ queryKey: ["workflows"] });
+      await queryclient.invalidateQueries({ queryKey: ["workflow", workflowId] });
       toast.success("Workflow Updated Successfully", {
         duration: 2000,
         id: "update_workflow",

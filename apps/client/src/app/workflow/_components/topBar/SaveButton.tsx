@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useUpdateWorkflow } from '@/hooks/workflows';
 import { useReactFlow } from '@xyflow/react';
 import { CheckIcon, Loader } from 'lucide-react';
+import { revalidatePath } from 'next/cache';
 import React from 'react'
 import { toast } from 'sonner';
 
@@ -12,7 +13,7 @@ type Props = {
 export default function SaveButton({ workflowId }: Props) {
     const { toObject } = useReactFlow();
 
-    const { mutateAsync, isPending } = useUpdateWorkflow();
+    const { mutateAsync, isPending } = useUpdateWorkflow(workflowId);
 
     const handleSave = async (wfDef: string) => {
         toast.loading('Saving workflow...', {
@@ -24,6 +25,7 @@ export default function SaveButton({ workflowId }: Props) {
                 definition: wfDef,
             }
         });
+        // revalidatePath(`/workflow/${workflowId}`);
     };
 
     return (
