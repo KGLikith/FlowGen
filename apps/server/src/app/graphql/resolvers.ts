@@ -1,4 +1,4 @@
-import { prisma } from "@automation/db";
+import { prisma, WorkflowStatus } from "@automation/db";
 import { GraphqlContext } from "../../interface";
 
 export interface CreateWorkflowDataPayload {
@@ -108,6 +108,39 @@ const mutations = {
     } catch (error) {
       console.error("Error deleting workflow:", error);
       return false;
+    }
+  },
+  updateWorkflow: async (
+    _: any,
+    {
+      id,
+      payload,
+    }: { id: string; payload: { definition: string; description?: string } },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    try {
+      const workflow = await prisma.workflow.findUnique({
+        where: { id },
+      });
+      if (!workflow) {
+        throw new Error("Workflow not found");
+      }
+      if(workflow.status !== WorkflowStatus.DRAFT){ 
+        throw new Error("Cannot update a DRAFT workflow");
+      }
+      await prisma.workflow.update({
+        where: { id },
+        data: {
+          definition: payload.definition,
+          description: payload.description,
+          updatedAt: new Date(),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error("Error updating workflow:", error);
+      throw new Error("Failed to update workflow. Please try again.");
     }
   },
 };

@@ -218,4 +218,10 @@ input createWorkflowPayload {
   definition: String!
   description: String
 }
+
+input updateWorkflowPayload{
+  definition: String!
+  description: String
+}
 `;
+
