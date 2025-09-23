@@ -9,7 +9,6 @@ export const useGetCurrentUser = () => {
       try {
         const res = await client.query({
           query: CURRENT_USER,
-          fetchPolicy: "network-only",
         });
         return res.data;
       } catch (err) {

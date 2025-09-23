@@ -3,7 +3,7 @@ import { User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { TaskType } from "@/schema/task"
 import { Background, BackgroundVariant, Controls, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
-
+ 
 import "@xyflow/react/dist/style.css"
 
 type Props = {
@@ -25,7 +25,7 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
   return (
-    <main className="h-full w-full ">
+    <main className="h-full w-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}

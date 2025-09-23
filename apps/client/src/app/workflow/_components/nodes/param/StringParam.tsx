@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TaskParam, TaskParamProps } from "@/schema/task";
+import { TaskParamProps } from "@/schema/task";
 import React, { useId, useState } from "react";
 
 export default function StringParam({

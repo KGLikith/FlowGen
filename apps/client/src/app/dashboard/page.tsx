@@ -1,11 +1,9 @@
 'use client'
 import { Button } from "@/components/ui/button"
-import { useGetCurrentUser } from "@/hooks/user"
 import { useUser } from "@clerk/nextjs";
 
 export default function HomePage() {
 
-  const {user, isLoading} = useGetCurrentUser();
   const clerkUser = useUser();
   
   return (

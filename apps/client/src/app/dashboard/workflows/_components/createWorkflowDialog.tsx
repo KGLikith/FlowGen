@@ -22,6 +22,7 @@ import { useCreateWorkflow } from "@/hooks/workflows"
 import { useGetCurrentUser } from "@/hooks/user"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { User } from "@/gql/graphql"
 
 type Props = {
   triggerText?: string
@@ -31,7 +32,7 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useGetCurrentUser()
-  const [currentUser, setCurrentUser] = useState(user);
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const router = useRouter();
 
   const { mutateAsync } = useCreateWorkflow()
@@ -52,6 +53,7 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
   const onSubmit = useCallback(async (data: createWorkflowSchemaType) => {
     setIsLoading(true)
     try {
+      console.log(currentUser)
       if (!currentUser?.id) return;
 
       toast.loading("Creating workflow...", { id: "create_workflow" })
@@ -79,7 +81,7 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
     } finally {
       setIsLoading(false)
     }
-  }, [mutateAsync])
+  }, [mutateAsync, currentUser])
 
   return (
     <Dialog open={open} onOpenChange={() => {

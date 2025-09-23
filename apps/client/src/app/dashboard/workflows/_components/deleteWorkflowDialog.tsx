@@ -30,7 +30,7 @@ export default function DeleteWorkflowDialog({ workflowId, workflowName, trigger
     const handleDelete = async () => {
         setIsLoading(true)
         try {
-            await mutateAsync(workflowId);
+            await mutateAsync({ id: workflowId });
             setOpen(false)
             setIsLoading(false)
         } catch (error) {

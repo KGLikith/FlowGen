@@ -1,12 +1,35 @@
 import { client } from "@/clients/api";
-import { CreateWorkflowPayload } from "@/gql/graphql";
+import queryclient from "@/clients/queryClient";
+import { CreateWorkflowPayload, UpdateWorkflowPayload } from "@/gql/graphql";
 import {
-  createWorkflowMutation,
-  deleteWorkflowMutation,
+  CREATE_WORKFLOW,
+  DELETE_WORKFLOW,
+  UPDATE_WORKFLOW,
 } from "@/graphql/mutation/automation";
 import { GET_WORKFLOW, GET_WORKFLOWS } from "@/graphql/query/automation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+export const useGetWorkflow = (workflowId: string) => {
+  const query = useQuery({
+    queryKey: ["workflow", workflowId],
+    queryFn: async () => {
+      try {
+        const res = await client.query({
+          query: GET_WORKFLOW,
+          variables: { id: workflowId },
+        });
+        return res.data;
+      } catch (err) {
+        console.log("Error fetching workflow:", (err as Error).message);
+        return {
+          getWorkflow: null,
+        };
+      }
+    },
+  });
+  return { ...query, workflow: query.data?.getWorkflow };
+};
 
 export const useGetWorkflows = () => {
   const query = useQuery({
@@ -30,12 +53,11 @@ export const useGetWorkflows = () => {
 };
 
 export const useCreateWorkflow = () => {
-  const queryclient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (payload: CreateWorkflowPayload) => {
       try {
         const { data } = await client.mutate({
-          mutation: createWorkflowMutation,
+          mutation: CREATE_WORKFLOW,
           variables: { payload },
         });
         return data;
@@ -64,13 +86,12 @@ export const useCreateWorkflow = () => {
 };
 
 export const useDeleteWorkflow = () => {
-  const queryclient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: async (workflowId: string) => {
+    mutationFn: async ({ id }: { id: string }) => {
       try {
         const { data } = await client.mutate({
-          mutation: deleteWorkflowMutation,
-          variables: { id: workflowId },
+          mutation: DELETE_WORKFLOW,
+          variables: { id },
         });
         return data;
       } catch (err) {
@@ -83,29 +104,57 @@ export const useDeleteWorkflow = () => {
       await queryclient.invalidateQueries({ queryKey: ["workflows"] });
       toast.success("Workflow Deleted Successfully", {
         duration: 2000,
+        id: "delete_workflow",
       });
     },
-  });
-  return { ...mutation, deleteWorkflow: mutation.data?.deleteWorkflow };
-};
-
-export const useGetWorkflow = (workflowId: string) => {
-  const query = useQuery({
-    queryKey: ["workflow", workflowId],
-    queryFn: async () => {
-      try {
-        const res = await client.query({
-          query: GET_WORKFLOW,
-          variables: { id: workflowId },
-        });
-        return res.data;
-      } catch (err) {
-        console.log("Error fetching workflow:", (err as Error).message);
-        return {
-          getWorkflow: null
-        };
-      }
+    onError: (error) => {
+      toast.error("Error deleting workflow", {
+        description: "Please try again",
+        duration: 2000,
+        id: "delete_workflow",
+      });
+      console.log("Error deleting workflow:", (error as Error).message);
     },
   });
-  return { ...query, workflow: query.data?.getWorkflow };
+  return { ...mutation, deleteWorkflow: mutation.mutateAsync };
+};
+
+export const useUpdateWorkflow = () => {
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateWorkflowPayload;
+    }) => {
+      try {
+        const { data } = await client.mutate({
+          mutation: UPDATE_WORKFLOW,
+          variables: { id, payload },
+        });
+        return data;
+      } catch (err) {
+        console.log("Error updating workflow:", (err as Error).message);
+        return null;
+      }
+    },
+    onSuccess: async () => {
+      await client.resetStore();
+      await queryclient.invalidateQueries({ queryKey: ["workflows"] });
+      toast.success("Workflow Updated Successfully", {
+        duration: 2000,
+        id: "update_workflow",
+      });
+    },
+    onError: (error) => {
+      toast.error("Error updating workflow", {
+        description: "Please try again",
+        duration: 2000,
+        id: "update_workflow",
+      });
+      console.log("Error updating workflow:", (error as Error).message);
+    },
+  });
+  return { ...mutation };
 };

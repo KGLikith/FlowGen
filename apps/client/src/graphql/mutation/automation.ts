@@ -1,6 +1,6 @@
 import { graphql } from "@/gql"
 
-export const createWorkflowMutation = graphql(`
+export const CREATE_WORKFLOW = graphql(`
     #graphql
     mutation CreateWorkflow($payload: createWorkflowPayload!) {
         createWorkflow(payload: $payload) {
@@ -20,9 +20,16 @@ export const createWorkflowMutation = graphql(`
     }
 `)
 
-export const deleteWorkflowMutation = graphql(`
+export const DELETE_WORKFLOW = graphql(`
     #graphql
     mutation DeleteWorkflow($id: ID!) {
         deleteWorkflow(id: $id)
+    }
+`)
+
+export const UPDATE_WORKFLOW = graphql(`
+    #graphql
+    mutation UpdateWorkflow($id: ID!, $payload: updateWorkflowPayload!) {
+        updateWorkflow(id: $id, payload: $payload)
     }
 `)
