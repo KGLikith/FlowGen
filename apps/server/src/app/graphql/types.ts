@@ -55,8 +55,8 @@ type WorkflowExecution {
   id: ID!
   workflowId: String!
   userId: String
-  trigger: String!
-  status: String!
+  trigger: WorkflowExecutionType!
+  status: WorkflowExecutionStatus!
   createdAt: DateTime
   startedAt: DateTime
   completedAt: DateTime
@@ -67,27 +67,76 @@ type WorkflowExecution {
   phases: [ExecutionPhase!]
 }
 
+enum WorkflowExecutionType {
+  MANUAL
+  SCHEDULED
+  TRIGGERED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
 type AvailableTrigger {
   id: ID!
   name: String!
-  key: String!
+  key: TriggerKey! 
   image: String
-  category: String!
+  taskInfo: TaskInfo!
   createdAt: DateTime
 
   actions: [AvailableTriggerAction!]
   executionPhases: [ExecutionPhase!]
 }
 
+enum TriggerKey {
+  LAUNCH_BROWSER
+}
+
 type AvailableAction {
   id: ID!
   name: String!
-  key: String!
+  key: ActionKey!
   image: String
-  category: String!
   createdAt: DateTime
+  taskInfo: TaskInfo!
+  
   triggers: [AvailableTriggerAction!]
   executionPhases: [ExecutionPhase!]
+}
+
+enum ActionKey {
+  PAGE_TO_HTML
+  EXTRACT_TEXT_FROM_ELEMENT
+}
+
+type TaskInfo {
+  id: ID!
+  label: String!
+  icon: String
+  type: String!
+  isEntryPoint: Boolean!
+  inputs: [TaskParam!]
+  outputs: [TaskParam!]
+  credits: Int!
+}
+
+type TaskParam {
+  id: ID!
+  type: TaskParamType!
+  name: String!
+  required: Boolean!
+  variant: String
+  helperText: String
+  hideHandle: Boolean
+}
+
+enum TaskParamType {
+  STRING
+  BROWSER_INSTANCE
 }
 
 type AvailableTriggerAction {
@@ -222,6 +271,13 @@ input createWorkflowPayload {
 input updateWorkflowPayload{
   definition: String!
   description: String
+}
+
+input runWorkflowPayload {
+  workflowId: ID!
+  flowDefinition: String
+  name: String!
+  executionPlan: String!
 }
 `;
 

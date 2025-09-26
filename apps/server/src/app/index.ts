@@ -68,8 +68,9 @@ export default async function initServer() {
       execute,
       subscribe,
       context: async (ctx) => {
+        console.log("hello")
         const token = ctx.connectionParams?.authorization as string | undefined;
-
+        console.log(token)
         let auth = null;
         if (token) {
           auth = getAuth({ headers: { authorization: token } } as any);
@@ -104,7 +105,6 @@ export default async function initServer() {
     expressMiddleware(gqlserver, {
       context: async ({ req, res }) => {
         const auth = getAuth(req);
-
         let user = null;
 
         if (auth.userId) {
