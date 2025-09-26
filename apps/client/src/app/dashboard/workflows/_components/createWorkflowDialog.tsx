@@ -23,10 +23,7 @@ import { useGetCurrentUser } from "@/hooks/user"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { User } from "@/gql/graphql"
-import { AppNode } from "@/schema/appNode"
-import { Edge, Node } from "@xyflow/react"
-import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
-import { TaskType } from "@/schema/task"
+import { Edge } from "@xyflow/react"
 
 type Props = {
   triggerText?: string
@@ -57,26 +54,20 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
   const onSubmit = useCallback(async (data: createWorkflowSchemaType) => {
     setIsLoading(true)
     try {
-      console.log(currentUser)
       if (!currentUser?.id) return;
 
       toast.loading("Creating workflow...", { id: "create_workflow" })
-      // const initialFlow: {nodes: AppNode[], edges: Edge[]} = { nodes: [], edges: [] }
-
-      // initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER))
 
       const res = await mutateAsync({
         name: data.name,
         description: data.description,
         userId: currentUser.id,
-        // definition: JSON.stringify(initialFlow),
         definition: JSON.stringify({ nodes: [], edges: [] as Edge[] }),
       })
 
       if (!res?.createWorkflow) {
         toast.error("Failed to create workflow", { id: "create_workflow" })
         setIsLoading(false)
-        // setOpen(false)
         form.reset()
         return;
       }

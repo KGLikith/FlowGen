@@ -1,17 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { ActionKey, TriggerKey } from '@/gql/graphql'
-import { TaskRegistry } from '@/lib/workflow/task/registry'
-import { TaskType } from '@/schema/task'
 import React from 'react'
 
 type Props = {
     taskType: TriggerKey | ActionKey
     taskId: string
     trigger: boolean
+    taskIcon: String
+    taskLabel: String
 }
 
-export default function TaskButton({ taskType, taskId, trigger }: Props) {
-    const task = TaskRegistry[taskType]
+export default function TaskButton({ taskType, taskId, trigger, taskIcon, taskLabel }: Props) {
 
     const onDragStart = (event: React.DragEvent<HTMLButtonElement>, taskType: TriggerKey | ActionKey) => {
         event.dataTransfer.setData('application/reactflow/taskType', taskType);
@@ -28,8 +27,8 @@ export default function TaskButton({ taskType, taskId, trigger }: Props) {
             
         >
             <div className="flex gap-2 items-center">
-                <task.icon size={20} />
-                {task.label}
+                {/* <task.icon size={20} /> */}
+                {taskLabel}
             </div>
 
         </Button>

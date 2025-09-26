@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
-import { TaskParam } from "@/schema/task";
 import { Handle, Position } from "@xyflow/react";
 import React from "react";
 import { ColorForHandle } from "./common";
+import { TaskParam } from "@/gql/graphql";
 
 type Props = {
     children: React.ReactNode;

@@ -1,6 +1,6 @@
-import { TaskParamType } from "@/schema/task";
+import { TaskParamType } from "@/gql/graphql";
 
 export const ColorForHandle: Record<TaskParamType, string> = {
-    [TaskParamType.BROWSER_INSTANCE]: "!bg-blue-500",
-    [TaskParamType.STRING]: "!bg-green-500",
+    [TaskParamType.BrowserInstance]: "!bg-blue-500",
+    [TaskParamType.String]: "!bg-green-500",
 }

@@ -4,14 +4,17 @@ import { useReactFlow } from "@xyflow/react"
 import { useCallback } from "react";
 import useFlowValidation from "./useFlowValidation";
 import { toast } from "sonner";
+import { useTrigger } from "@/components/context/TaskProvider";
+import { AvailableTrigger } from "@/gql/graphql";
 
 
 const useExecutionPlan = () => {
     const { toObject } = useReactFlow();
     const { setInvalidInputs, clearErrors } = useFlowValidation();
+    const { trigger, actions } = useTrigger();
 
     const handleError = useCallback((error: any) => {
-        switch(error.type){
+        switch (error.type) {
             case FlowToExecutionPlanTypeErrorType.NO_ENTRY_POINT:
                 toast.error("No entry point found. Please add a task that can start the workflow.")
                 break;
@@ -19,17 +22,17 @@ const useExecutionPlan = () => {
                 toast.error("Not all inputs are connected. Please fix the errors.")
                 setInvalidInputs(error.invalidElements || []);
                 break;
-            default: 
+            default:
                 toast.error("An unknown error occurred while generating the execution plan.")
                 break;
         }
-    },[setInvalidInputs])
+    }, [setInvalidInputs])
 
     const generateExecutionPlan = useCallback(() => {
         const { nodes, edges } = toObject();
-        const {executionPlan, error} = FlowToExecutionPlan(nodes as AppNode[], edges);
+        const { executionPlan, error } = FlowToExecutionPlan(nodes as AppNode[], edges, actions, trigger as AvailableTrigger);
 
-        if(error){
+        if (error) {
             handleError(error);
             return null
         }
@@ -37,7 +40,7 @@ const useExecutionPlan = () => {
         clearErrors();
 
         return executionPlan
-    }, [toObject, handleError])
+    }, [toObject, handleError, actions, trigger])
 
     return generateExecutionPlan
 }

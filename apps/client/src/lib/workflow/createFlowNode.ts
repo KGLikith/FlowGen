@@ -1,7 +1,7 @@
-import { TaskType } from "@/schema/task";
+import { ActionKey, TriggerKey } from "@/gql/graphql";
 
 export function CreateFlowNode(
-  nodeType: TaskType,
+  nodeType: ActionKey | TriggerKey,
   position?: { x: number; y: number },
   type: "TRIGGER" | "ACTION" = "ACTION",
   taskId?: string

@@ -1,10 +1,10 @@
+import { AvailableAction, AvailableTrigger, TaskParam } from "@/gql/graphql";
 import { AppNode, AppNodeMissingInputs } from "@/schema/appNode";
 import {
   workflowExecutionPlan,
   WorkflowExecutionPlanPhase,
 } from "@/schema/workflow";
 import { Edge, getIncomers } from "@xyflow/react";
-import { TaskRegistry } from "./task/registry";
 
 export enum FlowToExecutionPlanTypeErrorType {
   NO_ENTRY_POINT = "NO_ENTRY_POINT",
@@ -21,12 +21,15 @@ type FlowToExecutionPlanType = {
 
 export function FlowToExecutionPlan(
   nodes: AppNode[],
-  edges: Edge[]
+  edges: Edge[],
+  actions: AvailableAction[],
+  trigger: AvailableTrigger | null
 ): FlowToExecutionPlanType {
   const entryPoint = nodes.find(
-    (nd) => TaskRegistry[nd.data.type].isEntryPoint
+    (nd) => nd.data.type === trigger?.key && nd.data.trigger === true
   );
 
+  console.log(entryPoint, "entry point")
   if (!entryPoint) {
     return {
       error: {
@@ -37,7 +40,7 @@ export function FlowToExecutionPlan(
 
   const inputsWithErrors: AppNodeMissingInputs[] = [];
 
-  const invalidInputs = getInvalidInputs(entryPoint, edges, new Set());
+  const invalidInputs = getInvalidInputs(entryPoint, edges, new Set(), trigger?.taskInfo.inputs || []);
   if (invalidInputs.length > 0) {
     inputsWithErrors.push({
       nodeId: entryPoint.id,
@@ -65,8 +68,8 @@ export function FlowToExecutionPlan(
       if (planned.has(currentNode.id)) {
         continue;
       }
-
-      const invalidInputs = getInvalidInputs(currentNode, edges, planned);
+      const inputs = actions.find((a) => a.key === currentNode.data.type)?.taskInfo.inputs
+      const invalidInputs = getInvalidInputs(currentNode, edges, planned, inputs || []);
       if (invalidInputs.length > 0) {
         const incomers = getIncomers(currentNode, nodes, edges);
         if (incomers.every((incomer) => planned.has(incomer.id))) {
@@ -106,11 +109,10 @@ export function FlowToExecutionPlan(
 function getInvalidInputs(
   node: AppNode,
   edges: Edge[],
-  planned: Set<string>
+  planned: Set<string>,
+  inputs: TaskParam[]
 ): string[] {
   const invalidInputs: string[] = [];
-
-  const inputs = TaskRegistry[node.data.type].inputs;
 
   for (const input of inputs) {
     const inputValue = node.data.inputs[input.name];

@@ -84,7 +84,7 @@ export const getAvailableActions = () => {
       }
     },
   });
-  return { ...query, triggers: query.data?.getAvailableActions };
+  return { ...query, actions: query.data?.getAvailableActions };
 };
 
 export const getAvailableActionsForTrigger = (

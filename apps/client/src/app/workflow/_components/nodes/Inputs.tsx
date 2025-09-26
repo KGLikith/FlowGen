@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
-import { TaskParam } from '@/schema/task'
 import { Handle, Position, useEdges } from '@xyflow/react'
 import React from 'react'
 import NodeParamField from './ParamField'
 import { ColorForHandle } from './common'
 import useFlowValidation from '@/hooks/useFlowValidation'
+import { TaskParam } from '@/gql/graphql'
 
 type Props = {
     children: React.ReactNode

@@ -1,7 +1,4 @@
-import { LucideProps } from "lucide-react";
-import React from "react";
 import { z } from "zod";
-import { TaskParam, TaskType } from "./task";
 import { AppNode } from "./appNode";
 
 export const createWorkflowSchema = z.object({
@@ -17,15 +14,15 @@ export const createWorkflowSchema = z.object({
 
 export type createWorkflowSchemaType = z.infer<typeof createWorkflowSchema>;
 
-export type WorkflowTask = {
-  label: string;
-  icon: React.FC<LucideProps>;
-  type: TaskType;
-  isEntryPoint?: boolean;
-  inputs: TaskParam[];
-  outputs: TaskParam[];
-  credits: number;
-};
+// export type WorkflowTask = {
+//   label: string;
+//   icon: React.FC<LucideProps>;
+//   type: TaskType;
+//   isEntryPoint?: boolean;
+//   inputs: TaskParam[];
+//   outputs: TaskParam[];
+//   credits: number;
+// };
 
 export type WorkflowExecutionPlanPhase = {
   phase: number;
@@ -34,27 +31,27 @@ export type WorkflowExecutionPlanPhase = {
 
 export type workflowExecutionPlan = WorkflowExecutionPlanPhase[];
 
-export type Workflow = {
-  id: string;
-  name: string;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tasks: WorkflowTask[];
-  executionPlan?: workflowExecutionPlan;
-};
+// export type Workflow = {
+//   id: string;
+//   name: string;
+//   description?: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   tasks: WorkflowTask[];
+//   executionPlan?: workflowExecutionPlan;
+// };
 
-export enum WorkflowExecutionStatus {
-  PENDING = "PENDING",
-  RUNNING = "RUNNING",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-}
+// export enum WorkflowExecutionStatus {
+//   PENDING = "PENDING",
+//   RUNNING = "RUNNING",
+//   COMPLETED = "COMPLETED",
+//   FAILED = "FAILED",
+// }
 
-export enum ExecutionPhaseStatus {
-  CREATED = "CREATED",
-  PENDING = "PENDING",
-  RUNNING = "RUNNING",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-}
+// export enum ExecutionPhaseStatus {
+//   CREATED = "CREATED",
+//   PENDING = "PENDING",
+//   RUNNING = "RUNNING",
+//   COMPLETED = "COMPLETED",
+//   FAILED = "FAILED",
+// }

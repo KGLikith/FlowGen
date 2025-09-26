@@ -1,9 +1,10 @@
-import { TaskParam, TaskParamType } from '@/schema/task'
+// import { TaskParam, TaskParamType } from '@/schema/task'
 import React, { useCallback } from 'react'
 import Stringparam from './param/StringParam'
 import { useReactFlow } from '@xyflow/react'
 import { AppNode } from '@/schema/appNode'
 import BrowserInstanceParam from './param/BrowserInstanceParam'
+import { TaskParam, TaskParamType } from '@/gql/graphql'
 
 type Props = {
     param: TaskParam
@@ -26,9 +27,9 @@ export default function NodeParamField({ param, nodeId, disabled }: Props) {
     },[nodeId, updateNodeData, param.name, node?.data.inputs])
 
     switch (param.type) {
-        case TaskParamType.STRING:
+        case TaskParamType.String:
             return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled} />
-        case TaskParamType.BROWSER_INSTANCE:
+        case TaskParamType.BrowserInstance:
             return <BrowserInstanceParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} />
         default:
             return (

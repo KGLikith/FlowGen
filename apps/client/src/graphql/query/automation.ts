@@ -69,7 +69,6 @@ export const GET_AVAILABLE_TRIGGERS = graphql(`
         }
         credits
       }
-      
     }
   }
 `);
@@ -113,32 +112,63 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
   #graphql
   query getAvailableActionsForTrigger($triggerId: ID!) {
     getAvailableActionsForTrigger(triggerId: $triggerId) {
-      id
-      name
-      key
-      image
-      taskInfo {
-        label
-        icon
-        type
-        isEntryPoint
-        inputs {
+      actions {
+        id
+        name
+        key
+        image
+        taskInfo {
+          label
+          icon
           type
-          name
-          required
-          variant
-          helperText
-          hideHandle
+          isEntryPoint
+          inputs {
+            type
+            name
+            required
+            variant
+            helperText
+            hideHandle
+          }
+          outputs {
+            type
+            name
+            required
+            variant
+            helperText
+            hideHandle
+          }
+          credits
         }
-        outputs {
+      }
+      trigger {
+        id
+        name
+        key
+        image
+        taskInfo {
+          label
+          icon
           type
-          name
-          required
-          variant
-          helperText
-          hideHandle
+          isEntryPoint
+          inputs {
+            type
+            name
+            required
+            variant
+            helperText
+            hideHandle
+          }
+          outputs {
+            type
+            name
+            required
+            variant
+            helperText
+            hideHandle
+          }
+          credits
         }
-        credits
       }
     }
   }

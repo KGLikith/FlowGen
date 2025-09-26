@@ -14,8 +14,7 @@ export default function ExecButton({ workflowId }: Props) {
     const generate = useExecutionPlan()
     const { toObject } = useReactFlow();
     const { mutateAsync } = useRunWorkflow();
-
-
+    
     return (
         <Button variant={"outline"} className='cursor-pointer flex items-center gap-2'
             onClick={async () => {

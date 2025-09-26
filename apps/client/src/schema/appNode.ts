@@ -1,11 +1,12 @@
+import { ActionKey, TriggerKey } from "@/gql/graphql";
 import { Node } from "@xyflow/react";
-import { TaskType } from "./task";
+// import { TaskType } from "./task";
 
 export interface AppNodeData {
     trigger: boolean;
     triggerId?: string;
     actionId?: string;
-    type: TaskType;
+    type: TriggerKey | ActionKey;
     inputs: Record<string, string>;
     [key: string]: any;
 }

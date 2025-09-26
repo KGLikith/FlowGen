@@ -92,7 +92,6 @@ export const useUpdateWorkflow = (workflowId: string) => {
       }
     },
     onSuccess: async (data) => {
-      console.log(data)
       await client.resetStore();
       await queryclient.invalidateQueries({ queryKey: ["workflow", workflowId] });
       toast.success("Workflow Updated Successfully", {

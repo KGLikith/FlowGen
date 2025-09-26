@@ -1,15 +1,12 @@
 import DeletableEdge from "@/app/workflow/_components/edges/deletableEdge"
 import NodeComponent from "@/app/workflow/_components/nodes/Component"
 import { useTrigger } from "@/components/context/TaskProvider"
-import { AvailableTrigger, User, Workflow } from "@/gql/graphql"
+import { ActionKey, TriggerKey, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
-import { TaskRegistry } from "@/lib/workflow/task/registry"
 import { AppNode } from "@/schema/appNode"
-import { TaskType } from "@/schema/task"
-import { useQueryClient } from "@tanstack/react-query"
 import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, Node, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { use, useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect} from "react"
 import { toast } from "sonner"
 
 type Props = {
@@ -32,8 +29,7 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow()
-  const { setCurrentTriggerId } = useTrigger()
-  const queryclient = useQueryClient();
+  const { setCurrentTriggerId, actions, trigger } = useTrigger()
 
   useEffect(() => {
     try {
@@ -75,7 +71,7 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
       x: event.clientX - reactFlowBounds.left / 2,
       y: event.clientY - reactFlowBounds.top / 2,
     });
-    const newNode = CreateFlowNode(type as TaskType, pos, trigger === "true" ? "TRIGGER" : "ACTION", taskId)
+    const newNode = CreateFlowNode(type as ActionKey | TriggerKey, pos, trigger === "true" ? "TRIGGER" : "ACTION", taskId)
     setNodes((nds) => nds.concat(newNode))
 
   }, [screenToFlowPosition, setNodes])
@@ -104,6 +100,8 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
       return false;
     }
 
+    const TaskRegistry = [...(actions || []), trigger]
+
     const source = nodes.find((n) => n.id === connection.source)
     const target = nodes.find((n) => n.id === connection.target)
 
@@ -111,11 +109,11 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
       return false;
     }
 
-    const sourceTask = TaskRegistry[source.data.type]
-    const targetTask = TaskRegistry[target.data.type]
+    const sourceTask = TaskRegistry.find((t) => t?.key === source.data.type)
+    const targetTask = TaskRegistry.find((t) => t?.key === target.data.type)
 
-    const output = sourceTask.outputs?.find(o => o.name === connection.sourceHandle)
-    const input = targetTask.inputs?.find(i => i.name === connection.targetHandle)
+    const output = sourceTask?.taskInfo.outputs?.find(o => o.name === connection.sourceHandle)
+    const input = targetTask?.taskInfo.inputs?.find(i => i.name === connection.targetHandle)
 
     if (!input || !output || input.type !== output.type) {
       toast.error("Incompatible connection");
@@ -140,7 +138,7 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
     if (target.id === connection.source) return false;
 
     return !hasCycle(target);
-  }, [edges, nodes]);
+  }, [edges, nodes, actions, trigger]);
 
   return (
     <main className="h-full w-full">

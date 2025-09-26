@@ -27,7 +27,7 @@ export default function Triggers({ availableTriggers, isLoading }: Props) {
             <div className="flex gap-2 flex-col">
                 {
                     availableTriggers.map((trigger) => {
-                        return <TaskButton key={trigger.id} taskType={trigger.key} taskId={trigger.id} trigger={true} />
+                        return <TaskButton key={trigger.id} taskType={trigger.key} taskId={trigger.id} trigger={true} taskIcon={trigger.taskInfo.icon as string} taskLabel={trigger.taskInfo.label}  />
                     })
                 }
             </div>
