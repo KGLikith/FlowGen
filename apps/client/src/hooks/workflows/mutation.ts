@@ -4,53 +4,11 @@ import { CreateWorkflowPayload, UpdateWorkflowPayload } from "@/gql/graphql";
 import {
   CREATE_WORKFLOW,
   DELETE_WORKFLOW,
+  RUN_WORKFLOW,
   UPDATE_WORKFLOW,
 } from "@/graphql/mutation/automation";
-import { GET_WORKFLOW, GET_WORKFLOWS } from "@/graphql/query/automation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-export const useGetWorkflow = (workflowId: string) => {
-  const query = useQuery({
-    queryKey: ["workflow", workflowId],
-    queryFn: async () => {
-      try {
-        const res = await client.query({
-          query: GET_WORKFLOW,
-          variables: { id: workflowId },
-        });
-        return res.data;
-      } catch (err) {
-        console.log("Error fetching workflow:", (err as Error).message);
-        return {
-          getWorkflow: null,
-        };
-      }
-    },
-  });
-  return { ...query, workflow: query.data?.getWorkflow };
-};
-
-export const useGetWorkflows = () => {
-  const query = useQuery({
-    queryKey: ["workflows"],
-    queryFn: async () => {
-      try {
-        const res = await client.query({
-          query: GET_WORKFLOWS,
-        });
-        return res.data;
-      } catch (err) {
-        console.log("Error fetching workflows:", (err as Error).message);
-        return {
-          getWorkflows: [],
-        };
-      }
-    },
-  });
-
-  return { ...query, workflowData: query.data?.getWorkflows };
-};
 
 export const useCreateWorkflow = () => {
   const mutation = useMutation({
@@ -152,4 +110,39 @@ export const useUpdateWorkflow = (workflowId: string) => {
     },
   });
   return { ...mutation };
+};
+
+export const useRunWorkflow = () => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (form: {workflowId: string; flowDefinition?: string; name: string; executionPlan: string;}) => {
+      try {
+        const { data } = await client.mutate({
+          mutation: RUN_WORKFLOW,
+          variables: { form },
+        });
+        return data;
+      } catch (err) {
+        console.log("Error running workflow:", (err as Error).message);
+        return null;
+      }
+    },
+    onSuccess: async () => {
+      await client.resetStore();
+      await queryClient.invalidateQueries({ queryKey: ["workflows"] });
+      toast.success("Workflow Started Successfully", {
+        duration: 2000,
+        id: "run_workflow",
+      });
+    },
+    onError: (error) => {
+      toast.error("Error running workflow", {
+        description: "Please try again",
+        duration: 2000,
+        id: "run_workflow",
+      });
+      console.log("Error running workflow:", (error as Error).message);
+    },
+  });
+  return { ...mutation, runWorkflow: mutation.mutateAsync };
 };

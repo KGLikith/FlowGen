@@ -1,22 +1,27 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { TaskType } from '@/schema/task'
 import React from 'react'
-import TaskButton from './Button'
+import { AvailableTrigger } from '@/gql/graphql'
+import { getAvailableTriggers } from '@/hooks/workflows/queries'
+import Triggers from './Triggers'
+import Actions from './Actions'
+import { useTrigger } from '@/components/context/TaskProvider'
 
-type Props = {}
+type Props = {
+   // trigger: AppNode | null
+}
 
 export default function TaskMenu({ }: Props) {
+   const { currentTriggerId, actions, actionsLoading } = useTrigger();
+   const { triggers, isLoading } = getAvailableTriggers(currentTriggerId);
+
    return (
       <aside className='w-[300px] min-w-[300px] max-w-[300px] border-r-2 border-separate h-full p-2 px-4 overflow-auto'>
-         <Accordion type="multiple" className='w-full' defaultValue={["Extraction"]}>
-            <AccordionItem value="Extraction">
-               <AccordionTrigger className="font-bold cursor-pointer">Data Extraction</AccordionTrigger>
-               <AccordionContent className='flex flex-col gap-1'>
-                  <TaskButton taskType={TaskType.PAGE_TO_HTML} />
-                  <TaskButton taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
-               </AccordionContent>
-            </AccordionItem>
-         </Accordion>
+         {!currentTriggerId ?
+            <>
+               <Triggers availableTriggers={triggers as AvailableTrigger[]} isLoading={isLoading} />
+            </>
+            : <>
+               <Actions actions={actions} isLoading={actionsLoading} />
+            </>}
       </aside>
    )
 }

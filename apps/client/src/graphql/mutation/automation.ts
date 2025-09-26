@@ -33,3 +33,12 @@ export const UPDATE_WORKFLOW = graphql(`
         updateWorkflow(id: $id, payload: $payload)
     }
 `)
+
+export const RUN_WORKFLOW = graphql(`
+    #graphql
+    mutation RunWorkflow($form: runWorkflowPayload!) {
+        runWorkflow(form: $form) {
+            id
+        }
+    }
+`)

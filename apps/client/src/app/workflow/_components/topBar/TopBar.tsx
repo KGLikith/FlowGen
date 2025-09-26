@@ -3,6 +3,7 @@ import { ChevronLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import SaveButton from './SaveButton';
+import ExecButton from './ExecButton';
 
 type Props = {
   title: string
@@ -28,6 +29,7 @@ export default function TopBar({ title, subtitle, workflowId }: Props) {
         </div>
       </div>
       <div className="flex gap-1 flex-1 justify-end">
+        <ExecButton workflowId={workflowId} />
         <SaveButton workflowId={workflowId} />
       </div>
     </header>

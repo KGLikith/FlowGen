@@ -1,9 +1,10 @@
 "use client"
 import { useGetCurrentUser } from "@/hooks/user"
-import { useGetWorkflow } from "@/hooks/workflows"
+import { useGetWorkflow } from "@/hooks/workflows/queries"
 import Loader from "@/components/loader"
 import { User, FileX } from "lucide-react"
 import Editor from "./editor"
+import { TriggerContextProvider } from "@/components/context/TaskProvider"
 
 type Props = {
   workflowId: string
@@ -58,5 +59,10 @@ export default function WorkflowPage({ workflowId }: Props) {
     )
   }
 
-  return <Editor workflow={workflow} currentUser={user} />
+  return (
+  <>
+    <TriggerContextProvider>
+      <Editor workflow={workflow} currentUser={user} />
+    </TriggerContextProvider>
+  </>)
 }

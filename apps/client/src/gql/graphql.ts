@@ -19,28 +19,33 @@ export type Scalars = {
   JSON: { input: any; output: any; }
 };
 
+export enum ActionKey {
+  ExtractTextFromElement = 'EXTRACT_TEXT_FROM_ELEMENT',
+  PageToHtml = 'PAGE_TO_HTML'
+}
+
 export type AvailableAction = {
   __typename?: 'AvailableAction';
-  category: Scalars['String']['output'];
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   executionPhases?: Maybe<Array<ExecutionPhase>>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
-  key: Scalars['String']['output'];
+  key: ActionKey;
   name: Scalars['String']['output'];
+  taskInfo: TaskInfo;
   triggers?: Maybe<Array<AvailableTriggerAction>>;
 };
 
 export type AvailableTrigger = {
   __typename?: 'AvailableTrigger';
   actions?: Maybe<Array<AvailableTriggerAction>>;
-  category: Scalars['String']['output'];
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   executionPhases?: Maybe<Array<ExecutionPhase>>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
-  key: Scalars['String']['output'];
+  key: TriggerKey;
   name: Scalars['String']['output'];
+  taskInfo: TaskInfo;
 };
 
 export type AvailableTriggerAction = {
@@ -139,6 +144,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   createWorkflow: Workflow;
   deleteWorkflow: Scalars['Boolean']['output'];
+  initializeWorkflowExecution: Scalars['Boolean']['output'];
+  runWorkflow: WorkflowExecution;
   updateWorkflow: Scalars['Boolean']['output'];
 };
 
@@ -150,6 +157,17 @@ export type MutationCreateWorkflowArgs = {
 
 export type MutationDeleteWorkflowArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationInitializeWorkflowExecutionArgs = {
+  executionId: Scalars['ID']['input'];
+  workflowId: Scalars['ID']['input'];
+};
+
+
+export type MutationRunWorkflowArgs = {
+  form: RunWorkflowPayload;
 };
 
 
@@ -172,10 +190,25 @@ export type Notion = {
 
 export type Query = {
   __typename?: 'Query';
+  getAvailableActions: Array<AvailableAction>;
+  getAvailableActionsForTrigger: Array<AvailableAction>;
+  getAvailableTriggers: Array<AvailableTrigger>;
   getCurrentUser?: Maybe<User>;
+  getExecutionPhaseDetails?: Maybe<ExecutionPhase>;
   getUserByClerkId?: Maybe<User>;
   getWorkflow?: Maybe<Workflow>;
+  getWorkflowExecution?: Maybe<WorkflowExecution>;
   getWorkflows: Array<Workflow>;
+};
+
+
+export type QueryGetAvailableActionsForTriggerArgs = {
+  triggerId: Scalars['ID']['input'];
+};
+
+
+export type QueryGetExecutionPhaseDetailsArgs = {
+  phaseId: Scalars['ID']['input'];
 };
 
 
@@ -186,6 +219,11 @@ export type QueryGetUserByClerkIdArgs = {
 
 export type QueryGetWorkflowArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryGetWorkflowExecutionArgs = {
+  executionId: Scalars['ID']['input'];
 };
 
 export type Slack = {
@@ -200,6 +238,38 @@ export type Slack = {
   user?: Maybe<User>;
   userId: Scalars['String']['output'];
 };
+
+export type TaskInfo = {
+  __typename?: 'TaskInfo';
+  credits: Scalars['Int']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  inputs?: Maybe<Array<TaskParam>>;
+  isEntryPoint: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  outputs?: Maybe<Array<TaskParam>>;
+  type: Scalars['String']['output'];
+};
+
+export type TaskParam = {
+  __typename?: 'TaskParam';
+  helperText?: Maybe<Scalars['String']['output']>;
+  hideHandle?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  required: Scalars['Boolean']['output'];
+  type: TaskParamType;
+  variant?: Maybe<Scalars['String']['output']>;
+};
+
+export enum TaskParamType {
+  BrowserInstance = 'BROWSER_INSTANCE',
+  String = 'STRING'
+}
+
+export enum TriggerKey {
+  LaunchBrowser = 'LAUNCH_BROWSER'
+}
 
 export type User = {
   __typename?: 'User';
@@ -266,13 +336,26 @@ export type WorkflowExecution = {
   id: Scalars['ID']['output'];
   phases?: Maybe<Array<ExecutionPhase>>;
   startedAt?: Maybe<Scalars['DateTime']['output']>;
-  status: Scalars['String']['output'];
-  trigger: Scalars['String']['output'];
+  status: WorkflowExecutionStatus;
+  trigger: WorkflowExecutionType;
   user?: Maybe<User>;
   userId?: Maybe<Scalars['String']['output']>;
   workflow?: Maybe<Workflow>;
   workflowId: Scalars['String']['output'];
 };
+
+export enum WorkflowExecutionStatus {
+  Completed = 'COMPLETED',
+  Failed = 'FAILED',
+  Pending = 'PENDING',
+  Running = 'RUNNING'
+}
+
+export enum WorkflowExecutionType {
+  Manual = 'MANUAL',
+  Scheduled = 'SCHEDULED',
+  Triggered = 'TRIGGERED'
+}
 
 export enum WorkflowStatus {
   Active = 'ACTIVE',
@@ -284,6 +367,13 @@ export type CreateWorkflowPayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   userId: Scalars['String']['input'];
+};
+
+export type RunWorkflowPayload = {
+  executionPlan: Scalars['String']['input'];
+  flowDefinition?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  workflowId: Scalars['ID']['input'];
 };
 
 export type UpdateWorkflowPayload = {
@@ -313,6 +403,13 @@ export type UpdateWorkflowMutationVariables = Exact<{
 
 export type UpdateWorkflowMutation = { __typename?: 'Mutation', updateWorkflow: boolean };
 
+export type RunWorkflowMutationVariables = Exact<{
+  form: RunWorkflowPayload;
+}>;
+
+
+export type RunWorkflowMutation = { __typename?: 'Mutation', runWorkflow: { __typename?: 'WorkflowExecution', id: string } };
+
 export type GetWorkflowsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -325,6 +422,23 @@ export type GetWorkflowQueryVariables = Exact<{
 
 export type GetWorkflowQuery = { __typename?: 'Query', getWorkflow?: { __typename?: 'Workflow', id: string, name: string, status: WorkflowStatus, definition?: string | null, description?: string | null, createdAt?: any | null, updatedAt?: any | null, creditsCost: number, lastRunAt?: any | null, lastRunId?: string | null, nextRunAt?: any | null, userId?: string | null } | null };
 
+export type GetAvailableTriggersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAvailableTriggersQuery = { __typename?: 'Query', getAvailableTriggers: Array<{ __typename?: 'AvailableTrigger', id: string, name: string, key: TriggerKey, image?: string | null, taskInfo: { __typename?: 'TaskInfo', label: string, icon?: string | null, type: string, isEntryPoint: boolean, credits: number, inputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null, outputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null } }> };
+
+export type GetAvailableActionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAvailableActionsQuery = { __typename?: 'Query', getAvailableActions: Array<{ __typename?: 'AvailableAction', id: string, name: string, key: ActionKey, image?: string | null, taskInfo: { __typename?: 'TaskInfo', label: string, icon?: string | null, type: string, isEntryPoint: boolean, credits: number, inputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null, outputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null } }> };
+
+export type GetAvailableActionsForTriggerQueryVariables = Exact<{
+  triggerId: Scalars['ID']['input'];
+}>;
+
+
+export type GetAvailableActionsForTriggerQuery = { __typename?: 'Query', getAvailableActionsForTrigger: Array<{ __typename?: 'AvailableAction', id: string, name: string, key: ActionKey, image?: string | null, taskInfo: { __typename?: 'TaskInfo', label: string, icon?: string | null, type: string, isEntryPoint: boolean, credits: number, inputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null, outputs?: Array<{ __typename?: 'TaskParam', type: TaskParamType, name: string, required: boolean, variant?: string | null, helperText?: string | null, hideHandle?: boolean | null }> | null } }> };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -334,6 +448,10 @@ export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __type
 export const CreateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"createWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"definition"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"creditsCost"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunId"}},{"kind":"Field","name":{"kind":"Name","value":"nextRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]} as unknown as DocumentNode<CreateWorkflowMutation, CreateWorkflowMutationVariables>;
 export const DeleteWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteWorkflowMutation, DeleteWorkflowMutationVariables>;
 export const UpdateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"updateWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkflowMutation, UpdateWorkflowMutationVariables>;
+export const RunWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RunWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"form"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"runWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"runWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"form"},"value":{"kind":"Variable","name":{"kind":"Name","value":"form"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RunWorkflowMutation, RunWorkflowMutationVariables>;
 export const GetWorkflowsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkflows"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getWorkflows"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"definition"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"creditsCost"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunId"}},{"kind":"Field","name":{"kind":"Name","value":"nextRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]} as unknown as DocumentNode<GetWorkflowsQuery, GetWorkflowsQueryVariables>;
 export const GetWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"definition"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"creditsCost"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunId"}},{"kind":"Field","name":{"kind":"Name","value":"nextRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]} as unknown as DocumentNode<GetWorkflowQuery, GetWorkflowQueryVariables>;
+export const GetAvailableTriggersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAvailableTriggers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailableTriggers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"taskInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isEntryPoint"}},{"kind":"Field","name":{"kind":"Name","value":"inputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"credits"}}]}}]}}]}}]} as unknown as DocumentNode<GetAvailableTriggersQuery, GetAvailableTriggersQueryVariables>;
+export const GetAvailableActionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAvailableActions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailableActions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"taskInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isEntryPoint"}},{"kind":"Field","name":{"kind":"Name","value":"inputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"credits"}}]}}]}}]}}]} as unknown as DocumentNode<GetAvailableActionsQuery, GetAvailableActionsQueryVariables>;
+export const GetAvailableActionsForTriggerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAvailableActionsForTrigger"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"triggerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailableActionsForTrigger"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"triggerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"triggerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"taskInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isEntryPoint"}},{"kind":"Field","name":{"kind":"Name","value":"inputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outputs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"required"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"helperText"}},{"kind":"Field","name":{"kind":"Name","value":"hideHandle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"credits"}}]}}]}}]}}]} as unknown as DocumentNode<GetAvailableActionsForTriggerQuery, GetAvailableActionsForTriggerQueryVariables>;
 export const CurrentUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CurrentUserQuery, CurrentUserQueryVariables>;

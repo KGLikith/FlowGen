@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
-import { useDeleteWorkflow } from "@/hooks/workflows"
+import { useDeleteWorkflow } from "@/hooks/workflows/mutation"
 
 type Props = {
     workflowId: string

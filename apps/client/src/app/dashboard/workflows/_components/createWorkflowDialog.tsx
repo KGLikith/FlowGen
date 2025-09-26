@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
-import { useCreateWorkflow } from "@/hooks/workflows"
+import { useCreateWorkflow } from "@/hooks/workflows/mutation"
 import { useGetCurrentUser } from "@/hooks/user"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -61,15 +61,16 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
       if (!currentUser?.id) return;
 
       toast.loading("Creating workflow...", { id: "create_workflow" })
-      const initialFlow: {nodes: AppNode[], edges: Edge[]} = { nodes: [], edges: [] }
+      // const initialFlow: {nodes: AppNode[], edges: Edge[]} = { nodes: [], edges: [] }
 
-      initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER))
+      // initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER))
 
       const res = await mutateAsync({
         name: data.name,
         description: data.description,
         userId: currentUser.id,
-        definition: JSON.stringify(initialFlow),
+        // definition: JSON.stringify(initialFlow),
+        definition: JSON.stringify({ nodes: [], edges: [] as Edge[] }),
       })
 
       if (!res?.createWorkflow) {

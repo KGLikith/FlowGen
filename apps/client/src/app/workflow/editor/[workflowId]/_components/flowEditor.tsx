@@ -1,13 +1,15 @@
 import DeletableEdge from "@/app/workflow/_components/edges/deletableEdge"
 import NodeComponent from "@/app/workflow/_components/nodes/Component"
-import { User, Workflow } from "@/gql/graphql"
+import { useTrigger } from "@/components/context/TaskProvider"
+import { AvailableTrigger, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { TaskRegistry } from "@/lib/workflow/task/registry"
 import { AppNode } from "@/schema/appNode"
 import { TaskType } from "@/schema/task"
+import { useQueryClient } from "@tanstack/react-query"
 import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, Node, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { useCallback, useEffect } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 type Props = {
@@ -30,6 +32,8 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow()
+  const { setCurrentTriggerId } = useTrigger()
+  const queryclient = useQueryClient();
 
   useEffect(() => {
     try {
@@ -55,17 +59,25 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
 
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    const type = event.dataTransfer.getData('application/reactflow');
+    const type = event.dataTransfer.getData('application/reactflow/taskType');
+    const taskId = event.dataTransfer.getData('application/reactflow/taskId'); // ........................................................
+    const trigger = event.dataTransfer.getData('application/reactflow/trigger');
+
     if (typeof type === 'undefined' || !type) {
       return;
+    }
+
+    if(trigger === "true") {
+      setCurrentTriggerId(taskId)
     }
     const reactFlowBounds = event.currentTarget.getBoundingClientRect();
     const pos = screenToFlowPosition({
       x: event.clientX - reactFlowBounds.left / 2,
       y: event.clientY - reactFlowBounds.top / 2,
     });
-    const newNode = CreateFlowNode(type as TaskType, pos)
+    const newNode = CreateFlowNode(type as TaskType, pos, trigger === "true" ? "TRIGGER" : "ACTION", taskId)
     setNodes((nds) => nds.concat(newNode))
+
   }, [screenToFlowPosition, setNodes])
 
   const onConnect = useCallback((connection: Connection) => {
@@ -129,7 +141,6 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
 
     return !hasCycle(target);
   }, [edges, nodes]);
-
 
   return (
     <main className="h-full w-full">
