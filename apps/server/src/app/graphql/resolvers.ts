@@ -1,8 +1,7 @@
-import { ExecutionPhaseStatus, prisma, WorkflowExecutionStatus, WorkflowExecutionType, WorkflowStatus } from "@automation/db";
+import { ActionKey, ExecutionPhaseStatus, prisma, TriggerKey, WorkflowExecutionStatus, WorkflowExecutionType, WorkflowStatus } from "@automation/db";
 import { GraphqlContext } from "../../interface";
 import {
   CreateWorkflowDataPayload,
-  TaskRegistry,
   workflowExecutionPlan,
 } from "../schema/workflow";
 
@@ -118,6 +117,16 @@ const queries = {
           triggerId
         },
         include: {
+          trigger: {
+            include: {
+              taskInfo: {
+                include: {
+                  inputs: true,
+                  outputs: true
+                }
+              }
+            }
+          },
           action: {
             include: {
               taskInfo: {
@@ -132,13 +141,13 @@ const queries = {
       })
 
       const actionList = actions.map(a => a.action);
-      return actionList
+      const trigger = actions[0]?.trigger;
+      return { trigger, actions: actionList };
     }catch(err){
       console.log(err);
       throw new Error("Something went wrong. Please try again later.")
     }
   },
-
 
   getWorkflowExecution: async (
     __: any,
@@ -305,9 +314,11 @@ const mutations = {
                   status: ExecutionPhaseStatus.CREATED,
                   number: phase.phase,
                   data: JSON.stringify(node),
-                  name: TaskRegistry[node.data.type],
+                  name: ActionKey[node.data.type as ActionKey] || TriggerKey[node.data.type as TriggerKey],
                   creditsConsumed: 0,
                   startedAt: new Date(),
+                  actionId: node.data.actionId,
+                  triggerId: node.data.triggerId,
                 };
               });
             }),

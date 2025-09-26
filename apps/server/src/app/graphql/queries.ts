@@ -5,7 +5,7 @@ export const queries = `#graphql
     getWorkflow(id: ID!): Workflow
     getAvailableTriggers: [AvailableTrigger!]!
     getAvailableActions: [AvailableAction!]!
-    getAvailableActionsForTrigger(triggerId: ID!): [AvailableAction!]!
+    getAvailableActionsForTrigger(triggerId: ID!): ActionsAndTrigger!
     getWorkflowExecution(executionId: ID!): WorkflowExecution
     getExecutionPhaseDetails(phaseId: ID!): ExecutionPhase
 `;

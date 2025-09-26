@@ -1,3 +1,4 @@
+import { ActionKey, TriggerKey } from "@automation/db";
 
 export interface CreateWorkflowDataPayload {
   name: string;
@@ -14,23 +15,14 @@ export type WorkflowExecutionPlanPhase = {
 export type workflowExecutionPlan = WorkflowExecutionPlanPhase[];
 
 export interface AppNodeData {
-  type: TaskType;
+  type: ActionKey | TriggerKey;
   inputs: Record<string, string>;
+  trigger: boolean;
+  triggerId?: string;
+  actionId?: string;
   [key: string]: any;
 }
 
-export interface AppNode extends Node {
+export interface AppNode {
   data: AppNodeData;
-}
-
-export enum TaskType {
-  LAUNCH_BROWSER = "LAUNCH_BROWSER",
-  PAGE_TO_HTML = "PAGE_TO_HTML",
-  EXTRACT_TEXT_FROM_ELEMENT = "EXTRACT_TEXT_FROM_ELEMENT",
-}
-
-export const TaskRegistry={
-    LAUNCH_BROWSER: TaskType.LAUNCH_BROWSER,
-    PAGE_TO_HTML: TaskType.PAGE_TO_HTML,
-    EXTRACT_TEXT_FROM_ELEMENT: TaskType.EXTRACT_TEXT_FROM_ELEMENT,
 }

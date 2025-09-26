@@ -279,5 +279,11 @@ input runWorkflowPayload {
   name: String!
   executionPlan: String!
 }
+
+type ActionsAndTrigger {
+  trigger: AvailableTrigger
+  actions: [AvailableAction!]!
+}
 `;
+
 
