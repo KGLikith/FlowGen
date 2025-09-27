@@ -1,9 +1,9 @@
 import { TaskParamProps } from '@/schema/task'
 import React from 'react'
 
-type Props = {}
 
-export default function BrowserInstanceParam({param, updateNodeParamValue, value}: TaskParamProps) {
+export default function BrowserInstanceParam({param, value}: TaskParamProps) {
+  console.log("BrowserInstanceParam", param, value)
   return (
     <p className='text-xs'>{param.name}</p>
   )

@@ -5,7 +5,7 @@ const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    const { isAuthenticated, redirectToSignIn, userId } = await auth();
+    const { isAuthenticated, } = await auth();
     if (!isAuthenticated) {
       const signInUrl = new URL("/sign-in", req.url);
       signInUrl.searchParams.set("redirect_url", "/dashboard");

@@ -65,7 +65,7 @@ export default function DeleteWorkflowDialog({ workflowId, workflowName, trigger
 
                 <div className="py-4">
                     <p className="text-sm text-muted-foreground">
-                        Are you sure you want to delete <span className="font-semibold text-foreground">"{workflowName}"</span>?
+                        Are you sure you want to delete <span className="font-semibold text-foreground">{workflowName}</span>?
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
                         This will permanently remove the workflow and all its associated data. Any scheduled runs will be cancelled.

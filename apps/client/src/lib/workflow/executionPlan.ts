@@ -1,5 +1,5 @@
 import { AvailableAction, AvailableTrigger, TaskParam } from "@/gql/graphql";
-import { AppNode, AppNodeMissingInputs } from "@/schema/appNode";
+import { AppInvalidNodes, AppNode, AppNodeMissingInputs } from "@/schema/appNode";
 import {
   workflowExecutionPlan,
   WorkflowExecutionPlanPhase,
@@ -9,6 +9,7 @@ import { Edge, getIncomers } from "@xyflow/react";
 export enum FlowToExecutionPlanTypeErrorType {
   NO_ENTRY_POINT = "NO_ENTRY_POINT",
   INVALID_INPUTS = "INVALID_INPUTS",
+  INVALID_NODES = "INVALID_NODES",
 }
 
 type FlowToExecutionPlanType = {
@@ -16,6 +17,7 @@ type FlowToExecutionPlanType = {
   error?: {
     type: FlowToExecutionPlanTypeErrorType;
     invalidElements?: AppNodeMissingInputs[];
+    invalidNodes?: AppInvalidNodes[];
   };
 };
 
@@ -29,13 +31,29 @@ export function FlowToExecutionPlan(
     (nd) => nd.data.type === trigger?.key && nd.data.trigger === true
   );
 
-  console.log(entryPoint, "entry point")
   if (!entryPoint) {
     return {
       error: {
         type: FlowToExecutionPlanTypeErrorType.NO_ENTRY_POINT,
       },
     };
+  }
+
+  const invalidActions = nodes.filter(
+    (nd) =>
+      nd.data.type !== trigger?.key &&
+      !actions.find((a) => a.key === nd.data.type)
+  );
+
+  if (invalidActions.length > 0) {
+    return {
+      error: {
+        type: FlowToExecutionPlanTypeErrorType.INVALID_NODES,
+        invalidNodes: invalidActions.map((ma) => ({
+          nodeId: ma.id,
+        })),
+      }
+    }
   }
 
   const inputsWithErrors: AppNodeMissingInputs[] = [];

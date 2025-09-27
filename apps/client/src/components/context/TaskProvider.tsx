@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { AvailableAction, AvailableTrigger } from "@/gql/graphql"
-import { getAvailableActions, getAvailableActionsForTrigger } from "@/hooks/workflows/queries"
+import { useGetAvailableActions, useGetAvailableActionsForTrigger } from "@/hooks/workflows/queries"
 
 type TriggerContextType = {
   currentTriggerId?: string
@@ -26,9 +26,9 @@ export function TriggerContextProvider({ children }: { children: React.ReactNode
   )
 
   const data =
-    getAvailableActionsForTrigger(currentTriggerId)
+    useGetAvailableActionsForTrigger(currentTriggerId)
 
-  const {actions} = getAvailableActions();
+  const {actions} = useGetAvailableActions();
 
   useEffect(() => {
     data?.refetch()

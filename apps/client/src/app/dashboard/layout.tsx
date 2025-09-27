@@ -1,5 +1,4 @@
 import { DashboardLayout } from '@/components/dashboard-layout'
-import { useAuth } from '@clerk/nextjs';
 import React from 'react'
 
 type Props = {

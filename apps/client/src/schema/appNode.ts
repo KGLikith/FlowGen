@@ -19,3 +19,7 @@ export type AppNodeMissingInputs = {
     nodeId: string;
     inputs: string[];
 }
+
+export type AppInvalidNodes = {
+    nodeId: string;
+}

@@ -14,7 +14,7 @@ const NodeComponent = memo((props: NodeProps) => {
     const task = [...(allActions || []), trigger].find(t => t?.key === nodeData.type)?.taskInfo;
 
     return <NodeCard nodeId={props.id} isSelected={!!props.selected} >
-        <NodeHeader taskType={nodeData.type} nodeId={props.id} />
+        <NodeHeader taskType={nodeData.type} nodeId={props.id} isTrigger={nodeData.trigger} />
         <NodeInputs>
             {task?.inputs?.map(input =>
                 <NodeInput key={input.name} input={input} nodeId={props.id} />

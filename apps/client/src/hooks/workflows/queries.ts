@@ -50,7 +50,7 @@ export const useGetWorkflows = () => {
   return { ...query, workflowData: query.data?.getWorkflows };
 };
 
-export const getAvailableTriggers = (triggerId?: string) => {
+export const useGetAvailableTriggers = (triggerId?: string) => {
   const query = useQuery({
     queryKey: ["AvailableTriggers"],
     queryFn: async () => {
@@ -69,7 +69,7 @@ export const getAvailableTriggers = (triggerId?: string) => {
   return { ...query, triggers: query.data?.getAvailableTriggers };
 };
 
-export const getAvailableActions = () => {
+export const useGetAvailableActions = () => {
   const query = useQuery({
     queryKey: ["AvailableActions"],
     queryFn: async () => {
@@ -87,7 +87,7 @@ export const getAvailableActions = () => {
   return { ...query, actions: query.data?.getAvailableActions };
 };
 
-export const getAvailableActionsForTrigger = (
+export const useGetAvailableActionsForTrigger = (
   triggerId: string | undefined
 ) => {
   

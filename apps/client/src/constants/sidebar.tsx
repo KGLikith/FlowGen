@@ -1,5 +1,5 @@
 
-import { Home, Zap, Plug, Settings, User, FileText, Menu, DollarSign } from "lucide-react"
+import { Home, Zap, Plug,  User, FileText,  DollarSign } from "lucide-react"
 
 export const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },

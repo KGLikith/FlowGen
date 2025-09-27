@@ -1,4 +1,4 @@
-import { AvailableTrigger, User, Workflow } from '@/gql/graphql'
+import { User, Workflow } from '@/gql/graphql'
 import React, { useEffect } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import FlowEditor from './flowEditor'

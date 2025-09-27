@@ -14,7 +14,7 @@ export default function NodeOutputs({ children }: Props) {
 
 export function NodeOutput({
     output,
-    nodeId,
+    // nodeId,
 }: {
     output: TaskParam;
     nodeId: string;

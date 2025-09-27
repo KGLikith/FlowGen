@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { useUpdateWorkflow } from '@/hooks/workflows/mutation';
 import { useReactFlow } from '@xyflow/react';
 import { CheckIcon, Loader } from 'lucide-react';
-import { revalidatePath } from 'next/cache';
 import React from 'react'
 import { toast } from 'sonner';
 

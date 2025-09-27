@@ -21,7 +21,6 @@ export default function ExecButton({ workflowId }: Props) {
                 const plan = generate();
                 if (!plan) return;
 
-                console.log(plan)
                 await mutateAsync({
                     workflowId,
                     name: "todo",

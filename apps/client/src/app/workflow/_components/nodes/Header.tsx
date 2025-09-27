@@ -12,9 +12,10 @@ import React from 'react'
 type Props = {
     taskType: ActionKey | TriggerKey
     nodeId: string
+    isTrigger: boolean
 }
 
-export default function NodeHeader({ taskType, nodeId }: Props) {
+export default function NodeHeader({ taskType, nodeId, isTrigger }: Props) {
     const { allActions, trigger , setCurrentTriggerId} = useTrigger();
 
     const combined = [...(allActions || []), trigger];
@@ -38,7 +39,7 @@ export default function NodeHeader({ taskType, nodeId }: Props) {
 
                     <Button variant={"ghost"} size="icon" className='cursor-pointer text-destructive'
                         onClick={() => {
-                            if (trigger) setCurrentTriggerId(undefined);
+                            if (isTrigger) setCurrentTriggerId(undefined);
                             deleteElements({
                                 nodes: [{ id: nodeId }]
                             })

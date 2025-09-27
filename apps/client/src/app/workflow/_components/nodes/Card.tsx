@@ -13,8 +13,9 @@ type Props = {
 export default function NodeCard({ children, nodeId, isSelected }: Props) {
 
   const { getNode, setCenter } = useReactFlow();
-  const { invalidInputs } = useFlowValidation();
+  const { invalidInputs, invalidNodes } = useFlowValidation();
   const hasInvalidInputs = invalidInputs.some(input => input.nodeId === nodeId);
+  const hasInvalidNodes = invalidNodes.some(node => node.nodeId === nodeId);
 
   return (
     <div
@@ -40,7 +41,7 @@ export default function NodeCard({ children, nodeId, isSelected }: Props) {
       }}
       className={cn(`rounded-md cursor-pointer bg-background border-2 border-separate w-[400px] text-xs gap-1 flex flex-col `,
         { "border-primary": isSelected, "border-border": !isSelected },
-        { "border-red-500 border-2": hasInvalidInputs }
+        { "border-destructive border-2": hasInvalidInputs || hasInvalidNodes },
       )}>
       {children}
     </div>

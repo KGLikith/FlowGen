@@ -19,13 +19,13 @@ export function NodeInputs({ children }: Props) {
 export function NodeInput({ input, nodeId }: { input: TaskParam, nodeId: string }) {
     const { invalidInputs } = useFlowValidation();
     const edges = useEdges();
-    const isConnected = edges.some(edge => edge.target === nodeId && edge.targetHandle === input.name);  
+    const isConnected = edges.some(edge => edge.target === nodeId && edge.targetHandle === input.name);
 
     const hasErrors = invalidInputs.some(invalid => invalid.nodeId === nodeId && invalid.inputs.includes(input.name));
 
     return (
         <div className={cn("flex justify-start relative p-3 bg-secondary w-full",
-            { "bg-red-500/10": hasErrors },
+            { "bg-destructive/50": hasErrors },
         )}>
             <NodeParamField param={input} nodeId={nodeId} disabled={isConnected} />
             <Handle

@@ -46,7 +46,7 @@ export const getStatusBadge = (status: string) => {
   }
 }
 
-export const formatDate = (date: any) => {
+export const formatDate = (date: Date) => {
   if (!date) return null
   return new Date(date).toLocaleString()
 }

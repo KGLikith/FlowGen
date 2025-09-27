@@ -3,7 +3,6 @@
 import { createApolloClient } from "@/clients/api";
 import { ApolloProvider } from "@apollo/client/react";
 import { useAuth } from "@clerk/nextjs";
-import { useEffect } from "react";
 import Loader from "../loader";
 
 export default function ProviderApollo({

@@ -10,7 +10,7 @@ import { AvailableTrigger } from "@/gql/graphql";
 
 const useExecutionPlan = () => {
     const { toObject } = useReactFlow();
-    const { setInvalidInputs, clearErrors } = useFlowValidation();
+    const { setInvalidInputs, clearErrors, setInvalidNodes } = useFlowValidation();
     const { trigger, actions } = useTrigger();
 
     const handleError = useCallback((error: any) => {
@@ -21,6 +21,12 @@ const useExecutionPlan = () => {
             case FlowToExecutionPlanTypeErrorType.INVALID_INPUTS:
                 toast.error("Not all inputs are connected. Please fix the errors.")
                 setInvalidInputs(error.invalidElements || []);
+                break;
+            case FlowToExecutionPlanTypeErrorType.INVALID_NODES:
+                toast.error("Some nodes are not compatible with the trigger. ",{
+                    description: "Please remove or replace the invalid nodes."
+                })
+                setInvalidNodes(error.invalidNodes || []);
                 break;
             default:
                 toast.error("An unknown error occurred while generating the execution plan.")

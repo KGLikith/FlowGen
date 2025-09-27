@@ -1,14 +1,15 @@
 import { AppNodeMissingInputs } from "@/schema/appNode";
-import App from "next/app";
 import { createContext, Dispatch, SetStateAction, useState } from "react";
 
 type flowValidationContextType = {
     invalidInputs: AppNodeMissingInputs[];
     setInvalidInputs: Dispatch<SetStateAction<AppNodeMissingInputs[]>>;
     clearErrors: () => void
+    invalidNodes: AppNodeMissingInputs[];
+    setInvalidNodes: Dispatch<SetStateAction<AppNodeMissingInputs[]>>;
 }
 
-export const FlowValidionContext = createContext<flowValidationContextType | null>(null)
+export const FlowValidationContext = createContext<flowValidationContextType | null>(null)
 
 export function FlowValidationContextProvider({
     children
@@ -16,14 +17,16 @@ export function FlowValidationContextProvider({
     children: React.ReactNode
 }) {
     const [invalidInputs, setInvalidInputs] = useState<AppNodeMissingInputs[]>([])
+    const [invalidNodes, setInvalidNodes] = useState<AppNodeMissingInputs[]>([])
 
     const clearErrors = () => {
         setInvalidInputs([])
+        setInvalidNodes([])
     }
 
     return (
-        <FlowValidionContext.Provider value={{ invalidInputs, setInvalidInputs, clearErrors }}>
+        <FlowValidationContext.Provider value={{ invalidInputs, setInvalidInputs, clearErrors, invalidNodes, setInvalidNodes }}>
             {children}
-        </FlowValidionContext.Provider>
+        </FlowValidationContext.Provider>
     )
 }

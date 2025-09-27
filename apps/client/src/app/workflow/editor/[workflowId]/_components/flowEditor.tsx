@@ -4,7 +4,7 @@ import { useTrigger } from "@/components/context/TaskProvider"
 import { ActionKey, TriggerKey, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { AppNode } from "@/schema/appNode"
-import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, Node, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
+import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { useCallback, useEffect} from "react"
 import { toast } from "sonner"
@@ -25,7 +25,7 @@ const EdgeTypes = {
 const snapGrid: [number, number] = [20, 20]
 const fitViewOptions = { padding: 1.5 };
 
-export default function FlowEditor({ workflow, currentUser }: Props) {
+export default function FlowEditor({ workflow }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow()
@@ -56,16 +56,22 @@ export default function FlowEditor({ workflow, currentUser }: Props) {
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     const type = event.dataTransfer.getData('application/reactflow/taskType');
-    const taskId = event.dataTransfer.getData('application/reactflow/taskId'); // ........................................................
+    const taskId = event.dataTransfer.getData('application/reactflow/taskId'); 
     const trigger = event.dataTransfer.getData('application/reactflow/trigger');
 
     if (typeof type === 'undefined' || !type) {
       return;
     }
 
-    if(trigger === "true") {
+    if (trigger === "true") {
+      const hasTrigger = nodes.some(node => node.data.trigger === true);
+      if (hasTrigger) {
+        toast.error("Only one trigger node is allowed.");
+        return;
+      }
       setCurrentTriggerId(taskId)
     }
+    
     const reactFlowBounds = event.currentTarget.getBoundingClientRect();
     const pos = screenToFlowPosition({
       x: event.clientX - reactFlowBounds.left / 2,

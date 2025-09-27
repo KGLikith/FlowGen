@@ -50,7 +50,8 @@ export default function WorkflowPage({ workflowId }: Props) {
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-foreground">Workflow Not Found</h3>
             <p className="text-muted-foreground">
-              The workflow you're looking for doesn't exist or may have been deleted. Please check the URL or return to
+              The workflow you&apos;re looking for doesn&apos;t exist or may have been deleted.
+              The workflow you're looking for doesn&apos;t exist or may have been deleted. Please check the URL or return to
               your workflows.
             </p>
           </div>
