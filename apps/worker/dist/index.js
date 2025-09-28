@@ -13,6 +13,8 @@ require("dotenv").config();
 const kafkajs_1 = require("kafkajs");
 const db_1 = require("@automation/db");
 const executePhase_1 = require("./executePhase");
+const executionEnvironment_1 = require("./executionEnvironment");
+const log_1 = require("./log");
 const TOPIC_NAME = "workflow-events";
 const kafka = new kafkajs_1.Kafka({
     clientId: "worker",
@@ -55,136 +57,173 @@ function main() {
                     yield commitOffset();
                     return;
                 }
-                if (stage == 1) {
-                    yield db_1.prisma.workflowExecution.update({
-                        where: { id: executionId },
-                        data: {
-                            status: db_1.WorkflowExecutionStatus.RUNNING,
-                            startedAt: new Date(),
-                            phases: {
-                                updateMany: {
-                                    where: {},
-                                    data: { status: db_1.ExecutionPhaseStatus.PENDING },
-                                },
-                            },
-                            workflow: {
-                                update: {
-                                    lastRunStatus: db_1.WorkflowExecutionStatus.RUNNING,
-                                    lastRunAt: new Date(),
-                                    lastRunId: executionId,
-                                },
-                            },
-                        },
-                    });
-                }
-                const executinnWithPhases = yield db_1.prisma.workflowExecution.findUnique({
-                    where: { id: executionId },
-                    include: {
-                        phases: {
-                            where: { number: stage },
-                            include: {
-                                action: {
-                                    include: {
-                                        taskInfo: {
-                                            include: {
-                                                inputs: true,
-                                                outputs: true,
-                                            },
-                                        },
+                try {
+                    if (stage == 1) {
+                        yield db_1.prisma.workflowExecution.update({
+                            where: { id: executionId },
+                            data: {
+                                status: db_1.WorkflowExecutionStatus.RUNNING,
+                                startedAt: new Date(),
+                                phases: {
+                                    updateMany: {
+                                        where: {},
+                                        data: { status: db_1.ExecutionPhaseStatus.PENDING },
                                     },
                                 },
-                                trigger: {
-                                    include: {
-                                        taskInfo: {
-                                            include: {
-                                                inputs: true,
-                                                outputs: true,
-                                            },
-                                        },
+                                workflow: {
+                                    update: {
+                                        lastRunStatus: db_1.WorkflowExecutionStatus.RUNNING,
+                                        lastRunAt: new Date(),
+                                        lastRunId: executionId,
                                     },
                                 },
                             },
-                        },
-                        _count: {
-                            select: { phases: true },
-                        },
-                    },
-                });
-                if (!executinnWithPhases) {
-                    console.warn("⚠️ Phase not found, skipping...");
-                    yield commitOffset();
-                    return;
-                }
-                const phase = executinnWithPhases.phases[0];
-                // as ExecutionPhase & { action?: AvailableAction & { taskInfo: TaskInfo}, trigger?: AvailableTrigger & { taskInfo: TaskInfo } };
-                if (!phase) {
-                    console.warn("⚠️ Phase not found, skipping...");
-                    yield commitOffset();
-                    return;
-                }
-                let executionFailed = false;
-                let creditsConsumed = 0;
-                const startedAt = new Date();
-                const node = JSON.parse(phase.data);
-                yield db_1.prisma.executionPhase.update({
-                    where: { id: phase.id },
-                    data: {
-                        status: db_1.ExecutionPhaseStatus.RUNNING,
-                        startedAt,
-                    },
-                });
-                creditsConsumed = node.data.credits || 0;
-                yield (0, executePhase_1.executePhase)(phase, node);
-                yield new Promise((r) => setTimeout(r, 3000));
-                const success = Math.random() > 0.1;
-                yield db_1.prisma.executionPhase.update({
-                    where: { id: phase.id },
-                    data: {
-                        completedAt: new Date(),
-                        status: success ? db_1.ExecutionPhaseStatus.COMPLETED : db_1.ExecutionPhaseStatus.FAILED,
-                        workflowExecution: {
-                            update: {
-                                creditsConsumed: { increment: creditsConsumed },
-                            }
-                        }
+                        });
                     }
-                });
-                // TODO: Decrementing the credits for the user
-                // .... in the end ....
-                if (stage === executinnWithPhases._count.phases) {
-                    console.log('last stage reached, updating execution status');
-                    yield db_1.prisma.workflowExecution.update({
+                    const executinnWithPhases = yield db_1.prisma.workflowExecution.findUnique({
                         where: { id: executionId },
+                        include: {
+                            phases: {
+                                where: { number: stage },
+                                include: {
+                                    action: {
+                                        include: {
+                                            taskInfo: {
+                                                include: {
+                                                    inputs: true,
+                                                    outputs: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    trigger: {
+                                        include: {
+                                            taskInfo: {
+                                                include: {
+                                                    inputs: true,
+                                                    outputs: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            _count: {
+                                select: { phases: true },
+                            },
+                        },
+                    });
+                    if (!executinnWithPhases) {
+                        console.warn("⚠️ Phase not found, skipping...");
+                        yield commitOffset();
+                        return;
+                    }
+                    const phase = executinnWithPhases.phases[0];
+                    if (!phase) {
+                        console.warn("⚠️ Phase not found, skipping...");
+                        yield commitOffset();
+                        return;
+                    }
+                    const edges = JSON.parse(executinnWithPhases.definition)
+                        .edges;
+                    const startedAt = new Date();
+                    const node = JSON.parse(phase.data);
+                    yield db_1.prisma.executionPhase.update({
+                        where: { id: phase.id },
                         data: {
-                            status: executionFailed
-                                ? db_1.WorkflowExecutionStatus.FAILED
-                                : db_1.WorkflowExecutionStatus.COMPLETED,
+                            status: db_1.ExecutionPhaseStatus.RUNNING,
+                            startedAt,
+                        },
+                    });
+                    let executionFailed = false;
+                    let creditsConsumed = 0;
+                    creditsConsumed = node.data.credits || 0;
+                    // TODO
+                    const userBalanceUpdateResult = yield db_1.prisma.userBalance.update({
+                        where: { userId: executinnWithPhases.userId, credits: { gte: creditsConsumed } },
+                        data: { credits: { decrement: creditsConsumed } },
+                    });
+                    const environment = (0, executionEnvironment_1.getEnvironment)(executionId);
+                    const logCollector = (0, log_1.createLogCollector)(phase.id);
+                    let success = false;
+                    if (!userBalanceUpdateResult) {
+                        logCollector.ERROR("Insufficient credits");
+                        executionFailed = true;
+                    }
+                    else {
+                        success = yield (0, executePhase_1.executePhase)(phase, node, environment, edges, logCollector);
+                    }
+                    console.log(success, stage);
+                    yield db_1.prisma.executionPhase.update({
+                        where: { id: phase.id },
+                        data: {
                             completedAt: new Date(),
-                            workflow: {
+                            status: success
+                                ? db_1.ExecutionPhaseStatus.COMPLETED
+                                : db_1.ExecutionPhaseStatus.FAILED,
+                            workflowExecution: {
                                 update: {
-                                    lastRunStatus: executionFailed
-                                        ? db_1.WorkflowExecutionStatus.FAILED
-                                        : db_1.WorkflowExecutionStatus.COMPLETED,
+                                    creditsConsumed: { increment: creditsConsumed },
+                                },
+                            },
+                            inputs: JSON.stringify(environment.phases[node.id].inputs),
+                            outputs: JSON.stringify(environment.phases[node.id].outputs),
+                            logs: {
+                                createMany: {
+                                    data: logCollector.getAll().map((log) => {
+                                        return {
+                                            message: log.message,
+                                            logLevel: log.logLevel,
+                                            timestamp: log.timestamp,
+                                        };
+                                    }),
                                 },
                             },
                         },
                     });
-                }
-                else {
-                    yield producer.send({
-                        topic,
-                        messages: [
-                            {
-                                value: JSON.stringify({
-                                    executionId,
-                                    stage: stage + 1,
-                                }),
+                    // TODO: Decrementing the credits for the user
+                    // .... in the end ....
+                    if (stage === executinnWithPhases._count.phases) {
+                        console.log("last stage reached, updating execution status");
+                        yield (0, executionEnvironment_1.cleanupEnvironment)(executionId);
+                        yield db_1.prisma.workflowExecution.update({
+                            where: { id: executionId },
+                            data: {
+                                status: executionFailed
+                                    ? db_1.WorkflowExecutionStatus.FAILED
+                                    : db_1.WorkflowExecutionStatus.COMPLETED,
+                                completedAt: new Date(),
+                                workflow: {
+                                    update: {
+                                        lastRunStatus: executionFailed
+                                            ? db_1.WorkflowExecutionStatus.FAILED
+                                            : db_1.WorkflowExecutionStatus.COMPLETED,
+                                    },
+                                },
                             },
-                        ],
-                    });
+                        });
+                    }
+                    else {
+                        yield producer.send({
+                            topic,
+                            messages: [
+                                {
+                                    key: executionId,
+                                    value: JSON.stringify({
+                                        executionId,
+                                        stage: stage + 1,
+                                    }),
+                                },
+                            ],
+                        });
+                    }
+                    yield commitOffset();
                 }
-                console.log("processing done for ", executionId, " at stage ", stage);
-                yield commitOffset();
+                catch (err) {
+                    console.log(err);
+                    yield commitOffset();
+                    return;
+                }
                 // commitOffset helper to avoid repeating the same logic
                 function commitOffset() {
                     return __awaiter(this, void 0, void 0, function* () {
