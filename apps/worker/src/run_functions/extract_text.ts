@@ -28,13 +28,12 @@ export const ExtractTextFromElementExecutor = async (environmentio: PhaseEnviron
 
         const extractedText = $.text(element)
 
-        console.log(extractedText, "extracted TExt")
-
         if(!extractedText) {
             environmentFn.log.ERROR("No text found in the element")
             return false
         }
 
+        environmentFn.log.INFO("Text extracted successfully")
         environmentio.outputs['Extracted Text'] = extractedText
         environmentio.outputs['Website URL'] = environmentio.inputs['Website URL']
         return true;

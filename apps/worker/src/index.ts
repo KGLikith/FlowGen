@@ -11,11 +11,18 @@ import {
   TaskInfo,
   WorkflowExecutionStatus,
 } from "@automation/db";
-import { executePhase } from "./executePhase";
-import { cleanupEnvironment, getEnvironment } from "./executionEnvironment";
+import { executePhase } from "./execution/executePhase";
+import {
+  cleanupEnvironment,
+  getEnvironment,
+} from "./execution/executionEnvironment";
 import { Edge } from "./schema/types";
 import { AppNode } from "./schema/appnode";
 import { createLogCollector } from "./log";
+import { updateWorkflowExecution } from "./actions/updateWorkflowExecution";
+import { getExecutionDetails } from "./actions/getExecutionDetails";
+import { updateExecutionPhase } from "./actions/updateExecutionPhase";
+import { decrementUserBalance } from "./actions/updateUserBalance";
 
 const TOPIC_NAME = "workflow-events";
 
@@ -67,69 +74,37 @@ async function main() {
 
       try {
         if (stage == 1) {
-          await prisma.workflowExecution.update({
-            where: { id: executionId },
-            data: {
-              status: WorkflowExecutionStatus.RUNNING,
-              startedAt: new Date(),
-              phases: {
-                updateMany: {
-                  where: {},
-                  data: { status: ExecutionPhaseStatus.PENDING },
-                },
+          await updateWorkflowExecution(executionId, {
+            status: WorkflowExecutionStatus.RUNNING,
+            startedAt: new Date(),
+            phases: {
+              updateMany: {
+                where: {},
+                data: { status: ExecutionPhaseStatus.PENDING },
               },
-              workflow: {
-                update: {
-                  lastRunStatus: WorkflowExecutionStatus.RUNNING,
-                  lastRunAt: new Date(),
-                  lastRunId: executionId,
-                },
+            },
+            workflow: {
+              update: {
+                lastRunStatus: WorkflowExecutionStatus.RUNNING,
+                lastRunAt: new Date(),
+                lastRunId: executionId,
               },
             },
           });
         }
 
-        const executinnWithPhases = await prisma.workflowExecution.findUnique({
-          where: { id: executionId },
-          include: {
-            phases: {
-              where: { number: stage },
-              include: {
-                action: {
-                  include: {
-                    taskInfo: {
-                      include: {
-                        inputs: true,
-                        outputs: true,
-                      },
-                    },
-                  },
-                },
-                trigger: {
-                  include: {
-                    taskInfo: {
-                      include: {
-                        inputs: true,
-                        outputs: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            _count: {
-              select: { phases: true },
-            },
-          },
-        });
+        const executionWithPhases = await getExecutionDetails(
+          executionId,
+          stage
+        );
 
-        if (!executinnWithPhases) {
+        if (!executionWithPhases) {
           console.warn("⚠️ Phase not found, skipping...");
           await commitOffset();
           return;
         }
 
-        const phase = executinnWithPhases.phases[0];
+        const phase = executionWithPhases.phases[0];
 
         if (!phase) {
           console.warn("⚠️ Phase not found, skipping...");
@@ -137,38 +112,38 @@ async function main() {
           return;
         }
 
-
-        const edges = JSON.parse(executinnWithPhases.definition)
+        const edges = JSON.parse(executionWithPhases.definition)
           .edges as Edge[];
 
         const startedAt = new Date();
         const node = JSON.parse(phase.data) as AppNode;
 
-        await prisma.executionPhase.update({
-          where: { id: phase.id },
-          data: {
-            status: ExecutionPhaseStatus.RUNNING,
-            startedAt,
-          },
+        await updateExecutionPhase(phase.id, {
+          status: ExecutionPhaseStatus.RUNNING,
+          startedAt,
         });
-        let executionFailed = false;
+
+        let executionFailed = true;
         let creditsConsumed = 0;
 
         creditsConsumed = node.data.credits || 0;
 
         // TODO
-        const userBalanceUpdateResult = await prisma.userBalance.update({
-          where: { userId: executinnWithPhases.userId, credits: { gte: creditsConsumed} },
-          data: { credits: { decrement: creditsConsumed } },
-        });
+        const userBalanceUpdateResult = await decrementUserBalance(
+          executionWithPhases.userId,
+          creditsConsumed
+        );
 
-        
         const environment = getEnvironment(executionId);
-        
+
         const logCollector = createLogCollector(phase.id);
+
         let success = false;
-        if(!userBalanceUpdateResult) {
-          logCollector.ERROR("Insufficient credits");
+
+        if (!userBalanceUpdateResult.success) {
+          logCollector.ERROR(
+            userBalanceUpdateResult.error || "Insufficient credit balance"
+          );
           executionFailed = true;
         } else {
           success = await executePhase(
@@ -180,62 +155,79 @@ async function main() {
           );
         }
 
-
-        console.log(success, stage);
-
-        await prisma.executionPhase.update({
-          where: { id: phase.id },
-          data: {
-            completedAt: new Date(),
-            status: success
-              ? ExecutionPhaseStatus.COMPLETED
-              : ExecutionPhaseStatus.FAILED,
-            workflowExecution: {
-              update: {
-                creditsConsumed: { increment: creditsConsumed },
-              },
+        await updateExecutionPhase(phase.id, {
+          completedAt: new Date(),
+          status: success
+            ? ExecutionPhaseStatus.COMPLETED
+            : ExecutionPhaseStatus.FAILED,
+          inputs: JSON.stringify(environment.phases[node.id]?.inputs),
+          outputs: JSON.stringify(environment.phases[node.id]?.outputs),
+          workflowExecution: {
+            update: {
+              creditsConsumed: { increment: creditsConsumed },
             },
-            inputs: JSON.stringify(environment.phases[node.id].inputs),
-            outputs: JSON.stringify(environment.phases[node.id].outputs),
-            logs: {
-              createMany: {
-                data: logCollector.getAll().map((log) => {
-                  return {
-                    message: log.message,
-                    logLevel: log.logLevel,
-                    timestamp: log.timestamp,
-                  };
-                }),
-              },
+          },
+          logs: {
+            createMany: {
+              data: logCollector.getAll().map((log) => {
+                return {
+                  message: log.message,
+                  logLevel: log.logLevel,
+                  timestamp: log.timestamp,
+                };
+              }),
             },
           },
         });
 
         // TODO: Decrementing the credits for the user
-        
+
         // .... in the end ....
-        if (stage === executinnWithPhases._count.phases) {
+        if (stage === executionWithPhases._count.phases) {
           console.log("last stage reached, updating execution status");
 
           await cleanupEnvironment(executionId);
 
-          await prisma.workflowExecution.update({
-            where: { id: executionId },
-            data: {
-              status: executionFailed
-                ? WorkflowExecutionStatus.FAILED
-                : WorkflowExecutionStatus.COMPLETED,
-              completedAt: new Date(),
-              workflow: {
-                update: {
-                  lastRunStatus: executionFailed
-                    ? WorkflowExecutionStatus.FAILED
-                    : WorkflowExecutionStatus.COMPLETED,
-                },
+          await updateWorkflowExecution(executionId, {
+            status: executionFailed
+              ? WorkflowExecutionStatus.FAILED
+              : WorkflowExecutionStatus.COMPLETED,
+            completedAt: new Date(),
+            workflow: {
+              update: {
+                lastRunStatus: executionFailed
+                  ? WorkflowExecutionStatus.FAILED
+                  : WorkflowExecutionStatus.COMPLETED,
               },
             },
           });
         } else {
+          if (!userBalanceUpdateResult.success) {
+            logCollector.ERROR(
+              userBalanceUpdateResult.error || "Insufficient credit balance"
+            );
+            await updateWorkflowExecution(executionId, {
+              status: WorkflowExecutionStatus.FAILED,
+              completedAt: new Date(),
+              workflow: {
+                update: {
+                  lastRunStatus: WorkflowExecutionStatus.FAILED,
+                },
+              },
+              phases: {
+                updateMany: {
+                  where: { status: ExecutionPhaseStatus.PENDING },
+                  data: {
+                    status: ExecutionPhaseStatus.CANCELLED,
+                  },
+                },
+              },
+            });
+            await cleanupEnvironment(executionId);
+            await commitOffset();
+            return;
+          }
+
           await producer.send({
             topic,
             messages: [
@@ -257,7 +249,6 @@ async function main() {
         return;
       }
 
-      // commitOffset helper to avoid repeating the same logic
       async function commitOffset() {
         await consumer.commitOffsets([
           {

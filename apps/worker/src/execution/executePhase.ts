@@ -5,10 +5,11 @@ import {
   ExecutionPhaseWithPayload,
   ExecutorRegistry,
   TaskWithInfo,
-} from "./schema/types";
-import { AppNode } from "./schema/appnode";
-import { Environment, ExecutionEnvironment } from "./schema/environment";
-import { LogCollector } from "./schema/log";
+} from "../schema/types";
+import { AppNode } from "../schema/appnode";
+import { Environment, ExecutionEnvironment } from "../schema/environment";
+import { LogCollector } from "../schema/log";
+import { addUserBalance } from "../actions/updateUserBalance";
 
 export async function executePhase(
   phase: ExecutionPhaseWithPayload,
@@ -22,19 +23,22 @@ export async function executePhase(
   const taskInfo = phase.action
     ? phase.action?.taskInfo
     : phase.trigger?.taskInfo;
+
   if (taskInfo) {
     setUpEnvironmentForPhase(node, taskInfo, environment, edges);
   }
 
   if (!run) {
+    logCollector.ERROR(`No executor found(Server Error)`);
+    await addUserBalance(phase.userId, phase.action?.taskInfo.credits || phase.trigger?.taskInfo.credits || 0);
     return false;
   }
 
   const executionEnvironment = createExecutionEnvironment(
-    node,
     environment,
     logCollector
   );
+
   return await run(environment.phases[node.id], executionEnvironment);
 }
 
@@ -76,7 +80,6 @@ function setUpEnvironmentForPhase(
 }
 
 function createExecutionEnvironment(
-  node: AppNode,
   environment: Environment,
   logCollector: LogCollector
 ): ExecutionEnvironment {

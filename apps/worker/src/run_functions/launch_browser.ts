@@ -16,9 +16,9 @@ export const LaunchBrowserExecutor = async (environmentio: PhaseEnvironment, env
         environmentFn.setPage(page);
         environmentFn.log.INFO(`Opened Page at : ${websiteUrl}`)
 
-
         return true
     }catch(err){
+        environmentFn.log.ERROR("Failed to launch browser." + (err as Error).message)
         return false
     }
 }

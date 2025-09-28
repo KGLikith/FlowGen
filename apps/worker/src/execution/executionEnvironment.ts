@@ -1,4 +1,4 @@
-import { Environment } from "./schema/environment";
+import { Environment } from "../schema/environment";
 
 const registry: Record<string, Environment> = {};
 
