@@ -1,4 +1,12 @@
-import { ActionKey, ExecutionPhaseStatus, prisma, TriggerKey, WorkflowExecutionStatus, WorkflowExecutionType, WorkflowStatus } from "@automation/db";
+import {
+  ActionKey,
+  ExecutionPhaseStatus,
+  prisma,
+  TriggerKey,
+  WorkflowExecutionStatus,
+  WorkflowExecutionType,
+  WorkflowStatus,
+} from "@automation/db";
 import { GraphqlContext } from "../../interface";
 import {
   CreateWorkflowDataPayload,
@@ -65,7 +73,7 @@ const queries = {
     }
   },
 
-  getAvailableTriggers: async(_:any, __:any, context: GraphqlContext)=>{
+  getAvailableTriggers: async (_: any, __: any, context: GraphqlContext) => {
     const clerkId = context.clerkId;
     if (!clerkId) return null;
     try {
@@ -74,20 +82,20 @@ const queries = {
           taskInfo: {
             include: {
               inputs: true,
-              outputs: true
-            }
-          }
-        }
-      })
+              outputs: true,
+            },
+          },
+        },
+      });
 
-      return actions
-    }catch(err){
+      return actions;
+    } catch (err) {
       console.log(err);
-      throw new Error("Something went wrong. Please try again later.")
+      throw new Error("Something went wrong. Please try again later.");
     }
   },
 
-  getAvailableActions: async(_:any, __:any, context: GraphqlContext)=>{
+  getAvailableActions: async (_: any, __: any, context: GraphqlContext) => {
     const clerkId = context.clerkId;
     if (!clerkId) return null;
     try {
@@ -96,25 +104,29 @@ const queries = {
           taskInfo: {
             include: {
               inputs: true,
-              outputs: true
-            }
-          }
-        }
-      })
+              outputs: true,
+            },
+          },
+        },
+      });
 
-      return actions
-    }catch(err){
+      return actions;
+    } catch (err) {
       console.log(err);
-      throw new Error("Something went wrong. Please try again later.")
+      throw new Error("Something went wrong. Please try again later.");
     }
   },
-  getAvailableActionsForTrigger: async(_:any, {triggerId}:{triggerId:string}, context: GraphqlContext)=>{
+  getAvailableActionsForTrigger: async (
+    _: any,
+    { triggerId }: { triggerId: string },
+    context: GraphqlContext
+  ) => {
     const clerkId = context.clerkId;
     if (!clerkId) return null;
     try {
       const actions = await prisma.availableTriggerAction.findMany({
         where: {
-          triggerId
+          triggerId,
         },
         include: {
           trigger: {
@@ -122,30 +134,30 @@ const queries = {
               taskInfo: {
                 include: {
                   inputs: true,
-                  outputs: true
-                }
-              }
-            }
+                  outputs: true,
+                },
+              },
+            },
           },
           action: {
             include: {
               taskInfo: {
                 include: {
                   inputs: true,
-                  outputs: true
-                }
-              }
-            }
-          }
-        }
-      })
+                  outputs: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-      const actionList = actions.map(a => a.action);
+      const actionList = actions.map((a) => a.action);
       const trigger = actions[0]?.trigger;
       return { trigger, actions: actionList };
-    }catch(err){
+    } catch (err) {
       console.log(err);
-      throw new Error("Something went wrong. Please try again later.")
+      throw new Error("Something went wrong. Please try again later.");
     }
   },
 
@@ -298,43 +310,60 @@ const mutations = {
       const flow = JSON.parse(flowDefinition);
       const plan: workflowExecutionPlan = JSON.parse(executionPlan);
 
-      const execution = await prisma.workflowExecution.create({
+      await prisma.workflow.update({
+        where: { id: workflowId },
         data: {
-          workflowId,
-          userId: workflow.userId,
-          status: WorkflowExecutionStatus.PENDING,
-          startedAt: new Date(),
-          trigger: WorkflowExecutionType.MANUAL,
-          creditsConsumed: 0,
-          phases: {
-            create: plan.flatMap((phase) => {
-              return phase.nodes.flatMap((node) => {
-                return {
-                  userId: workflow.userId,
-                  status: ExecutionPhaseStatus.CREATED,
-                  number: phase.phase,
-                  data: JSON.stringify(node),
-                  name: ActionKey[node.data.type as ActionKey] || TriggerKey[node.data.type as TriggerKey],
-                  creditsConsumed: 0,
-                  startedAt: new Date(),
-                  actionId: node.data.actionId,
-                  triggerId: node.data.triggerId,
-                };
-              });
-            }),
+          definition: flowDefinition,
+        },
+      });
+
+      const execution = prisma.$transaction(async (tx) => {
+        const execution = await tx.workflowExecution.create({
+          data: {
+            workflowId,
+            userId: workflow.userId,
+            status: WorkflowExecutionStatus.PENDING,
+            trigger: WorkflowExecutionType.MANUAL,
+            creditsConsumed: 0,
+            phases: {
+              create: plan.flatMap((phase) => {
+                return phase.nodes.flatMap((node) => {
+                  return {
+                    userId: workflow.userId,
+                    status: ExecutionPhaseStatus.CREATED,
+                    number: phase.phase,
+                    data: JSON.stringify(node),
+                    name:
+                      ActionKey[node.data.type as ActionKey] ||
+                      TriggerKey[node.data.type as TriggerKey],
+                    creditsConsumed: node.data.credits || 0,
+                    actionId: node.data?.actionId,
+                    triggerId: node.data?.triggerId,
+                  };
+                });
+              }),
+            },
           },
-        },
-        select: {
-          id: true,
-          phases: true,
-        },
+          select: {
+            id: true,
+            phases: true,
+          },
+        });
+
+        await tx.executionOutbox.create({
+          data: {
+            workflowExecId: execution.id,
+          },
+        });
+
+        return execution;
       });
 
       if (!execution) {
         throw new Error("Failed to create workflow execution");
       }
       return execution;
-    } catch (error) {
+    } catch (error) { 
       console.error("Error running workflow:", error);
       throw new Error("Failed to run workflow. Please try again.");
     }
@@ -342,10 +371,7 @@ const mutations = {
 
   initializeWorkflowExecution: async (
     _: any,
-    {
-      executionId,
-      workflowId,
-    }: { executionId: string; workflowId: string },
+    { executionId, workflowId }: { executionId: string; workflowId: string },
     context: GraphqlContext
   ) => {
     if (!context.clerkId) throw new Error("Unauthorized");
@@ -354,25 +380,24 @@ const mutations = {
         where: { id: executionId },
         data: {
           startedAt: new Date(),
-          status: WorkflowExecutionStatus.RUNNING
-        }
+          status: WorkflowExecutionStatus.RUNNING,
+        },
       });
 
       await prisma.workflow.update({
         where: { id: workflowId },
-        data:{
+        data: {
           lastRunAt: new Date(),
           lastRunStatus: WorkflowExecutionStatus.RUNNING,
-          lastRunId: executionId
-        }
-      })
+          lastRunId: executionId,
+        },
+      });
       return true;
     } catch (error) {
       console.error("Error initializing workflow execution:", error);
       throw new Error("Failed to initialize workflow execution");
     }
   },
-
 };
 
 export const resolvers = {

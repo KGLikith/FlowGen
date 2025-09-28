@@ -38,7 +38,7 @@ type Workflow {
   creditsCost: Int!
   lastRunAt: DateTime
   lastRunId: String
-  lastRunStatus: String
+  lastRunStatus: WorkflowExecutionStatus
   nextRunAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
@@ -153,7 +153,7 @@ type ExecutionPhase {
   userId: String!
   status: String!
   number: Int!
-  node: String!
+  data: String!
   name: String!
   startedAt: DateTime
   completedAt: DateTime

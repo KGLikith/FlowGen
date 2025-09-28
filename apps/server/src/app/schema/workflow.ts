@@ -18,6 +18,7 @@ export interface AppNodeData {
   type: ActionKey | TriggerKey;
   inputs: Record<string, string>;
   trigger: boolean;
+  credits: number;
   triggerId?: string;
   actionId?: string;
   [key: string]: any;
