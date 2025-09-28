@@ -212,6 +212,7 @@ enum ExecutionPhaseStatus {
   RUNNING
   COMPLETED
   FAILED
+  CANCELLED
 }
 
 model ExecutionLog {
