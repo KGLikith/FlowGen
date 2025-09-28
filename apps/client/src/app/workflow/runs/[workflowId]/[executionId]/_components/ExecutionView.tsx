@@ -10,7 +10,7 @@ import ExecutionDetails from "./ExecutionDetails"
 import ExecutionPhases from "./ExecutionPhases"
 import PhaseDetails from "./PhaseDetails"
 import LoaderIc from "@/components/loader"
-import { Loader } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 type Props = {
     executionId: string
@@ -81,8 +81,7 @@ export default function ExecutionView({ executionId, workflowId }: Props) {
                             />
                         ) : (
                             <div className="flex items-center justify-center h-full gap-3">
-                                <Loader className="h-5 w-5 animate-spin" />
-                                <p className="text-muted-foreground">The selected phase is currently running</p>
+                                <p className="text-muted-foreground animate-pulse">The selected phase is currently running</p>
                             </div>
                         )
                     ) : (

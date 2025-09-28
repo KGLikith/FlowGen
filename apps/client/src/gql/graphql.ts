@@ -106,7 +106,7 @@ export type ExecutionLog = {
   __typename?: 'ExecutionLog';
   executionPhaseId: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  logLevel: Scalars['String']['output'];
+  logLevel: LogLevel;
   message: Scalars['String']['output'];
   phase: ExecutionPhase;
   timestamp: Scalars['DateTime']['output'];
@@ -135,6 +135,15 @@ export type ExecutionPhase = {
   workflowExecutionId: Scalars['String']['output'];
 };
 
+export enum ExecutionPhaseStatus {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Created = 'CREATED',
+  Failed = 'FAILED',
+  Pending = 'PENDING',
+  Running = 'RUNNING'
+}
+
 export type GoogleDocs = {
   __typename?: 'GoogleDocs';
   accessToken: Scalars['String']['output'];
@@ -145,6 +154,12 @@ export type GoogleDocs = {
   user?: Maybe<User>;
   userId: Scalars['String']['output'];
 };
+
+export enum LogLevel {
+  Error = 'ERROR',
+  Info = 'INFO',
+  Warn = 'WARN'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -450,7 +465,7 @@ export type GetWorkflowExecutionQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkflowExecutionQuery = { __typename?: 'Query', getWorkflowExecution?: { __typename?: 'WorkflowExecution', id: string, workflowId: string, trigger: WorkflowExecutionType, status: WorkflowExecutionStatus, createdAt?: any | null, startedAt?: any | null, completedAt?: any | null, creditsConsumed: number, phases?: Array<{ __typename?: 'ExecutionPhase', id: string, status: string, number: number, data: string, name: string, startedAt?: any | null, completedAt?: any | null, inputs?: string | null, outputs?: string | null, creditsConsumed: number, logs?: Array<{ __typename?: 'ExecutionLog', logLevel: string, message: string, timestamp: any }> | null }> | null } | null };
+export type GetWorkflowExecutionQuery = { __typename?: 'Query', getWorkflowExecution?: { __typename?: 'WorkflowExecution', id: string, workflowId: string, trigger: WorkflowExecutionType, status: WorkflowExecutionStatus, createdAt?: any | null, startedAt?: any | null, completedAt?: any | null, creditsConsumed: number, phases?: Array<{ __typename?: 'ExecutionPhase', id: string, status: string, number: number, data: string, name: string, startedAt?: any | null, completedAt?: any | null, inputs?: string | null, outputs?: string | null, creditsConsumed: number, logs?: Array<{ __typename?: 'ExecutionLog', logLevel: LogLevel, message: string, timestamp: any }> | null }> | null } | null };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 

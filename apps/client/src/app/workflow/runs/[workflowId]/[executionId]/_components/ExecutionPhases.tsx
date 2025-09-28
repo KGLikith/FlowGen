@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import type { ExecutionPhase } from "@/gql/graphql"
 import { formatPhaseName } from "./helper"
-import { Workflow, Check, X, Loader } from "lucide-react"
+import { Workflow, Check, X, Loader, Loader2, Ban } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface ExecutionPhasesProps {
@@ -54,11 +54,14 @@ export default function ExecutionPhases({ phases, selectedPhaseId, onPhaseSelect
                 </span>
               </div>
               <div className="flex-shrink-0">
-                {phase.status === "RUNNING" && <Loader className="h-4 w-4 animate-spin text-blue-500" />}
+                {phase.status === "RUNNING" && <Loader2 className="h-4 w-4 animate-spin text-blue-500" />}
                 {phase.status === "COMPLETED" && <Check className="h-4 w-4 text-green-500" />}
                 {phase.status === "FAILED" && <X className="h-4 w-4 text-red-500" />}
                 {phase.status === "CREATED" && (
                   <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30" />
+                )}
+                {phase.status === "CANCELLED" && (
+                  <Ban className="h-4 w-4 text-red-500" />
                 )}
               </div>
             </Button>

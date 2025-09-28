@@ -136,8 +136,6 @@ export function FlowToExecutionPlan(
     };
   }
 
-  console.log("executinPlan", executionPlan);
-
   return {
     executionPlan,
   };

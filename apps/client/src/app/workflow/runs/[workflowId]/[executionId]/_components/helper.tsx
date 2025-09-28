@@ -1,35 +1,41 @@
 import { formatDistanceToNow } from "date-fns"
 import { Badge } from "@/components/ui/badge"
+import { WorkflowExecutionStatus, WorkflowExecutionType } from "@/gql/graphql"
+import { cn } from "@/lib/utils"
 
-export const getStatusBadge = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "pending":
-      return (
-        <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
-          PENDING
-        </Badge>
-      )
-    case "running":
-      return (
-        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-          RUNNING
-        </Badge>
-      )
-    case "completed":
-      return (
-        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-          COMPLETED
-        </Badge>
-      )
-    case "failed":
-      return (
-        <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">
-          FAILED
-        </Badge>
-      )
-    default:
-      return <Badge variant="outline">{status}</Badge>
+export function StatusBadge({ status }: { status: WorkflowExecutionStatus }) {
+  const variants: Record<WorkflowExecutionStatus, string> = {
+    COMPLETED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+    FAILED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+    RUNNING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
   }
+
+  return (
+    <Badge
+      variant="secondary"
+      className={cn("px-2 py-0.5 text-xs font-medium rounded-md", variants[status])}
+    >
+      {status}
+    </Badge>
+  )
+}
+
+export function TypeBadge({ type }: { type: WorkflowExecutionType }) {
+  const variants: Record<WorkflowExecutionType, string> = {
+    MANUAL: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300",
+    SCHEDULED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+    TRIGGERED: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  }
+
+  return (
+    <Badge
+      variant="secondary"
+      className={cn("px-2 py-0.5 text-xs font-medium rounded-md", variants[type])}
+    >
+      {type}
+    </Badge>
+  )
 }
 
 export const formatDuration = (startedAt?: string | null, completedAt?: string | null) => {
@@ -44,42 +50,6 @@ export const formatDuration = (startedAt?: string | null, completedAt?: string |
   const seconds = diffSec % 60
 
   return `${minutes}m ${seconds}s`
-}
-
-
-export const getPhaseStatusBadge = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "created":
-      return (
-        <Badge variant="outline" className="bg-gray-500/10 text-gray-600 border-gray-500/20 text-xs">
-          CREATED
-        </Badge>
-      )
-    case "running":
-      return (
-        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-xs">
-          RUNNING
-        </Badge>
-      )
-    case "completed":
-      return (
-        <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 text-xs">
-          COMPLETED
-        </Badge>
-      )
-    case "failed":
-      return (
-        <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 text-xs">
-          FAILED
-        </Badge>
-      )
-    default:
-      return (
-        <Badge variant="outline" className="text-xs">
-          {status}
-        </Badge>
-      )
-  }
 }
 
 export const formatPhaseName = (name: string) => {
