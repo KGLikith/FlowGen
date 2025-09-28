@@ -173,3 +173,31 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
     }
   }
 `);
+
+
+export const GET_WORKFLOW_EXECUTION = graphql(`
+  query getWorkflowExecution($executionId: ID!) {
+    getWorkflowExecution(executionId: $executionId) {
+      id
+      workflowId
+      trigger
+      status
+      createdAt
+      startedAt
+      completedAt
+      creditsConsumed
+      phases {
+        id
+        status
+        number 
+        data
+        name
+        startedAt
+        completedAt
+        inputs
+        outputs
+        creditsConsumed
+      }
+    }
+  }
+`);

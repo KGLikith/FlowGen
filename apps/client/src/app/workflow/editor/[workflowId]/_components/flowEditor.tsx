@@ -6,7 +6,7 @@ import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { AppNode } from "@/schema/appNode"
 import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { useCallback, useEffect} from "react"
+import { useCallback, useEffect } from "react"
 import { toast } from "sonner"
 
 type Props = {
@@ -55,29 +55,32 @@ export default function FlowEditor({ workflow }: Props) {
 
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    const type = event.dataTransfer.getData('application/reactflow/taskType');
-    const taskId = event.dataTransfer.getData('application/reactflow/taskId'); 
-    const trigger = event.dataTransfer.getData('application/reactflow/trigger');
+    const data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
+    console.log(data)
+    const { type, taskId, trigger, credits } = data;
 
     if (typeof type === 'undefined' || !type) {
       return;
     }
 
-    if (trigger === "true") {
+    if (trigger) {
       const hasTrigger = nodes.some(node => node.data.trigger === true);
+      console.log(hasTrigger)
       if (hasTrigger) {
         toast.error("Only one trigger node is allowed.");
         return;
       }
       setCurrentTriggerId(taskId)
     }
-    
+
     const reactFlowBounds = event.currentTarget.getBoundingClientRect();
     const pos = screenToFlowPosition({
       x: event.clientX - reactFlowBounds.left / 2,
       y: event.clientY - reactFlowBounds.top / 2,
     });
-    const newNode = CreateFlowNode(type as ActionKey | TriggerKey, pos, trigger === "true" ? "TRIGGER" : "ACTION", taskId)
+    
+    const newNode = CreateFlowNode(type as ActionKey | TriggerKey, credits, pos, trigger === true ? "TRIGGER" : "ACTION", taskId)
+    console.log(newNode)
     setNodes((nds) => nds.concat(newNode))
 
   }, [screenToFlowPosition, setNodes])

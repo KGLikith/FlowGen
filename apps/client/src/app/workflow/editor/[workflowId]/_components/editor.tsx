@@ -23,9 +23,7 @@ export default function Editor({ workflow, currentUser }: Props) {
     })
 
     useEffect(() => { 
-        console.log("node changed", node)
         if (node?.data?.triggerId) {
-            console.log("hello trigger changed", node.data.triggerId)
             setCurrentTriggerId(node.data.triggerId)
         }
     }, [workflow.id,setCurrentTriggerId])

@@ -2,9 +2,12 @@
 import { useGetCurrentUser } from "@/hooks/user"
 import { useGetWorkflow } from "@/hooks/workflows/queries"
 import Loader from "@/components/loader"
-import { User, FileX } from "lucide-react"
+import {  ArrowLeft, FileX } from "lucide-react"
 import Editor from "./editor"
 import { TriggerContextProvider } from "@/components/context/TaskProvider"
+import Unauthorized from "@/components/unauthorized"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 type Props = {
   workflowId: string
@@ -13,6 +16,7 @@ type Props = {
 export default function WorkflowPage({ workflowId }: Props) {
   const { user, isLoading: isLoadingUser } = useGetCurrentUser()
   const { workflow, isLoading: isLoadingWorkflow } = useGetWorkflow(workflowId)
+  const router = useRouter()
 
   if (isLoadingUser || isLoadingWorkflow) {
     return (
@@ -24,19 +28,7 @@ export default function WorkflowPage({ workflowId }: Props) {
 
   if (!user) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="flex flex-col items-center justify-center max-w-md text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center">
-            <User className="h-8 w-8 text-orange-500" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-foreground">Authentication Required</h3>
-            <p className="text-muted-foreground">
-              Please log in  view this workflow. You need to be authenticated to access workflow details.
-            </p>
-          </div>
-        </div>
-      </div>
+      <Unauthorized />
     )
   }
 
@@ -51,9 +43,13 @@ export default function WorkflowPage({ workflowId }: Props) {
             <h3 className="text-xl font-semibold text-foreground">Workflow Not Found</h3>
             <p className="text-muted-foreground">
               The workflow you&apos;re looking for doesn&apos;t exist or may have been deleted.
-              The workflow you're looking for doesn&apos;t exist or may have been deleted. Please check the URL or return to
-              your workflows.
+              Please check the URL or return to your workflows.
             </p>
+            <Button variant="outline" onClick={() => {
+              router.push('/dashboard/workflows');
+            }}>
+              <ArrowLeft className="mr-2" /> Back to Workflow list.
+            </Button>
           </div>
         </div>
       </div>

@@ -29,7 +29,7 @@ export default function Actions({ actions, isLoading }: Props) {
                 <AccordionTrigger className="font-bold cursor-pointer">Data Extraction</AccordionTrigger>
                 <AccordionContent className='flex flex-col gap-1'>
                     {actions.map(action => (
-                        <TaskButton key={action.id} taskType={action.key} taskId={action.id} trigger={false} taskIcon={action.taskInfo.icon as string} taskLabel={action.taskInfo.label} />
+                        <TaskButton credits={action.taskInfo.credits} key={action.id} taskType={action.key} taskId={action.id} trigger={false} taskIcon={action.taskInfo.icon as string} taskLabel={action.taskInfo.label} />
                     ))}
                 </AccordionContent>  
             </AccordionItem>

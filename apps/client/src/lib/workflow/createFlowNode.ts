@@ -2,6 +2,7 @@ import { ActionKey, TriggerKey } from "@/gql/graphql";
 
 export function CreateFlowNode(
   nodeType: ActionKey | TriggerKey,
+  credits: number,
   position?: { x: number; y: number },
   type: "TRIGGER" | "ACTION" = "ACTION",
   taskId?: string
@@ -11,6 +12,7 @@ export function CreateFlowNode(
     data: {
       type: nodeType,
       inputs: {},
+      credits: credits,
       trigger: type === "TRIGGER",
       triggerId: type === "TRIGGER" ? taskId : undefined,
       actionId: type === "ACTION" ? taskId : undefined,

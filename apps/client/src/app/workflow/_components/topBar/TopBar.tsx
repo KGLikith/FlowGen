@@ -1,3 +1,4 @@
+'use client'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ChevronLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation'
@@ -9,9 +10,10 @@ type Props = {
   title: string
   subtitle?: string
   workflowId: string
+  hideButtons?: boolean
 }
 
-export default function TopBar({ title, subtitle, workflowId }: Props) {
+export default function TopBar({ title, subtitle, workflowId, hideButtons }: Props) {
   const router = useRouter();
 
   return (
@@ -28,10 +30,10 @@ export default function TopBar({ title, subtitle, workflowId }: Props) {
           {subtitle && <p className="text-sm text-muted-foreground truncate text-ellipsis">{subtitle}</p>}
         </div>
       </div>
-      <div className="flex gap-1 flex-1 justify-end">
+      {!hideButtons && <div className="flex gap-1 flex-1 justify-end">
         <ExecButton workflowId={workflowId} />
         <SaveButton workflowId={workflowId} />
-      </div>
+      </div>}
     </header>
   )
 }

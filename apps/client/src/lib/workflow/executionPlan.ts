@@ -1,5 +1,9 @@
 import { AvailableAction, AvailableTrigger, TaskParam } from "@/gql/graphql";
-import { AppInvalidNodes, AppNode, AppNodeMissingInputs } from "@/schema/appNode";
+import {
+  AppInvalidNodes,
+  AppNode,
+  AppNodeMissingInputs,
+} from "@/schema/appNode";
 import {
   workflowExecutionPlan,
   WorkflowExecutionPlanPhase,
@@ -52,13 +56,18 @@ export function FlowToExecutionPlan(
         invalidNodes: invalidActions.map((ma) => ({
           nodeId: ma.id,
         })),
-      }
-    }
+      },
+    };
   }
 
   const inputsWithErrors: AppNodeMissingInputs[] = [];
 
-  const invalidInputs = getInvalidInputs(entryPoint, edges, new Set(), trigger?.taskInfo.inputs || []);
+  const invalidInputs = getInvalidInputs(
+    entryPoint,
+    edges,
+    new Set(),
+    trigger?.taskInfo.inputs || []
+  );
   if (invalidInputs.length > 0) {
     inputsWithErrors.push({
       nodeId: entryPoint.id,
@@ -75,6 +84,8 @@ export function FlowToExecutionPlan(
 
   planned.add(entryPoint.id);
 
+  executionPlan[0].nodes = [entryPoint];
+
   for (
     let phase = 2;
     phase <= nodes.length && planned.size < nodes.length;
@@ -86,8 +97,14 @@ export function FlowToExecutionPlan(
       if (planned.has(currentNode.id)) {
         continue;
       }
-      const inputs = actions.find((a) => a.key === currentNode.data.type)?.taskInfo.inputs
-      const invalidInputs = getInvalidInputs(currentNode, edges, planned, inputs || []);
+      const inputs = actions.find((a) => a.key === currentNode.data.type)
+        ?.taskInfo.inputs;
+      const invalidInputs = getInvalidInputs(
+        currentNode,
+        edges,
+        planned,
+        inputs || []
+      );
       if (invalidInputs.length > 0) {
         const incomers = getIncomers(currentNode, nodes, edges);
         if (incomers.every((incomer) => planned.has(incomer.id))) {
@@ -96,13 +113,13 @@ export function FlowToExecutionPlan(
             inputs: invalidInputs,
           });
         } else {
-          // todo:
           continue;
         }
       }
 
       nextPhase.nodes.push(currentNode);
       planned.add(currentNode.id);
+      break;
     }
 
     if (nextPhase.nodes.length > 0) {
@@ -116,8 +133,10 @@ export function FlowToExecutionPlan(
         type: FlowToExecutionPlanTypeErrorType.INVALID_INPUTS,
         invalidElements: inputsWithErrors,
       },
-};
+    };
   }
+
+  console.log("executinPlan", executionPlan);
 
   return {
     executionPlan,
@@ -160,3 +179,38 @@ function getInvalidInputs(
 
   return invalidInputs;
 }
+
+// for (
+//   let phase = 2;
+//   phase <= nodes.length && planned.size < nodes.length;
+//   phase++
+// ) {
+//   const nextPhase: WorkflowExecutionPlanPhase = { phase, nodes: [] };
+
+//   for (const currentNode of nodes) {
+//     if (planned.has(currentNode.id)) {
+//       continue;
+//     }
+//     const inputs = actions.find((a) => a.key === currentNode.data.type)?.taskInfo.inputs
+//     const invalidInputs = getInvalidInputs(currentNode, edges, planned, inputs || []);
+//     if (invalidInputs.length > 0) {
+//       const incomers = getIncomers(currentNode, nodes, edges);
+//       if (incomers.every((incomer) => planned.has(incomer.id))) {
+//         inputsWithErrors.push({
+//           nodeId: currentNode.id,
+//           inputs: invalidInputs,
+//         });
+//       } else {
+//         // todo:
+//         continue;
+//       }
+//     }
+
+//     nextPhase.nodes.push(currentNode);
+//     planned.add(currentNode.id);
+//   }
+
+//   if (nextPhase.nodes.length > 0) {
+//     executionPlan.push(nextPhase);
+//   }
+// }

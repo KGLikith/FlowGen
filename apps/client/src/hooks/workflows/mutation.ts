@@ -113,14 +113,14 @@ export const useUpdateWorkflow = (workflowId: string) => {
 
 export const useRunWorkflow = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: async (form: {workflowId: string; flowDefinition?: string; name: string; executionPlan: string;}) => {
       try {
         const { data } = await client.mutate({
           mutation: RUN_WORKFLOW,
           variables: { form },
         });
-        return data;
+        return data?.runWorkflow;
       } catch (err) {
         console.log("Error running workflow:", (err as Error).message);
         return null;
@@ -143,5 +143,4 @@ export const useRunWorkflow = () => {
       console.log("Error running workflow:", (error as Error).message);
     },
   });
-  return { ...mutation, runWorkflow: mutation.mutateAsync };
 };

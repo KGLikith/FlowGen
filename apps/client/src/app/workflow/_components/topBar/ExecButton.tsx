@@ -4,6 +4,7 @@ import useExecutionPlan from '@/hooks/useExecutionPlan'
 import { useRunWorkflow } from '@/hooks/workflows/mutation'
 import { useReactFlow } from '@xyflow/react'
 import { PlayIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 type Props = {
@@ -13,7 +14,8 @@ type Props = {
 export default function ExecButton({ workflowId }: Props) {
     const generate = useExecutionPlan()
     const { toObject } = useReactFlow();
-    const { mutateAsync } = useRunWorkflow();
+    const { mutateAsync} = useRunWorkflow();
+    const router = useRouter();
     
     return (
         <Button variant={"outline"} className='cursor-pointer flex items-center gap-2'
@@ -21,13 +23,14 @@ export default function ExecButton({ workflowId }: Props) {
                 const plan = generate();
                 if (!plan) return;
 
-                await mutateAsync({
+                const data =await mutateAsync({
                     workflowId,
                     name: "todo",
                     executionPlan: JSON.stringify(plan),
                     flowDefinition: JSON.stringify(toObject()),
                 })
-
+                if(!data) return;
+                router.push(`/workflow/runs/${workflowId}/${data.id}`)
             }}
         >
             <PlayIcon size={16} className='stroke-orange-400' />

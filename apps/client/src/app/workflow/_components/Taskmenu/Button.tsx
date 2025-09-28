@@ -8,14 +8,19 @@ type Props = {
     trigger: boolean
     taskIcon: string
     taskLabel: string
+    credits: number
 }
 
-export default function TaskButton({ taskType, taskId, trigger, taskLabel }: Props) {
+export default function TaskButton({ taskType, taskId, trigger, taskLabel, credits }: Props) {
 
     const onDragStart = (event: React.DragEvent<HTMLButtonElement>, taskType: TriggerKey | ActionKey) => {
-        event.dataTransfer.setData('application/reactflow/taskType', taskType);
-        event.dataTransfer.setData('application/reactflow/taskId', taskId);
-        event.dataTransfer.setData('application/reactflow/trigger', trigger ? "true" : "false");
+        const task = {
+            type: taskType,
+            taskId: taskId,
+            trigger: trigger,
+            credits: credits
+        }
+        event.dataTransfer.setData('application/reactflow', JSON.stringify(task));
         event.dataTransfer.effectAllowed = 'move'
     }
     return (

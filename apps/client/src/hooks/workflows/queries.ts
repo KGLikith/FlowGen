@@ -4,6 +4,7 @@ import {
   GET_AVAILABLE_ACTIONS_FOR_TRIGGERS,
   GET_AVAILABLE_TRIGGERS,
   GET_WORKFLOW,
+  GET_WORKFLOW_EXECUTION,
   GET_WORKFLOWS,
 } from "@/graphql/query/automation";
 import { useQuery } from "@tanstack/react-query";
@@ -110,4 +111,27 @@ export const useGetAvailableActionsForTrigger = (
     },
     enabled: !!triggerId,
   });
+};
+
+export const useGetWorkflowExecutionWithPhases = (executionId: string) => {
+  const query = useQuery({
+    queryKey: ["WorkflowExecution", executionId],
+    queryFn: async () => {
+      try {
+        const res = await client.query({
+          query: GET_WORKFLOW_EXECUTION,
+          variables: { executionId },
+          fetchPolicy: "network-only"
+        });
+        return res.data;
+      } catch (err) {
+        console.log("Error fetching workflow execution:", (err as Error).message);
+        return {
+          getWorkflowExecution: null,
+        };
+      }
+    },
+    refetchInterval: 3000
+  });
+  return { ...query, workflowExecution: query.data?.getWorkflowExecution };
 };

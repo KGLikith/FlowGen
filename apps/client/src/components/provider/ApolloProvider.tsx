@@ -14,9 +14,9 @@ export default function ProviderApollo({
   const { getToken, isLoaded } = useAuth();
 
   if (!isLoaded) {
-    return <div className="flex items-center justify-center h-screen w-full bg-accent-foreground">
-      <Loader state></Loader>
-    </div>; 
+    return <div className="flex items-center justify-center h-screen w-full bg-background">
+      <Loader state color='bg-foreground' />
+    </div>;
   }
 
   const client = createApolloClient(getToken);
