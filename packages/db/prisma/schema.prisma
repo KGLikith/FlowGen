@@ -48,7 +48,7 @@ model Workflow {
   creditsCost   Int
   lastRunAt     DateTime?
   lastRunId     String?
-  lastRunStatus String?
+  lastRunStatus WorkflowExecutionStatus?
   nextRunAt     DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
