@@ -1,22 +1,17 @@
 import React from 'react'
-import { Spinner } from './spinner'
-import { cn } from '@/lib/utils'
+import { Loader } from 'lucide-react'
 
 type Props = {
-  state: boolean
+  state?: boolean
   className?: string
   color?: string
   children?: React.ReactNode
 }
 
-const Loader = ({ state, className, color, children }: Props) => {
-  return state ? (
-    <div className={cn(className)}>
-      <Spinner color={color} />
+const LoaderIc = ({ state, className, color, children }: Props) => {
+  return <div className="flex h-screen w-screen justify-center items-center text-foreground ">
+      <Loader className="h-7 w-7 animate-spin" />
     </div>
-  ) : (
-    children
-  )
 }
 
-export default Loader
+export default LoaderIc

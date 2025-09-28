@@ -197,6 +197,11 @@ export const GET_WORKFLOW_EXECUTION = graphql(`
         inputs
         outputs
         creditsConsumed
+        logs{
+          logLevel 
+          message
+          timestamp
+        }
       }
     }
   }

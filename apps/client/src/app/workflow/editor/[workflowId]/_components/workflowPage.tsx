@@ -2,7 +2,7 @@
 import { useGetCurrentUser } from "@/hooks/user"
 import { useGetWorkflow } from "@/hooks/workflows/queries"
 import Loader from "@/components/loader"
-import {  ArrowLeft, FileX } from "lucide-react"
+import { ArrowLeft, FileX } from "lucide-react"
 import Editor from "./editor"
 import { TriggerContextProvider } from "@/components/context/TaskProvider"
 import Unauthorized from "@/components/unauthorized"
@@ -20,9 +20,7 @@ export default function WorkflowPage({ workflowId }: Props) {
 
   if (isLoadingUser || isLoadingWorkflow) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Loader state />
-      </div>
+      <Loader />
     )
   }
 
@@ -57,9 +55,9 @@ export default function WorkflowPage({ workflowId }: Props) {
   }
 
   return (
-  <>
-    <TriggerContextProvider>
-      <Editor workflow={workflow} currentUser={user} />
-    </TriggerContextProvider>
-  </>)
+    <>
+      <TriggerContextProvider>
+        <Editor workflow={workflow} currentUser={user} />
+      </TriggerContextProvider>
+    </>)
 }
