@@ -13,12 +13,14 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@automation/db": "*",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "puppeteer": "^24.22.3",
     "tsc-watch": "^7.1.1"
   }
 }
