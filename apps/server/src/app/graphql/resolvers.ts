@@ -176,6 +176,9 @@ const queries = {
             orderBy: {
               number: "asc",
             },
+            include: {
+              logs: true
+            }
           },
         },
       });
@@ -314,6 +317,7 @@ const mutations = {
         where: { id: workflowId },
         data: {
           definition: flowDefinition,
+          executionPlan: executionPlan
         },
       });
 
@@ -325,6 +329,7 @@ const mutations = {
             status: WorkflowExecutionStatus.PENDING,
             trigger: WorkflowExecutionType.MANUAL,
             creditsConsumed: 0,
+            definition: flowDefinition,
             phases: {
               create: plan.flatMap((phase) => {
                 return phase.nodes.flatMap((node) => {
