@@ -21,7 +21,10 @@ import { AppNode } from "./schema/appnode";
 import { createLogCollector } from "./log";
 import { updateWorkflowExecution } from "./actions/updateWorkflowExecution";
 import { getExecutionDetails } from "./actions/getExecutionDetails";
-import { updateExecutionPhase } from "./actions/updateExecutionPhase";
+import {
+  updateExecutionPhase,
+  updatePendingExecutionPhases,
+} from "./actions/updateExecutionPhase";
 import { decrementUserBalance } from "./actions/updateUserBalance";
 
 const TOPIC_NAME = "workflow-events";
@@ -136,7 +139,7 @@ async function main() {
 
         const environment = getEnvironment(executionId);
 
-        const logCollector = createLogCollector(phase.id);
+        const logCollector = createLogCollector();
 
         let success = false;
 
@@ -169,20 +172,11 @@ async function main() {
           },
           logs: {
             createMany: {
-              data: logCollector.getAll().map((log) => {
-                return {
-                  message: log.message,
-                  logLevel: log.logLevel,
-                  timestamp: log.timestamp,
-                };
-              }),
+              data: logCollector.getAll(),
             },
           },
         });
 
-        // TODO: Decrementing the credits for the user
-
-        // .... in the end ....
         if (stage === executionWithPhases._count.phases) {
           console.log("last stage reached, updating execution status");
 
@@ -203,9 +197,6 @@ async function main() {
           });
         } else {
           if (!userBalanceUpdateResult.success) {
-            logCollector.ERROR(
-              userBalanceUpdateResult.error || "Insufficient credit balance"
-            );
             await updateWorkflowExecution(executionId, {
               status: WorkflowExecutionStatus.FAILED,
               completedAt: new Date(),
@@ -223,6 +214,22 @@ async function main() {
                 },
               },
             });
+
+            await updatePendingExecutionPhases(
+              executionId,
+              {
+                completedAt: new Date(),
+                status: ExecutionPhaseStatus.CANCELLED,
+              },
+              {
+                logLevel: "ERROR",
+                message:
+                  userBalanceUpdateResult.error ||
+                  "Insufficient credit balance",
+                timestamp: new Date(),
+              }
+            );
+
             await cleanupEnvironment(executionId);
             await commitOffset();
             return;

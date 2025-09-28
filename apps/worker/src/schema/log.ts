@@ -1,6 +1,6 @@
 import { ExecutionLog, logLevel } from "@automation/db";
 
-export type ExecutionLogSubset = Pick<ExecutionLog, "message" | "logLevel" | "timestamp" | "executionPhaseId">;
+export type ExecutionLogSubset = Pick<ExecutionLog, "message" | "logLevel" | "timestamp" >;
 export type LogCollector = {
   getAll(): ExecutionLogSubset[];
 } & {

@@ -107,7 +107,7 @@ function main() {
                     // TODO
                     const userBalanceUpdateResult = yield (0, updateUserBalance_1.decrementUserBalance)(executionWithPhases.userId, creditsConsumed);
                     const environment = (0, executionEnvironment_1.getEnvironment)(executionId);
-                    const logCollector = (0, log_1.createLogCollector)(phase.id);
+                    const logCollector = (0, log_1.createLogCollector)();
                     let success = false;
                     if (!userBalanceUpdateResult.success) {
                         logCollector.ERROR(userBalanceUpdateResult.error || "Insufficient credit balance");
@@ -130,18 +130,10 @@ function main() {
                         },
                         logs: {
                             createMany: {
-                                data: logCollector.getAll().map((log) => {
-                                    return {
-                                        message: log.message,
-                                        logLevel: log.logLevel,
-                                        timestamp: log.timestamp,
-                                    };
-                                }),
+                                data: logCollector.getAll(),
                             },
                         },
                     });
-                    // TODO: Decrementing the credits for the user
-                    // .... in the end ....
                     if (stage === executionWithPhases._count.phases) {
                         console.log("last stage reached, updating execution status");
                         yield (0, executionEnvironment_1.cleanupEnvironment)(executionId);
@@ -161,7 +153,6 @@ function main() {
                     }
                     else {
                         if (!userBalanceUpdateResult.success) {
-                            logCollector.ERROR(userBalanceUpdateResult.error || "Insufficient credit balance");
                             yield (0, updateWorkflowExecution_1.updateWorkflowExecution)(executionId, {
                                 status: db_1.WorkflowExecutionStatus.FAILED,
                                 completedAt: new Date(),
@@ -178,6 +169,15 @@ function main() {
                                         },
                                     },
                                 },
+                            });
+                            yield (0, updateExecutionPhase_1.updatePendingExecutionPhases)(executionId, {
+                                completedAt: new Date(),
+                                status: db_1.ExecutionPhaseStatus.CANCELLED,
+                            }, {
+                                logLevel: "ERROR",
+                                message: userBalanceUpdateResult.error ||
+                                    "Insufficient credit balance",
+                                timestamp: new Date(),
                             });
                             yield (0, executionEnvironment_1.cleanupEnvironment)(executionId);
                             yield commitOffset();
