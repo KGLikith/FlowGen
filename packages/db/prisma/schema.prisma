@@ -74,6 +74,7 @@ model WorkflowExecution {
   startedAt       DateTime?
   completedAt     DateTime?
   creditsConsumed Int
+  definition      String     @default("{}")
 
   workflow        Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   user            User              @relation(fields: [userId], references: [id])
@@ -216,11 +217,17 @@ enum ExecutionPhaseStatus {
 model ExecutionLog {
   id               String   @id @default(cuid())
   executionPhaseId String
-  logLevel         String
+  logLevel         logLevel
   message          String
   timestamp        DateTime @default(now())
 
   phase ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+}
+
+enum logLevel {
+  INFO
+  WARN
+  ERROR
 }
 
 model Credential {
