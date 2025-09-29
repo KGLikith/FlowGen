@@ -32,13 +32,6 @@ export const useCreateWorkflow = () => {
         id: "create_workflow",
       });
     },
-    onError: (error) => {
-      toast.error("Error creating workflow", {
-        description: "Please try again",
-        duration: 2000,
-        id: "create_workflow",
-      });
-    },
   });
   return { ...mutation, createWorkflow: mutation.data?.createWorkflow };
 };
@@ -65,35 +58,30 @@ export const useDeleteWorkflow = () => {
         id: "delete_workflow",
       });
     },
-    onError: (error) => {
-      toast.error("Error deleting workflow", {
-        description: "Please try again",
-        duration: 2000,
-        id: "delete_workflow",
-      });
-      console.log("Error deleting workflow:", (error as Error).message);
-    },
   });
   return { ...mutation, deleteWorkflow: mutation.mutateAsync };
 };
 
 export const useUpdateWorkflow = (workflowId: string) => {
   const mutation = useMutation({
-    mutationFn: async ({id,payload}: {id: string; payload: UpdateWorkflowPayload;}) => {
-      try {
-        const { data } = await client.mutate({
-          mutation: UPDATE_WORKFLOW,
-          variables: { id, payload },
-        });
-        return data;
-      } catch (err) {
-        console.log("Error updating workflow:", (err as Error).message);
-        return null;
-      }
+    mutationFn: async ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateWorkflowPayload;
+    }) => {
+      const { data } = await client.mutate({
+        mutation: UPDATE_WORKFLOW,
+        variables: { id, payload },
+      });
+      return data;
     },
     onSuccess: async (data) => {
       await client.resetStore();
-      await queryclient.invalidateQueries({ queryKey: ["workflow", workflowId] });
+      await queryclient.invalidateQueries({
+        queryKey: ["workflow", workflowId],
+      });
       toast.success("Workflow Updated Successfully", {
         duration: 2000,
         id: "update_workflow",
@@ -101,11 +89,10 @@ export const useUpdateWorkflow = (workflowId: string) => {
     },
     onError: (error) => {
       toast.error("Error updating workflow", {
-        description: "Please try again",
+        description: (error as Error).message || "Please try again",
         duration: 2000,
         id: "update_workflow",
       });
-      console.log("Error updating workflow:", (error as Error).message);
     },
   });
   return { ...mutation };
@@ -114,17 +101,17 @@ export const useUpdateWorkflow = (workflowId: string) => {
 export const useRunWorkflow = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (form: {workflowId: string; flowDefinition?: string; name: string; executionPlan: string;}) => {
-      try {
-        const { data } = await client.mutate({
-          mutation: RUN_WORKFLOW,
-          variables: { form },
-        });
-        return data?.runWorkflow;
-      } catch (err) {
-        console.log("Error running workflow:", (err as Error).message);
-        return null;
-      }
+    mutationFn: async (form: {
+      workflowId: string;
+      flowDefinition?: string;
+      name: string;
+      executionPlan: string;
+    }) => {
+      const { data } = await client.mutate({
+        mutation: RUN_WORKFLOW,
+        variables: { form },
+      });
+      return data?.runWorkflow;
     },
     onSuccess: async () => {
       await client.resetStore();
@@ -136,11 +123,11 @@ export const useRunWorkflow = () => {
     },
     onError: (error) => {
       toast.error("Error running workflow", {
-        description: "Please try again",
+        description: (error as Error).message || "Please try again",
         duration: 2000,
         id: "run_workflow",
       });
-      console.log("Error running workflow:", (error as Error).message);
+      return null;
     },
   });
 };

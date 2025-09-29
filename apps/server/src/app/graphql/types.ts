@@ -172,14 +172,29 @@ type ExecutionPhase {
   action: AvailableAction
 }
 
+enum ExecutionPhaseStatus {
+  CREATED
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 type ExecutionLog {
   id: ID!
   executionPhaseId: String!
-  logLevel: String!
+  logLevel: LogLevel!
   message: String!
   timestamp: DateTime!
 
   phase: ExecutionPhase!
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
 }
 
 type Credential {
@@ -273,6 +288,10 @@ input updateWorkflowPayload{
   description: String
 }
 
+type createWorkflowResponse {
+  id: ID!
+}
+
 input runWorkflowPayload {
   workflowId: ID!
   flowDefinition: String
@@ -285,5 +304,4 @@ type ActionsAndTrigger {
   actions: [AvailableAction!]!
 }
 `;
-
 

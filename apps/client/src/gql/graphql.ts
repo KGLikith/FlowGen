@@ -163,10 +163,9 @@ export enum LogLevel {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createWorkflow: Workflow;
+  createWorkflow?: Maybe<Workflow>;
   deleteWorkflow: Scalars['Boolean']['output'];
-  initializeWorkflowExecution: Scalars['Boolean']['output'];
-  runWorkflow: WorkflowExecution;
+  runWorkflow?: Maybe<WorkflowExecution>;
   updateWorkflow: Scalars['Boolean']['output'];
 };
 
@@ -178,12 +177,6 @@ export type MutationCreateWorkflowArgs = {
 
 export type MutationDeleteWorkflowArgs = {
   id: Scalars['ID']['input'];
-};
-
-
-export type MutationInitializeWorkflowExecutionArgs = {
-  executionId: Scalars['ID']['input'];
-  workflowId: Scalars['ID']['input'];
 };
 
 
@@ -219,7 +212,7 @@ export type Query = {
   getUserByClerkId?: Maybe<User>;
   getWorkflow?: Maybe<Workflow>;
   getWorkflowExecution?: Maybe<WorkflowExecution>;
-  getWorkflows: Array<Workflow>;
+  getWorkflows?: Maybe<Array<Workflow>>;
 };
 
 
@@ -407,7 +400,7 @@ export type CreateWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type CreateWorkflowMutation = { __typename?: 'Mutation', createWorkflow: { __typename?: 'Workflow', id: string, name: string, status: WorkflowStatus, definition?: string | null, description?: string | null, createdAt?: any | null, updatedAt?: any | null, creditsCost: number, lastRunAt?: any | null, lastRunId?: string | null, nextRunAt?: any | null, userId?: string | null } };
+export type CreateWorkflowMutation = { __typename?: 'Mutation', createWorkflow?: { __typename?: 'Workflow', id: string } | null };
 
 export type DeleteWorkflowMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -429,12 +422,12 @@ export type RunWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type RunWorkflowMutation = { __typename?: 'Mutation', runWorkflow: { __typename?: 'WorkflowExecution', id: string } };
+export type RunWorkflowMutation = { __typename?: 'Mutation', runWorkflow?: { __typename?: 'WorkflowExecution', id: string } | null };
 
 export type GetWorkflowsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetWorkflowsQuery = { __typename?: 'Query', getWorkflows: Array<{ __typename?: 'Workflow', id: string, name: string, status: WorkflowStatus, definition?: string | null, description?: string | null, createdAt?: any | null, updatedAt?: any | null, creditsCost: number, lastRunAt?: any | null, lastRunId?: string | null, nextRunAt?: any | null, userId?: string | null }> };
+export type GetWorkflowsQuery = { __typename?: 'Query', getWorkflows?: Array<{ __typename?: 'Workflow', id: string, name: string, status: WorkflowStatus, definition?: string | null, description?: string | null, createdAt?: any | null, updatedAt?: any | null, creditsCost: number, lastRunAt?: any | null, lastRunId?: string | null, nextRunAt?: any | null, userId?: string | null }> | null };
 
 export type GetWorkflowQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -473,7 +466,7 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', id: string } | null };
 
 
-export const CreateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"createWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"definition"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"creditsCost"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastRunId"}},{"kind":"Field","name":{"kind":"Name","value":"nextRunAt"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]} as unknown as DocumentNode<CreateWorkflowMutation, CreateWorkflowMutationVariables>;
+export const CreateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"createWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateWorkflowMutation, CreateWorkflowMutationVariables>;
 export const DeleteWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteWorkflowMutation, DeleteWorkflowMutationVariables>;
 export const UpdateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"updateWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkflowMutation, UpdateWorkflowMutationVariables>;
 export const RunWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RunWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"form"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"runWorkflowPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"runWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"form"},"value":{"kind":"Variable","name":{"kind":"Name","value":"form"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RunWorkflowMutation, RunWorkflowMutationVariables>;

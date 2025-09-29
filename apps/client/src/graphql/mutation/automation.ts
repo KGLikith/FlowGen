@@ -5,17 +5,6 @@ export const CREATE_WORKFLOW = graphql(`
     mutation CreateWorkflow($payload: createWorkflowPayload!) {
         createWorkflow(payload: $payload) {
             id
-            name
-            status
-            definition
-            description
-            createdAt
-            updatedAt
-            creditsCost
-            lastRunAt
-            lastRunId
-            nextRunAt
-            userId
         }
     }
 `)

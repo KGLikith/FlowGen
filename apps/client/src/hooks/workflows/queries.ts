@@ -8,6 +8,7 @@ import {
   GET_WORKFLOWS,
 } from "@/graphql/query/automation";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useGetWorkflow = (workflowId: string) => {
   const query = useQuery({
@@ -21,6 +22,11 @@ export const useGetWorkflow = (workflowId: string) => {
         return res.data;
       } catch (err) {
         console.log("Error fetching workflow:", (err as Error).message);
+        toast.error("Error fetching workflow", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_workflow",
+        });
         return {
           getWorkflow: null,
         };
@@ -41,6 +47,11 @@ export const useGetWorkflows = () => {
         return res.data;
       } catch (err) {
         console.log("Error fetching workflows:", (err as Error).message);
+        toast.error("Error fetching workflows", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_workflows",
+        });
         return {
           getWorkflows: [],
         };
@@ -62,6 +73,12 @@ export const useGetAvailableTriggers = (triggerId?: string) => {
         return res.data;
       } catch (err) {
         console.log(err);
+        toast.error("Error fetching available triggers", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_available_triggers",
+        });
+
         return null;
       }
     },
@@ -81,6 +98,11 @@ export const useGetAvailableActions = () => {
         return res.data;
       } catch (err) {
         console.log(err);
+        toast.error("Error fetching available actions", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_available_actions",
+        });
         return null;
       }
     },
@@ -91,7 +113,6 @@ export const useGetAvailableActions = () => {
 export const useGetAvailableActionsForTrigger = (
   triggerId: string | undefined
 ) => {
-  
   return useQuery({
     queryKey: ["AvailableActions", triggerId],
     queryFn: async () => {
@@ -106,6 +127,12 @@ export const useGetAvailableActionsForTrigger = (
         return res.data?.getAvailableActionsForTrigger;
       } catch (err) {
         console.log(err);
+        toast.error("Error fetching available actions", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_available_actions",
+        });
+
         return null;
       }
     },
@@ -121,17 +148,26 @@ export const useGetWorkflowExecutionWithPhases = (executionId: string) => {
         const res = await client.query({
           query: GET_WORKFLOW_EXECUTION,
           variables: { executionId },
-          fetchPolicy: "network-only"
+          fetchPolicy: "network-only",
         });
         return res.data;
       } catch (err) {
-        console.log("Error fetching workflow execution:", (err as Error).message);
+        console.log(
+          "Error fetching workflow execution:",
+          (err as Error).message
+        );
+        toast.error("Error fetching workflow execution", {
+          description: (err as Error).message || "Please try again",
+          duration: 2000,
+          id: "fetch_workflow_execution",
+        });
+
         return {
           getWorkflowExecution: null,
         };
       }
     },
-    refetchInterval: 3000
+    refetchInterval: 3000,
   });
   return { ...query, workflowExecution: query.data?.getWorkflowExecution };
 };

@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
 import { useDeleteWorkflow } from "@/hooks/workflows/mutation"
+import { toast } from "sonner"
 
 type Props = {
     workflowId: string
@@ -30,7 +31,16 @@ export default function DeleteWorkflowDialog({ workflowId, workflowName, trigger
     const handleDelete = async () => {
         setIsLoading(true)
         try {
-            await mutateAsync({ id: workflowId });
+            const data = await mutateAsync({ id: workflowId });
+            if(!data?.deleteWorkflow){
+                toast.error("Error deleting workflow", {
+                    description: "Please try again",
+                    duration: 2000,
+                    id: "delete_workflow",
+                });
+                setIsLoading(false)
+                return
+            }
             setOpen(false)
             setIsLoading(false)
         } catch (error) {

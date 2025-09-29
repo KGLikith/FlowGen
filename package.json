@@ -21,7 +21,8 @@
     "server:build": "npm run build --workspace=@automation/server",
     "server:start": "npm run start --workspace=@automation/server",
     "worker:dev": "npm run dev --workspace=@automation/worker",
-    "processor:dev": "npm run dev --workspace=@automation/processor"
+    "processor:dev": "npm run dev --workspace=@automation/processor",
+    "dev": "concurrently -n client,server,worker,processor -c green,blue,yellow,magenta \"npm run client:dev\" \"npm run server:dev\" \"npm run worker:dev\" \"npm run processor:dev\""
   },
   "repository": {
     "type": "git",
@@ -34,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/KGLikith/FlowGen/issues"
   },
-  "homepage": "https://github.com/KGLikith/FlowGen#readme"
+  "homepage": "https://github.com/KGLikith/FlowGen#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

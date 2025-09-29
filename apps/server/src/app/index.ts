@@ -14,6 +14,7 @@ import { execute, subscribe } from "graphql";
 import { pubsub } from "../clients/pubsub";
 import { prisma } from "@automation/db";
 import { GraphqlData } from "./graphql";
+import userService from "./services/user";
 
 EventEmitter.defaultMaxListeners = 100;
 
@@ -24,8 +25,8 @@ export default async function initServer() {
   app.use(clerkMiddleware());
 
   // type Mutation {
-      //   ${User.mutations}
-      // }
+  //   ${User.mutations}
+  // }
 
   const schema = makeExecutableSchema({
     typeDefs: `
@@ -47,11 +48,11 @@ export default async function initServer() {
       DateTime: DateTimeResolver,
 
       Query: {
-        ...GraphqlData.resolvers.queries
+        ...GraphqlData.resolvers.queries,
       },
       Mutation: {
-        ...GraphqlData.resolvers.mutations
-      }
+        ...GraphqlData.resolvers.mutations,
+      },
     },
   });
 
@@ -68,9 +69,7 @@ export default async function initServer() {
       execute,
       subscribe,
       context: async (ctx) => {
-        console.log("hello")
         const token = ctx.connectionParams?.authorization as string | undefined;
-        console.log(token)
         let auth = null;
         if (token) {
           auth = getAuth({ headers: { authorization: token } } as any);
@@ -108,25 +107,14 @@ export default async function initServer() {
         let user = null;
 
         if (auth.userId) {
-          user = await prisma.user.upsert({
-            where: { clerkId: auth.userId },
-            update: {},
-            create: {
-              clerkId: auth.userId,
-              UserBalance: {
-                create: {
-                  credits: 10,
-                },
-              },
-            },
-          });
+          user = await userService.upsertUser(auth.userId);
         }
 
         return {
           req,
           res,
           clerkId: auth.userId,
-          pubsub
+          pubsub,
         };
       },
     })
