@@ -10,12 +10,13 @@ import { formatDate, getStatusBadge, getStatusIcon } from "./helpers"
 import DeleteWorkflowDialog from "./deleteWorkflowDialog"
 import CreateWorkflowDialog from "./createWorkflowDialog"
 import WorkflowSkeleton from "@/components/skeletons/Workflow"
+import { useRouter } from "next/navigation"
 
 export default function UserWorkflows() {
   const [workflows, setWorkflows] = useState<Workflow[]>([])
-
+  const router = useRouter();
   const { workflowData, isLoading, error } = useGetWorkflows()
- 
+
   useEffect(() => {
     if (workflowData) {
       setWorkflows(workflowData)
@@ -70,8 +71,8 @@ export default function UserWorkflows() {
                   Run
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1 bg-transparent hover:bg-primary/5 cursor-pointer"
-                  onClick={()=>{
-                    window.location.href = `/workflow/editor/${workflow.id}`
+                  onClick={() => {
+                    router.push(`/workflow/${workflow.id}/editor`)
                   }}
                 >
                   <Edit className="h-3 w-3" />

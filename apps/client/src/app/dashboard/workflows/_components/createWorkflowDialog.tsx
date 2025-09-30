@@ -73,7 +73,7 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
       }
       setOpen(false)
       form.reset()
-      router.push(`/workflow/editor/${res?.createWorkflow.id}`)
+      router.push(`/workflow/${res?.createWorkflow.id}/editor`)
 
     } catch (error) {
       console.error("Failed to create workflow:", error)

@@ -30,7 +30,7 @@ export default function ExecButton({ workflowId }: Props) {
                     flowDefinition: JSON.stringify(toObject()),
                 })
                 if(!data) return;
-                router.push(`/workflow/runs/${workflowId}/${data.id}`)
+                router.push(`/workflow/${workflowId}/runs/${data.id}`)
             }}
         >
             <PlayIcon size={16} className='stroke-orange-400' />
