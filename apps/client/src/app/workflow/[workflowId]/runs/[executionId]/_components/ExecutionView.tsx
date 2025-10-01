@@ -5,7 +5,7 @@ import { useGetWorkflowExecutionWithPhases } from "@/hooks/workflows/queries"
 import { useState, useEffect } from "react"
 import type { ExecutionPhase, WorkflowExecution } from "@/gql/graphql"
 import PageNotExist from "@/components/page_not_exist"
-import TopBar from "@/app/workflow/_components/topBar/TopBar"
+import TopBar from '@/app/workflow/[workflowId]/_components/topBar/TopBar';
 import ExecutionDetails from "./ExecutionDetails"
 import ExecutionPhases from "./ExecutionPhases"
 import PhaseDetails from "./PhaseDetails"
@@ -60,7 +60,7 @@ export default function ExecutionView({ executionId, workflowId }: Props) {
 
     return (
         <div className="flex flex-col h-screen w-full overflow-hidden">
-            <TopBar title="Workflow run details" subtitle={`Run ID: ${executionId}`} workflowId={workflowId} hideButtons />
+            <TopBar title="Workflow run details" subtitle={workflowExecution.workflow?.name} workflowId={workflowId} hideButtons />
             <section className="flex h-full overflow-auto">
                 <div className="w-80 min-w-80 border-r border-border bg-background p-3 overflow-y-auto">
                     <div className="space-y-3">

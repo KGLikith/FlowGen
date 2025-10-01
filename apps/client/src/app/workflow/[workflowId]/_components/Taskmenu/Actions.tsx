@@ -3,13 +3,16 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import TaskButton from './Button'
 import { AvailableAction } from '@/gql/graphql'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
+import { X } from 'lucide-react'
 
 type Props = {
     actions: AvailableAction[]
     isLoading: boolean
+    onClose: () => void
 }
 
-export default function Actions({ actions, isLoading }: Props) {
+export default function Actions({ actions, isLoading, onClose }: Props) {
 
     if (isLoading) {
         return <div className="space-y-3">
@@ -23,7 +26,13 @@ export default function Actions({ actions, isLoading }: Props) {
 
     return (
         <Accordion type="multiple" className='w-full' defaultValue={["Extraction"]}>
-            <div className='font-bold text-lg'>Actions</div>
+            <div className='flex items-center justify-between mb-1'>
+                <div className='font-bold text-lg'>Actions</div>
+                <Button size="icon" variant="ghost" onClick={onClose} aria-label="Close task menu">
+                    <X className="size-4" />
+                </Button>
+
+            </div>
             <div className="text-xs text-foreground">Please <span className="font-bold">drag and drop</span> the desired action into the workflow canvas.</div>
             <AccordionItem value="Extraction">
                 <AccordionTrigger className="font-bold cursor-pointer">Data Extraction</AccordionTrigger>
@@ -31,7 +40,7 @@ export default function Actions({ actions, isLoading }: Props) {
                     {actions.map(action => (
                         <TaskButton credits={action.taskInfo.credits} key={action.id} taskType={action.key} taskId={action.id} trigger={false} taskIcon={action.taskInfo.icon as string} taskLabel={action.taskInfo.label} />
                     ))}
-                </AccordionContent>  
+                </AccordionContent>
             </AccordionItem>
         </Accordion>
     )

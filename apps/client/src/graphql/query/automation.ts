@@ -186,6 +186,9 @@ export const GET_WORKFLOW_EXECUTION = graphql(`
       startedAt
       completedAt
       creditsConsumed
+      workflow {
+        name
+      }
       phases {
         id
         status
@@ -206,3 +209,17 @@ export const GET_WORKFLOW_EXECUTION = graphql(`
     }
   }
 `);
+
+export const GET_WORKFLOW_EXECUTIONS = graphql(`
+  query getWorkflowExecutions($workflowId: ID!) {
+    getWorkflowExecutions(workflowId: $workflowId) {
+      id
+      status 
+      startedAt
+      completedAt
+      trigger
+      creditsConsumed
+    }
+  }
+`);
+      

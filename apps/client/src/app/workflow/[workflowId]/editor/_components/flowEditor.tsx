@@ -1,5 +1,3 @@
-import DeletableEdge from "@/app/workflow/_components/edges/deletableEdge"
-import NodeComponent from "@/app/workflow/_components/nodes/Component"
 import { useTrigger } from "@/components/context/TaskProvider"
 import { ActionKey, TriggerKey, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
@@ -8,6 +6,8 @@ import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, get
 import "@xyflow/react/dist/style.css"
 import { useCallback, useEffect } from "react"
 import { toast } from "sonner"
+import NodeComponent from "@/app/workflow/[workflowId]/_components/nodes/Component"
+import DeletableEdge from "@/app/workflow/[workflowId]/_components/edges/deletableEdge"
 
 type Props = {
   workflow: Workflow

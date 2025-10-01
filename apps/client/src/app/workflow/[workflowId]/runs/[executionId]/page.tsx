@@ -1,4 +1,3 @@
-import TopBar from '@/app/workflow/_components/topBar/TopBar';
 import React from 'react'
 import ExecutionView from './_components/ExecutionView';
 

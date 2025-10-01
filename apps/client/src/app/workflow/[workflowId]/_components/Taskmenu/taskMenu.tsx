@@ -5,18 +5,18 @@ import Triggers from './Triggers'
 import Actions from './Actions'
 import { useTrigger } from '@/components/context/TaskProvider'
 
-export default function TaskMenu() {
+export default function TaskMenu({ onClose }: { onClose: () => void }) {
    const { currentTriggerId, actions, actionsLoading } = useTrigger();
    const { triggers, isLoading } = useGetAvailableTriggers(currentTriggerId);
 
    return (
-      <aside className='w-[250px] min-w-[250px] max-w-[250px] border-r-2 border-separate h-full p-2 px-4 overflow-auto'>
+      <aside className='w-[280px] min-w-[280px] max-w-[280px] border-r-2 border-separate h-full p-2 px-4 overflow-auto'>
          {!currentTriggerId ?
             <>
-               <Triggers availableTriggers={triggers as AvailableTrigger[]} isLoading={isLoading} />
+               <Triggers availableTriggers={triggers as AvailableTrigger[]} isLoading={isLoading} onClose={onClose} />
             </>
             : <>
-               <Actions actions={actions} isLoading={actionsLoading} />
+               <Actions actions={actions} isLoading={actionsLoading} onClose={onClose} />
             </>}
       </aside>
    )

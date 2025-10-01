@@ -129,5 +129,13 @@ export const useRunWorkflow = () => {
       });
       return null;
     },
+    onMutate: () => {
+      toast.loading("Starting Workflow...", {
+        duration: 2000,
+        id: "run_workflow",
+      });
+    },
   });
 };
+
+
