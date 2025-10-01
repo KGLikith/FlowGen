@@ -101,7 +101,6 @@ function main() {
                         status: db_1.ExecutionPhaseStatus.RUNNING,
                         startedAt,
                     });
-                    let executionFailed = true;
                     let creditsConsumed = 0;
                     creditsConsumed = node.data.credits || 0;
                     // TODO
@@ -111,7 +110,7 @@ function main() {
                     let success = false;
                     if (!userBalanceUpdateResult.success) {
                         logCollector.ERROR(userBalanceUpdateResult.error || "Insufficient credit balance");
-                        executionFailed = true;
+                        success = true;
                     }
                     else {
                         success = yield (0, executePhase_1.executePhase)(phase, node, environment, edges, logCollector);
@@ -135,16 +134,15 @@ function main() {
                         },
                     });
                     if (stage === executionWithPhases._count.phases) {
-                        console.log("last stage reached, updating execution status");
                         yield (0, executionEnvironment_1.cleanupEnvironment)(executionId);
                         yield (0, updateWorkflowExecution_1.updateWorkflowExecution)(executionId, {
-                            status: executionFailed
+                            status: success
                                 ? db_1.WorkflowExecutionStatus.FAILED
                                 : db_1.WorkflowExecutionStatus.COMPLETED,
                             completedAt: new Date(),
                             workflow: {
                                 update: {
-                                    lastRunStatus: executionFailed
+                                    lastRunStatus: success
                                         ? db_1.WorkflowExecutionStatus.FAILED
                                         : db_1.WorkflowExecutionStatus.COMPLETED,
                                 },

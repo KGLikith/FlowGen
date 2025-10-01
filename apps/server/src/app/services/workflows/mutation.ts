@@ -53,7 +53,7 @@ export default class WorkflowMutationService {
         throw new Error("Workflow not found.");
       }
       if (workflow.status !== WorkflowStatus.DRAFT) {
-        throw new Error("Cannot update a DRAFT workflow");
+        throw new Error("Cannot update a active workflow");
       }
       await prisma.workflow.update({
         where: { id },
@@ -70,41 +70,76 @@ export default class WorkflowMutationService {
     }
   }
 
+  public static async publishWorkflow(form: {
+    workflowId: string;
+    executionPlan: string;
+    flowDefinition: string;
+  }) {
+    try {
+      const plan: workflowExecutionPlan = JSON.parse(form.executionPlan);
+
+      if (!plan || plan.length === 0) {
+        throw new Error("Invalid execution plan.");
+      }
+
+      const creditsCost = plan.reduce((total, phase) => {
+        return (
+          total +
+          phase.nodes.reduce((nodeTotal, node) => {
+            return nodeTotal + (node.data.credits || 0);
+          }, 0)
+        );
+      }, 0);
+
+      const workflow = await prisma.workflow.update({
+        where: { id: form.workflowId },
+        data: {
+          definition: form.flowDefinition,
+          executionPlan: form.executionPlan,
+          status: WorkflowStatus.ACTIVE,
+          creditsCost,
+          updatedAt: new Date(),
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (!workflow) return false;
+      return true;
+    } catch (error) {
+      console.error("Error publishing workflow:", error);
+      throw new Error("Error publishing workflow. Please try again later.");
+    }
+  }
+
   public static async runWorkflow(form: {
     workflowId: string;
-    name: string;
     executionPlan: string;
     flowDefinition?: string;
   }) {
     try {
-      const { workflowId, flowDefinition, executionPlan, name } = form;
+      const { workflowId, flowDefinition, executionPlan } = form;
       const workflow = await prisma.workflow.findUnique({
         where: { id: form.workflowId },
-        select: { userId: true },
+        select: { userId: true, definition: true },
       });
-
       if (!workflow) {
         throw new Error("Workflow not found.");
       }
 
-      if (!flowDefinition) {
-        throw new Error(
-          "Server side error: Missing flow definition. Please try again later."
-        );
+      const plan: workflowExecutionPlan = JSON.parse(form.executionPlan);
+
+      if (flowDefinition && executionPlan) {
+        await prisma.workflow.update({
+          where: { id: workflowId },
+          data: {
+            definition: flowDefinition,
+            executionPlan: executionPlan,
+          },
+        });
       }
 
-    //   const flow = JSON.parse(flowDefinition);
-      const plan: workflowExecutionPlan = JSON.parse(executionPlan);
-
-      await prisma.workflow.update({
-        where: { id: workflowId },
-        data: {
-          definition: flowDefinition,
-          executionPlan: executionPlan,
-        },
-      });
-
-      const execution = prisma.$transaction(async (tx) => {
+      const execution = await prisma.$transaction(async (tx) => {
         const execution = await tx.workflowExecution.create({
           data: {
             workflowId,
@@ -112,7 +147,7 @@ export default class WorkflowMutationService {
             status: WorkflowExecutionStatus.PENDING,
             trigger: WorkflowExecutionType.MANUAL,
             creditsConsumed: 0,
-            definition: flowDefinition,
+            definition: flowDefinition || workflow.definition,
             phases: {
               create: plan.flatMap((phase) => {
                 return phase.nodes.flatMap((node) => {
@@ -154,6 +189,34 @@ export default class WorkflowMutationService {
     } catch (error) {
       console.error("Error running workflow:", error);
       throw new Error("Error running workflow. Please try again later.");
+    }
+  }
+
+  public static async unpublishWorkflow(id: string) {
+    try {
+      const workflow = await prisma.workflow.findUnique({
+        where: { id },
+        select: { status: true },
+      });
+      if (!workflow) {
+        throw new Error("Workflow not found.");
+      }
+      if (workflow.status !== WorkflowStatus.ACTIVE) {
+        throw new Error("Only ACTIVE workflows can be unpublished.");
+      }
+
+      await prisma.workflow.update({
+        where: { id },
+        data: {
+          status: WorkflowStatus.DRAFT,
+          executionPlan: null,
+          creditsCost: 0,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error("Error unpublishing workflow:", error);
+      throw new Error("Error unpublishing workflow. Please try again later.");
     }
   }
 }

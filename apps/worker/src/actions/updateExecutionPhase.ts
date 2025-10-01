@@ -13,7 +13,6 @@ export const updateExecutionPhase = async (
   payload: Partial<ExecutionPhaseUpdatePayload>
 ) => {
   try {
-    console.log("hello");
     await prisma.executionPhase.update({
       where: { id: executionId },
       data: payload,

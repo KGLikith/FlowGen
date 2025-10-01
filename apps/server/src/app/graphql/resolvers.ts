@@ -133,7 +133,6 @@ const mutations = {
     }: {
       form: {
         workflowId: string;
-        name: string;
         executionPlan: string;
         flowDefinition?: string;
       };
@@ -143,6 +142,28 @@ const mutations = {
     if (!context.clerkId) throw new Error("Unauthorized");
     return await WorkflowMutationService.runWorkflow(form);
   },
+
+  publishWorkflow: async (
+    _: any,
+    { form }: { form: {
+      workflowId: string;
+      executionPlan: string
+      flowDefinition: string
+    } },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await WorkflowMutationService.publishWorkflow(form);
+  },
+
+  unpublishWorkflow: async (
+    _: any,
+    { id }: { id: string },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await WorkflowMutationService.unpublishWorkflow(id);
+  }
 };
 
 export const resolvers = {

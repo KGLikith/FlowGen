@@ -126,7 +126,6 @@ async function main() {
           startedAt,
         });
 
-        let executionFailed = true;
         let creditsConsumed = 0;
 
         creditsConsumed = node.data.credits || 0;
@@ -147,7 +146,7 @@ async function main() {
           logCollector.ERROR(
             userBalanceUpdateResult.error || "Insufficient credit balance"
           );
-          executionFailed = true;
+          success = true;
         } else {
           success = await executePhase(
             phase,
@@ -178,18 +177,17 @@ async function main() {
         });
 
         if (stage === executionWithPhases._count.phases) {
-          console.log("last stage reached, updating execution status");
 
           await cleanupEnvironment(executionId);
 
           await updateWorkflowExecution(executionId, {
-            status: executionFailed
+            status: success
               ? WorkflowExecutionStatus.FAILED
               : WorkflowExecutionStatus.COMPLETED,
             completedAt: new Date(),
             workflow: {
               update: {
-                lastRunStatus: executionFailed
+                lastRunStatus: success
                   ? WorkflowExecutionStatus.FAILED
                   : WorkflowExecutionStatus.COMPLETED,
               },

@@ -295,7 +295,6 @@ type createWorkflowResponse {
 input runWorkflowPayload {
   workflowId: ID!
   flowDefinition: String
-  name: String!
   executionPlan: String!
 }
 
@@ -304,4 +303,3 @@ type ActionsAndTrigger {
   actions: [AvailableAction!]!
 }
 `;
-
