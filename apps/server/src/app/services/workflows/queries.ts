@@ -117,6 +117,12 @@ export default class WorkflowQueriesService {
       const execution = await prisma.workflowExecution.findUnique({
         where: { id: executionId },
         include: {
+          workflow: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
           phases: {
             orderBy: {
               number: "asc",
@@ -131,6 +137,22 @@ export default class WorkflowQueriesService {
     } catch (error) {
       throw new Error(
         "Error fetching workflow execution details. Please try again later."
+      );
+    }
+  }
+
+  public static async getWorkflowExecutions(workflowId: string) {
+    try {
+      const executions = await prisma.workflowExecution.findMany({
+        where: { workflowId },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return executions;
+    } catch (err) {
+      throw new Error(
+        "Error fetching workflow executions. Please try again later."
       );
     }
   }

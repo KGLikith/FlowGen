@@ -74,6 +74,16 @@ const queries = {
     return await WorkflowQueriesService.getWorkflowExecution(executionId);
   },
 
+  getWorkflowExecutions: async (
+    __: any,
+    { workflowId }: { workflowId: string },
+    context: GraphqlContext
+  ) => {
+    const clerkId = context.clerkId;
+    if (!clerkId) throw new Error("Unauthorized");
+    return await WorkflowQueriesService.getWorkflowExecutions(workflowId);
+  },
+
   getExecutionPhaseDetails: async (
     __: any,
     { phaseId }: { phaseId: string },
