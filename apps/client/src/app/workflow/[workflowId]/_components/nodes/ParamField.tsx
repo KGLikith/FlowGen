@@ -5,6 +5,7 @@ import { useReactFlow } from '@xyflow/react'
 import { AppNode } from '@/schema/appNode'
 import BrowserInstanceParam from './param/BrowserInstanceParam'
 import { TaskParam, TaskParamType } from '@/gql/graphql'
+import { useWorkflow } from '@/components/context/WorkflowProvider'
 
 type Props = {
     param: TaskParam
@@ -14,6 +15,7 @@ type Props = {
 
 export default function NodeParamField({ param, nodeId, disabled }: Props) {
     const { updateNodeData, getNode } =  useReactFlow();
+    const { workflow} = useWorkflow();
     const node = getNode(nodeId) as AppNode;
     const value = node?.data.inputs?.[param.name] || ''
 
@@ -28,7 +30,7 @@ export default function NodeParamField({ param, nodeId, disabled }: Props) {
 
     switch (param.type) {
         case TaskParamType.String:
-            return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled} />
+            return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled} status={workflow?.status} />
         case TaskParamType.BrowserInstance:
             return <BrowserInstanceParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} />
         default:

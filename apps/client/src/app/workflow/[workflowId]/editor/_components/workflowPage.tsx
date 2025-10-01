@@ -4,10 +4,11 @@ import { useGetWorkflow } from "@/hooks/workflows/queries"
 import Loader from "@/components/loader"
 import { ArrowLeft, FileX } from "lucide-react"
 import Editor from "./editor"
-import { TriggerContextProvider } from "@/components/context/TaskProvider"
+import { useWorkflow, WorkflowContextProvider } from "@/components/context/WorkflowProvider"
 import Unauthorized from "@/components/unauthorized"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 type Props = {
   workflowId: string
@@ -15,10 +16,14 @@ type Props = {
 
 export default function WorkflowPage({ workflowId }: Props) {
   const { user, isLoading: isLoadingUser } = useGetCurrentUser()
-  const { workflow, isLoading: isLoadingWorkflow } = useGetWorkflow(workflowId)
   const router = useRouter()
+  const { setWorkflowId, isWorkflowLoading, workflow } = useWorkflow();
 
-  if (isLoadingUser || isLoadingWorkflow) {
+  useEffect(()=>{
+    setWorkflowId(workflowId);
+  },[workflowId, setWorkflowId])
+
+  if (isLoadingUser || isWorkflowLoading) {
     return (
       <Loader />
     )
@@ -56,8 +61,7 @@ export default function WorkflowPage({ workflowId }: Props) {
 
   return (
     <>
-      <TriggerContextProvider>
         <Editor workflow={workflow} currentUser={user} />
-      </TriggerContextProvider>
-    </>)
+    </>
+  )
 }

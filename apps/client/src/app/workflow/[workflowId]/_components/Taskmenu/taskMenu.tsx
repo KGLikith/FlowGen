@@ -3,10 +3,10 @@ import { AvailableTrigger } from '@/gql/graphql'
 import { useGetAvailableTriggers } from '@/hooks/workflows/queries'
 import Triggers from './Triggers'
 import Actions from './Actions'
-import { useTrigger } from '@/components/context/TaskProvider'
+import { useWorkflow } from '@/components/context/WorkflowProvider'
 
 export default function TaskMenu({ onClose }: { onClose: () => void }) {
-   const { currentTriggerId, actions, actionsLoading } = useTrigger();
+   const { currentTriggerId, actions, actionsLoading } = useWorkflow();
    const { triggers, isLoading } = useGetAvailableTriggers(currentTriggerId);
 
    return (

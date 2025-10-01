@@ -31,3 +31,17 @@ export const RUN_WORKFLOW = graphql(`
         }
     }
 `)
+
+export const PUBLISH_WORKFLOW = graphql(`
+    #graphql
+    mutation PublishWorkflow($form: runWorkflowPayload!) {
+        publishWorkflow(form: $form) 
+    }
+`)
+
+export const UNPUBLISH_WORKFLOW = graphql(`
+    #graphql
+    mutation UnpublishWorkflow($id: ID!) {
+        unpublishWorkflow(id: $id)
+    }
+`)

@@ -33,6 +33,7 @@ export const useGetWorkflow = (workflowId: string) => {
         };
       }
     },
+    enabled: !!workflowId,
   });
   return { ...query, workflow: query.data?.getWorkflow };
 };

@@ -1,4 +1,4 @@
-import { useTrigger } from "@/components/context/TaskProvider"
+import { useWorkflow } from "@/components/context/WorkflowProvider"
 import { ActionKey, TriggerKey, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { AppNode } from "@/schema/appNode"
@@ -29,7 +29,7 @@ export default function FlowEditor({ workflow }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow()
-  const { setCurrentTriggerId, actions, trigger } = useTrigger()
+  const { setCurrentTriggerId, actions, trigger } = useWorkflow()
 
   useEffect(() => {
     try {
@@ -56,7 +56,6 @@ export default function FlowEditor({ workflow }: Props) {
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     const data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
-    console.log(data)
     const { type, taskId, trigger, credits } = data;
 
     if (typeof type === 'undefined' || !type) {
@@ -65,7 +64,6 @@ export default function FlowEditor({ workflow }: Props) {
 
     if (trigger) {
       const hasTrigger = nodes.some(node => node.data.trigger === true);
-      console.log(hasTrigger)
       if (hasTrigger) {
         toast.error("Only one trigger node is allowed.");
         return;
@@ -80,7 +78,6 @@ export default function FlowEditor({ workflow }: Props) {
     });
     
     const newNode = CreateFlowNode(type as ActionKey | TriggerKey, credits, pos, trigger === true ? "TRIGGER" : "ACTION", taskId)
-    console.log(newNode)
     setNodes((nds) => nds.concat(newNode))
 
   }, [screenToFlowPosition, setNodes])

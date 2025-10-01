@@ -18,13 +18,12 @@ export default function ExecutionItem({ workflowId, exec }: Props) {
       className="group flex items-center justify-between rounded-lg border bg-card px-4 py-3 shadow-sm hover:bg-muted/60 transition"
     >
       <div className="min-w-0 flex-1">
-        {/* Top row: status + trigger + credits */}
-        <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+        <div className="flex flex-wrap items-center gap-2 text-sm font-medium ">
           <StatusDot status={exec.status} />
-          <span>{exec.status}</span>
+          <span className='text-xs'>{exec.status}</span>
 
           {exec.trigger && (
-            <span className="text-muted-foreground text-xs px-2 py-0.5 rounded bg-muted">
+            <span className="text-muted-foreground text-xs px-1 py-0.5 rounded bg-muted">
               {exec.trigger}
             </span>
           )}
@@ -36,8 +35,7 @@ export default function ExecutionItem({ workflowId, exec }: Props) {
           )}
         </div>
 
-        {/* Bottom row: completed time */}
-        <div className="mt-1 text-xs text-muted-foreground truncate">
+        <div className="mt-1 text-xs text-foreground truncate">
           {finished ? formatDateTime(finished) : "—"}
         </div>
       </div>

@@ -27,6 +27,7 @@ export const GET_WORKFLOW = graphql(`
       status
       definition
       description
+      executionPlan
       createdAt
       updatedAt
       creditsCost

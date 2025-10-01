@@ -16,7 +16,7 @@ export function NodeInputs({ children }: Props) {
     )
 }
 
-export function NodeInput({ input, nodeId }: { input: TaskParam, nodeId: string }) {
+export function NodeInput({ input, nodeId}: { input: TaskParam, nodeId: string }) {
     const { invalidInputs } = useFlowValidation();
     const edges = useEdges();
     const isConnected = edges.some(edge => edge.target === nodeId && edge.targetHandle === input.name);

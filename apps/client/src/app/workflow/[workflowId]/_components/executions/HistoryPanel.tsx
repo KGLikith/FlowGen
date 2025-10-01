@@ -4,7 +4,7 @@ import { WorkflowExecution, WorkflowExecutionStatus } from '@/gql/graphql'
 import { useGetWorkflowExecutions } from '@/hooks/workflows/queries'
 import React, { useMemo, useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { X, Filter } from "lucide-react"
+import { X, Filter, Loader2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import ExecutionItem from './executionItem'
@@ -41,7 +41,10 @@ export default function HistoryPanel({ workflowId, onClose }: Props) {
   }, [data?.getWorkflowExecutions, range, status])
 
   if (isLoading) {
-    return <LoaderIc />
+    return <div className='flex h-full w-full justify-center items-center text-foreground '>
+      <Loader2 className='w-5 h-5 animate-spin' />
+    </div>
+      
   }
 
   if (!data) {

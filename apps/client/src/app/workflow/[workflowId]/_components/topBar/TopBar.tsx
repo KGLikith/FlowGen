@@ -5,15 +5,20 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import SaveButton from './SaveButton';
 import ExecButton from './ExecButton';
+import PublishButton from './PublishButton';
+import { WorkflowStatus } from '@/gql/graphql';
+import UnpublishButton from './UnpublishButton';
+import TestButton from './TestButton';
 
 type Props = {
   title: string
   subtitle?: string
   workflowId: string
   hideButtons?: boolean
+  workflowStaus?: WorkflowStatus
 }
 
-export default function TopBar({ title, subtitle, workflowId, hideButtons }: Props) {
+export default function TopBar({ title, subtitle, workflowId, hideButtons, workflowStaus }: Props) {
   const router = useRouter();
 
   return (
@@ -31,9 +36,21 @@ export default function TopBar({ title, subtitle, workflowId, hideButtons }: Pro
         </div>
       </div>
       {!hideButtons && <div className="flex gap-1 flex-1 justify-end">
-        <ExecButton workflowId={workflowId} />
-        <SaveButton workflowId={workflowId} />
+        {workflowStaus === WorkflowStatus.Active ? (
+          <>
+            <ExecButton workflowId={workflowId} />
+            <UnpublishButton workflowId={workflowId} />
+          </>
+        ) : (
+          <>
+            <TestButton workflowId={workflowId} />
+            <SaveButton workflowId={workflowId} />
+            <PublishButton workflowId={workflowId} />
+          </>
+        )
+
+        }
       </div>}
-    </header>
+    </header >
   )
 }

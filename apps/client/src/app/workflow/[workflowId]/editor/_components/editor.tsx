@@ -4,12 +4,11 @@ import { ReactFlowProvider } from '@xyflow/react'
 import FlowEditor from './flowEditor'
 import { FlowValidationContextProvider } from '@/components/context/flowValidationContxt'
 import { AppNode } from '@/schema/appNode'
-import { useTrigger } from '@/components/context/TaskProvider'
+import { useWorkflow } from '@/components/context/WorkflowProvider'
 import TopBar from "@/app/workflow/[workflowId]/_components/topBar/TopBar"
 import TaskMenu from "@/app/workflow/[workflowId]/_components/Taskmenu/taskMenu"
 import WorkflowSidebar from './sidebar'
 import HistoryPanel from '../../_components/executions/HistoryPanel'
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 
 type Props = {
     workflow: Workflow
@@ -18,7 +17,7 @@ type Props = {
 type ActivePanel = "task" | "history" | null
 
 export default function Editor({ workflow, currentUser }: Props) {
-    const { setCurrentTriggerId } = useTrigger()
+    const { setCurrentTriggerId } = useWorkflow()
     const [activePanel, setActivePanel] = useState<ActivePanel>("task")
 
     const flow = workflow.definition ? JSON.parse(workflow.definition) : null;
@@ -38,7 +37,7 @@ export default function Editor({ workflow, currentUser }: Props) {
             <ReactFlowProvider>
                 <div className="flex h-dvh w-full flex-col overflow-hidden bg-background text-foreground">
 
-                    <TopBar title="Workflow editor" subtitle={`Workflow ${workflow.name}`} workflowId={workflow.id} />
+                    <TopBar title="Workflow editor" subtitle={`Workflow ${workflow.name}`} workflowId={workflow.id} workflowStaus={workflow.status} />
                     <div className="flex h-full w-full overflow-hidden">
                         <WorkflowSidebar
                             active={activePanel}
@@ -47,14 +46,12 @@ export default function Editor({ workflow, currentUser }: Props) {
 
                         {activePanel ? activePanel === "task" ? (
                             <>
-                                {/* Task menu: small + resizable */}
                                 <TaskMenu onClose={() => setActivePanel(null)} />
                                 <FlowEditor workflow={workflow} currentUser={currentUser} />
                             </>
                         ) : (
                             <>
-                                {/* History panel: fixed width, not resizable */}
-                                <div className="w-[360px] max-w-sm border-r">
+                                <div className="w-[280px] max-w-sm border-r">
                                     <HistoryPanel workflowId={workflow.id} onClose={() => setActivePanel(null)} />
                                 </div>
                                 <div className="flex-1">

@@ -43,7 +43,7 @@ export function StatusDot({ status }: { status: WorkflowExecutionStatus }) {
     <span
       aria-hidden
       className={cn(
-        "inline-block size-2.5 rounded-full shadow-sm",
+        "inline-block size-2 rounded-full shadow-sm",
         colors[status] || "bg-gray-400"
       )}
     />

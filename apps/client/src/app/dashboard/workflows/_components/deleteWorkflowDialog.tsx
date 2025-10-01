@@ -33,11 +33,6 @@ export default function DeleteWorkflowDialog({ workflowId, workflowName, trigger
         try {
             const data = await mutateAsync({ id: workflowId });
             if(!data?.deleteWorkflow){
-                toast.error("Error deleting workflow", {
-                    description: "Please try again",
-                    duration: 2000,
-                    id: "delete_workflow",
-                });
                 setIsLoading(false)
                 return
             }

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useUpdateWorkflow } from '@/hooks/workflows/mutation';
 import { useReactFlow } from '@xyflow/react';
-import { CheckIcon, Loader } from 'lucide-react';
+import { CheckIcon,  Loader2 } from 'lucide-react';
 import React from 'react'
 import { toast } from 'sonner';
 
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default function SaveButton({ workflowId }: Props) {
-    const { toObject } = useReactFlow();
+    const { toObject } = useReactFlow()
 
     const { mutateAsync, isPending } = useUpdateWorkflow(workflowId);
 
@@ -24,7 +24,6 @@ export default function SaveButton({ workflowId }: Props) {
                 definition: wfDef,
             }
         });
-        // revalidatePath(`/workflow/${workflowId}`);
     };
 
     return (
@@ -37,7 +36,7 @@ export default function SaveButton({ workflowId }: Props) {
             {!isPending ? <>
                 <CheckIcon size={20} className='text-muted-foreground stroke-green-400' />
                 Save
-            </> : <Loader className='animate-spin' />
+            </> : <Loader2 className='animate-spin' />
             }
         </Button>
     )

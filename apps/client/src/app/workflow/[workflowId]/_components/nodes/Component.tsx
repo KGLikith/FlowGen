@@ -5,19 +5,19 @@ import NodeHeader from "./Header";
 import { AppNodeData } from "@/schema/appNode";
 import { NodeInput, NodeInputs } from "./Inputs";
 import NodeOutputs, { NodeOutput } from "./Outputs";
-import { useTrigger } from "@/components/context/TaskProvider";
+import { useWorkflow } from "@/components/context/WorkflowProvider";
 
 const NodeComponent = memo((props: NodeProps) => {
     const nodeData = props.data as AppNodeData;
-    const {allActions, trigger} = useTrigger();
-    
+    const { allActions, trigger } = useWorkflow();
+
     const task = [...(allActions || []), trigger].find(t => t?.key === nodeData.type)?.taskInfo;
 
     return <NodeCard nodeId={props.id} isSelected={!!props.selected} >
         <NodeHeader taskType={nodeData.type} nodeId={props.id} isTrigger={nodeData.trigger} />
         <NodeInputs>
             {task?.inputs?.map(input =>
-                <NodeInput key={input.name} input={input} nodeId={props.id} />
+                <NodeInput key={input.name} input={input} nodeId={props.id}  />
             )}
         </NodeInputs>
         <NodeOutputs>

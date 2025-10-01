@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { WorkflowStatus } from "@/gql/graphql";
 import { TaskParamProps } from "@/schema/task";
 import React, { useEffect, useId, useState } from "react";
 
@@ -8,7 +9,8 @@ export default function StringParam({
    param,
    value,
    updateNodeParamValue,
-   disabled
+   disabled,
+   status
 }: TaskParamProps) {
    const [stringValue, setStringValue] = useState(value);
    const id = useId();
@@ -30,7 +32,7 @@ export default function StringParam({
          </Label>
          <Component
             id={id}
-            disabled={disabled}
+            disabled={disabled|| status === WorkflowStatus.Active}
             placeholder="Enter value here"
             value={stringValue}
             onChange={(e: any) => {

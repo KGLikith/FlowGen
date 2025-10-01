@@ -4,14 +4,14 @@ import { useReactFlow } from "@xyflow/react"
 import { useCallback } from "react";
 import useFlowValidation from "./useFlowValidation";
 import { toast } from "sonner";
-import { useTrigger } from "@/components/context/TaskProvider";
+import { useWorkflow } from "@/components/context/WorkflowProvider";
 import { AvailableTrigger } from "@/gql/graphql";
 
 
 const useExecutionPlan = () => {
     const { toObject } = useReactFlow();
     const { setInvalidInputs, clearErrors, setInvalidNodes } = useFlowValidation();
-    const { trigger, actions } = useTrigger();
+    const { trigger, actions } = useWorkflow();
 
     const handleError = useCallback((error: any) => {
         switch (error.type) {

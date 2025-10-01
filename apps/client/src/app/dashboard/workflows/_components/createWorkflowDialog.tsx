@@ -66,7 +66,6 @@ export default function CreateWorkflowDialog({ triggerText = "Create workflow" }
       })
 
       if (!res?.createWorkflow) {
-        toast.error("Failed to create workflow", { id: "create_workflow" })
         setIsLoading(false)
         form.reset()
         return;

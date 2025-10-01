@@ -64,7 +64,6 @@ export default function PhaseDetails({ phase }: PhaseDetailsProps) {
         </div>
       </div>
 
-      {/* Inputs Section */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium">Inputs</CardTitle>
@@ -155,6 +154,20 @@ function KeyValueDisplay({ label, value }: { label: string; value: unknown }) {
   const [expanded, setExpanded] = useState(false)
   const strValue = String(value)
 
+  // Show limits
+  const PREVIEW_LIMIT = 120       // initial preview chars
+  const EXPANDED_LIMIT = 600      // max chars when expanded
+
+  const preview = strValue.length > PREVIEW_LIMIT
+    ? strValue.slice(0, PREVIEW_LIMIT) + "..."
+    : strValue
+
+  const expandedText = strValue.length > EXPANDED_LIMIT
+    ? strValue.slice(0, EXPANDED_LIMIT) + "..."
+    : strValue
+
+  const displayText = expanded ? expandedText : preview
+
   return (
     <div className="space-y-1">
       <label className="text-sm font-medium text-muted-foreground">
@@ -162,31 +175,18 @@ function KeyValueDisplay({ label, value }: { label: string; value: unknown }) {
       </label>
       <div
         className={cn(
-          "p-3 bg-muted/40 rounded-md font-mono text-sm cursor-pointer whitespace-pre-wrap break-all",
-          !expanded && "line-clamp-3"
+          "p-3 bg-muted/40 rounded-md font-mono text-sm whitespace-pre-wrap break-all"
         )}
-        onClick={() => {
-          if (strValue.length > 120) {
-            setExpanded(!expanded)
-          }
-        }}
       >
-        {strValue}
+        {displayText}
       </div>
-      {expanded && (
+
+      {strValue.length > PREVIEW_LIMIT && (
         <button
-          onClick={() => setExpanded(false)}
+          onClick={() => setExpanded(!expanded)}
           className="text-xs text-primary hover:underline"
         >
-          Show less
-        </button>
-      )}
-      {!expanded && strValue.length > 120 && (
-        <button
-          onClick={() => setExpanded(true)}
-          className="text-xs text-primary hover:underline"
-        >
-          Show more
+          {expanded ? "Show less" : "Show more"}
         </button>
       )}
     </div>
