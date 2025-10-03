@@ -61,7 +61,7 @@ export default function WorkflowPage({ workflowId }: Props) {
 
   return (
     <>
-        <Editor workflow={workflow} currentUser={user} />
+        <Editor currentUser={user} />
     </>
   )
 }

@@ -8,6 +8,7 @@ export const GET_WORKFLOWS = graphql(`
       status
       definition
       description
+      executionPlan
       createdAt
       updatedAt
       creditsCost
@@ -31,6 +32,8 @@ export const GET_WORKFLOW = graphql(`
       createdAt
       updatedAt
       creditsCost
+      cron 
+      nextRunAt
       lastRunAt
       lastRunId
       nextRunAt

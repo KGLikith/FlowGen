@@ -5,6 +5,7 @@ import { AvailableAction } from '@/gql/graphql'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import CloseButton from '../CloseButton'
 
 type Props = {
     actions: AvailableAction[]
@@ -17,10 +18,14 @@ export default function Actions({ actions, isLoading, onClose }: Props) {
     if (isLoading) {
         return <div className="space-y-3">
             <div className="font-bold text-lg">Actions</div>
-            <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
+            {[1, 2].map((i) => (
+                <div key={`skeleton-${i}`} className='space-y-2'>
+                    <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                </div>
+            ))}
         </div>
     }
 
@@ -28,10 +33,7 @@ export default function Actions({ actions, isLoading, onClose }: Props) {
         <Accordion type="multiple" className='w-full' defaultValue={["Extraction"]}>
             <div className='flex items-center justify-between mb-1'>
                 <div className='font-bold text-lg'>Actions</div>
-                <Button size="icon" variant="ghost" onClick={onClose} aria-label="Close task menu">
-                    <X className="size-4" />
-                </Button>
-
+                <CloseButton onClose={onClose} />
             </div>
             <div className="text-xs text-foreground">Please <span className="font-bold">drag and drop</span> the desired action into the workflow canvas.</div>
             <AccordionItem value="Extraction">

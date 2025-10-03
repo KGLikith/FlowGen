@@ -45,3 +45,18 @@ export const UNPUBLISH_WORKFLOW = graphql(`
         unpublishWorkflow(id: $id)
     }
 `)
+
+export const UPDATE_WORKFLOW_CRON = graphql(`
+    #graphql
+    mutation UpdateWorkflowCron($workflowId: ID!, $cron: String!) {
+        updateWorkflowCron(workflowId: $workflowId, cron: $cron)
+    }
+`)
+
+export const DELETE_WORKFLOW_CRON = graphql(`
+    #graphql
+    mutation DeleteWorkflowCron($workflowId: ID!) {
+        deleteWorkflowCron(workflowId: $workflowId)
+    }
+`)
+

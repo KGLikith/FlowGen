@@ -3,32 +3,36 @@
 import type React from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { WorkflowIcon, History } from "lucide-react"
+import { ActivePanel, sidebarItems } from "./helper"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 type Props = {
-  active: "task" | "history" | null
-  onSelect: (panel: "task" | "history") => void
+  active: ActivePanel
+  onSelect: (panel: ActivePanel) => void
 }
+
 
 export default function WorkflowSidebar({ active, onSelect }: Props) {
   return (
-    <TooltipProvider>
-      <aside className="flex h-full w-[56px] min-w-[56px] max-w-[56px] flex-col items-center gap-2 border-r bg-background p-2">
-        <SidebarIcon
-        
-          active={active === "task"}
-          onClick={() => onSelect("task")}
-          icon={<WorkflowIcon className="size-5" />}
-          tooltip="Actions / Trigger"
-        />
-        <SidebarIcon
-          active={active === "history"}
-          onClick={() => onSelect("history")}
-          icon={<History className="size-5" />}
-          tooltip="Execution History"
-        />
-      </aside>
-    </TooltipProvider>
+    <aside className="flex h-full w-[56px] min-w-[56px] max-w-[56px] flex-col  border-r bg-background p-2 justify-between">
+      <TooltipProvider>
+        <div className="flex flex-col items-center gap-2">
+          {
+            sidebarItems.map((item) => (
+              <SidebarIcon
+                key={item.id}
+                active={active === item.id}
+                onClick={() => onSelect(item.id as "task" | "history")}
+                icon={item.icon}
+                tooltip={item.tooltip}
+              />
+            ))
+          }
+        </div>
+        <ThemeToggle />
+      </TooltipProvider>
+
+    </aside>
   )
 }
 
@@ -58,7 +62,7 @@ function SidebarIcon({
           {icon}
         </button>
       </TooltipTrigger>
-      <TooltipContent side="right">{tooltip}</TooltipContent>
+      <TooltipContent className="font-semibold text-background" side="right">{tooltip}</TooltipContent>
     </Tooltip>
   )
 }

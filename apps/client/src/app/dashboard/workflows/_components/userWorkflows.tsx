@@ -2,20 +2,22 @@
 import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Card, CardContent } from "@/components/ui/card"
-import { Play, Edit, MoreHorizontal, Zap } from "lucide-react"
+import { Play, Edit, MoreHorizontal, Zap, Loader2, PlayIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Workflow } from "@/gql/graphql"
+import { Workflow, WorkflowStatus } from "@/gql/graphql"
 import { useGetWorkflows } from "@/hooks/workflows/queries"
 import { formatDate, getStatusBadge, getStatusIcon } from "./helpers"
 import DeleteWorkflowDialog from "./deleteWorkflowDialog"
 import CreateWorkflowDialog from "./createWorkflowDialog"
 import WorkflowSkeleton from "@/components/skeletons/Workflow"
 import { useRouter } from "next/navigation"
+import { useRunWorkflow } from "@/hooks/workflows/mutation"
 
 export default function UserWorkflows() {
   const [workflows, setWorkflows] = useState<Workflow[]>([])
   const router = useRouter();
-  const { workflowData, isLoading, error } = useGetWorkflows()
+  const { mutateAsync, isPending } = useRunWorkflow();
+  const { workflowData, isLoading } = useGetWorkflows()
 
   useEffect(() => {
     if (workflowData) {
@@ -66,10 +68,30 @@ export default function UserWorkflows() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" className="gap-1 bg-transparent hover:bg-primary/5 cursor-pointer">
-                  <Play className="h-3 w-3" />
-                  Run
-                </Button>
+                {workflow.status === WorkflowStatus.Active &&
+                  <Button variant={"outline"} className='cursor-pointer flex items-center gap-2'
+                    onClick={async () => {
+                      console.log(workflow)
+                      if (!workflow?.executionPlan) return;
+
+                      const data = await mutateAsync({
+                        workflowId: workflow.id,
+                        executionPlan: workflow.executionPlan,
+                      })
+                      if (!data) return;
+                      router.push(`/workflow/${workflow.id}/runs/${data.id}`)
+                    }}
+                  >
+                    {isPending ? <div>
+                      <Loader2 className='animate-spin stroke-orange-400' />
+                    </div> : <>
+                      <PlayIcon size={16} className='stroke-orange-400' />
+                      Execute
+                    </>
+                    }
+
+                  </Button>
+                }
                 <Button size="sm" variant="outline" className="gap-1 bg-transparent hover:bg-primary/5 cursor-pointer"
                   onClick={() => {
                     router.push(`/workflow/${workflow.id}/editor`)

@@ -10,7 +10,6 @@ import NodeComponent from "@/app/workflow/[workflowId]/_components/nodes/Compone
 import DeletableEdge from "@/app/workflow/[workflowId]/_components/edges/deletableEdge"
 
 type Props = {
-  workflow: Workflow
   currentUser: User
 }
 
@@ -25,11 +24,11 @@ const EdgeTypes = {
 const snapGrid: [number, number] = [20, 20]
 const fitViewOptions = { padding: 1.5 };
 
-export default function FlowEditor({ workflow }: Props) {
+export default function FlowEditor({ }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow()
-  const { setCurrentTriggerId, actions, trigger } = useWorkflow()
+  const { setCurrentTriggerId, actions, trigger, workflow } = useWorkflow()
 
   useEffect(() => {
     try {
@@ -154,7 +153,7 @@ export default function FlowEditor({ workflow }: Props) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         className="bg-background"
-        aria-label={`Flow editor for workflow: ${workflow.name}`}
+        aria-label={`Flow editor for workflow: ${workflow?.name}`}
         role="application"
         nodeTypes={nodeTypes}
         edgeTypes={EdgeTypes}

@@ -6,21 +6,19 @@ import { FlowValidationContextProvider } from '@/components/context/flowValidati
 import { AppNode } from '@/schema/appNode'
 import { useWorkflow } from '@/components/context/WorkflowProvider'
 import TopBar from "@/app/workflow/[workflowId]/_components/topBar/TopBar"
-import TaskMenu from "@/app/workflow/[workflowId]/_components/Taskmenu/taskMenu"
 import WorkflowSidebar from './sidebar'
-import HistoryPanel from '../../_components/executions/HistoryPanel'
+import EditorLayout, { ActivePanel } from './helper'
+import Loader from '@/components/loader'
 
 type Props = {
-    workflow: Workflow
     currentUser: User
 }
-type ActivePanel = "task" | "history" | null
 
-export default function Editor({ workflow, currentUser }: Props) {
-    const { setCurrentTriggerId } = useWorkflow()
+export default function Editor({ currentUser }: Props) {
+    const { setCurrentTriggerId, workflow } = useWorkflow()
     const [activePanel, setActivePanel] = useState<ActivePanel>("task")
 
-    const flow = workflow.definition ? JSON.parse(workflow.definition) : null;
+    const flow = workflow?.definition ? JSON.parse(workflow.definition) : null;
 
     const node: AppNode | null = flow.nodes.find((node: AppNode) => {
         return node.data.trigger === true
@@ -30,7 +28,11 @@ export default function Editor({ workflow, currentUser }: Props) {
         if (node?.data?.triggerId) {
             setCurrentTriggerId(node.data.triggerId)
         }
-    }, [workflow.id, setCurrentTriggerId])
+    }, [workflow?.id, setCurrentTriggerId])
+
+    if(!workflow){
+        return <Loader />;
+    }
 
     return (
         <FlowValidationContextProvider>
@@ -43,27 +45,13 @@ export default function Editor({ workflow, currentUser }: Props) {
                             active={activePanel}
                             onSelect={(panel) => setActivePanel((prev) => (prev === panel ? null : panel))}
                         />
-
-                        {activePanel ? activePanel === "task" ? (
-                            <>
-                                <TaskMenu onClose={() => setActivePanel(null)} />
-                                <FlowEditor workflow={workflow} currentUser={currentUser} />
-                            </>
-                        ) : (
-                            <>
-                                <div className="w-[280px] max-w-sm border-r">
-                                    <HistoryPanel workflowId={workflow.id} onClose={() => setActivePanel(null)} />
-                                </div>
-                                <div className="flex-1">
-                                    <FlowEditor workflow={workflow} currentUser={currentUser} />
-                                </div>
-                            </>
-                        )
-                            : (
-                                <div className="flex-1">
-                                    <FlowEditor workflow={workflow} currentUser={currentUser} />
-                                </div>
-                            )}
+                        <div className='w-full'>
+                            <EditorLayout
+                                activePanel={activePanel}
+                                setActivePanel={setActivePanel}
+                                currentUser={currentUser}
+                            />
+                        </div>
 
                     </div>
                 </div>

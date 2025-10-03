@@ -8,10 +8,12 @@ import {
 import {
   CREATE_WORKFLOW,
   DELETE_WORKFLOW,
+  DELETE_WORKFLOW_CRON,
   PUBLISH_WORKFLOW,
   RUN_WORKFLOW,
   UNPUBLISH_WORKFLOW,
   UPDATE_WORKFLOW,
+  UPDATE_WORKFLOW_CRON,
 } from "@/graphql/mutation/automation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -142,15 +144,17 @@ export const useRunWorkflow = () => {
       }
       await client.resetStore();
       await queryClient.invalidateQueries({ queryKey: ["workflows"] });
-      await queryClient.invalidateQueries({ queryKey: ["workflow",data.id] });
-      await queryClient.invalidateQueries({ queryKey: ["WorkflowExecutions",data.id] });
+      await queryClient.invalidateQueries({ queryKey: ["workflow", data.id] });
+      await queryClient.invalidateQueries({
+        queryKey: ["WorkflowExecutions", data.id],
+      });
       toast.success("Workflow Started Successfully", {
         duration: 2000,
         id: "run_workflow",
       });
     },
     onError: (error) => {
-      console.log(error, "error")
+      console.log(error, "error");
       toast.error("Error running workflow", {
         description: (error as Error).message || "Please try again",
         duration: 2000,
@@ -187,7 +191,7 @@ export const usePublishWorkflow = (id: string) => {
         return;
       }
       await client.resetStore();
-      await queryClient.invalidateQueries({ queryKey: ["workflow",id] });
+      await queryClient.invalidateQueries({ queryKey: ["workflow", id] });
       await queryClient.invalidateQueries({ queryKey: ["workflows"] });
       toast.success("Workflow Published Successfully", {
         duration: 2000,
@@ -251,6 +255,96 @@ export const useUnpublishWorkflow = (id: string) => {
         duration: 2000,
         id: "unpublish_workflow",
       });
-    }
+    },
   });
-}
+};
+
+export const useUpdateWorkflowCron = (workflowId: string) => {
+  const mutation = useMutation({
+    mutationFn: async ({
+      workflowId,
+      cron,
+    }: {
+      workflowId: string;
+      cron: string;
+    }) => {
+      const { data } = await client.mutate({
+        mutation: UPDATE_WORKFLOW_CRON,
+        variables: { workflowId, cron },
+      });
+      return data;
+    },
+    onSuccess: async (data) => {
+      if (!data || !data.updateWorkflowCron) {
+        toast.error("Error updating workflow cron", {
+          description: "Please try again",
+          duration: 2000,
+          id: "update_workflow_cron",
+        });
+        return;
+      }
+      await client.resetStore();
+      await queryclient.invalidateQueries({
+        queryKey: ["workflow", workflowId],
+      });
+      toast.success("Workflow Cron Updated Successfully", {
+        duration: 2000,
+        id: "update_workflow_cron",
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Error updating workflow cron", {
+        description: (error as Error).message || "Please try again",
+        duration: 2000,
+        id: "update_workflow_cron",
+      });
+    },
+    
+  });
+  return { ...mutation };
+};
+
+export const useDeleteWorkflowCron = (workflowId: string) => {
+  const mutation = useMutation({
+    mutationFn: async ({
+      workflowId,
+    }: {
+      workflowId: string;
+    }) => {
+      const { data } = await client.mutate({
+        mutation: DELETE_WORKFLOW_CRON,
+        variables: { workflowId },
+      });
+      return data;
+    },
+    onSuccess: async (data) => {
+      if (!data || !data.deleteWorkflowCron) {
+        toast.error("Error deleting workflow cron", {
+          description: "Please try again",
+          duration: 2000,
+          id: "delete_workflow_cron",
+        });
+        return;
+      }
+      await client.resetStore();
+      await queryclient.invalidateQueries({
+        queryKey: ["workflow", workflowId],
+      });
+      toast.success("Workflow Cron Deleted Successfully", {
+        duration: 2000,
+        id: "delete_workflow_cron",
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Error deleting workflow cron", {
+        description: (error as Error).message || "Please try again",
+        duration: 2000,
+        id: "delete_workflow_cron",
+      });
+    },
+    
+  });
+  return { ...mutation };
+};

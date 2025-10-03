@@ -8,19 +8,21 @@ import { X, Filter, Loader2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import ExecutionItem from './executionItem'
+import { useWorkflow } from '@/components/context/WorkflowProvider'
+import Skeleton from './skeleton'
+import CloseButton from '../CloseButton'
 
 type Props = {
-  workflowId: string
   onClose: () => void
 }
 
 type TimeRange = "7d" | "30d" | "90d" | "all"
 
-export default function HistoryPanel({ workflowId, onClose }: Props) {
-  const { data, isLoading } = useGetWorkflowExecutions(workflowId);
+export default function HistoryPanel({ onClose }: Props) {
+  const { workflow } = useWorkflow();
+  const { data, isLoading } = useGetWorkflowExecutions(workflow?.id ?? "");
   const [status, setStatus] = useState<WorkflowExecutionStatus | "ALL">("ALL")
   const [range, setRange] = useState<TimeRange>("30d")
-
 
   const filtered = useMemo(() => {
     const now = Date.now()
@@ -41,25 +43,18 @@ export default function HistoryPanel({ workflowId, onClose }: Props) {
   }, [data?.getWorkflowExecutions, range, status])
 
   if (isLoading) {
-    return <div className='flex h-full w-full justify-center items-center text-foreground '>
-      <Loader2 className='w-5 h-5 animate-spin' />
-    </div>
-      
+    return <Skeleton />;
   }
 
-  if (!data) {
+  if (!data || !workflow?.id) {
     return <div>No execution history found</div>
   }
 
   return (
     <div className="flex h-full w-full flex-col">
       <header className="flex items-center justify-between border-b px-3 py-2">
-        <h2 className="text-sm font-medium">Execution History</h2>
-        <div className="flex items-center gap-2">
-          <Button size="icon" variant="ghost" onClick={onClose} aria-label="Close history">
-            <X className="size-4" />
-          </Button>
-        </div>
+        <h2 className=" font-bold">Execution History</h2>
+        <CloseButton onClose={onClose} />
       </header>
 
       <div className="flex items-center gap-2 border-b px-3 py-2">
@@ -100,7 +95,7 @@ export default function HistoryPanel({ workflowId, onClose }: Props) {
             filtered?.map((exec) => (
               <ExecutionItem
                 key={exec.id}
-                workflowId={workflowId}
+                workflowId={workflow.id}
                 exec={exec as WorkflowExecution}
               />
             ))

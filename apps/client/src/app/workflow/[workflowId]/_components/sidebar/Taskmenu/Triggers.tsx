@@ -4,6 +4,7 @@ import TaskButton from './Button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import CloseButton from '../CloseButton'
 
 type Props = {
     availableTriggers: AvailableTrigger[]
@@ -15,11 +16,15 @@ export default function Triggers({ availableTriggers, isLoading, onClose }: Prop
 
     if (isLoading) {
         return <div className="space-y-3">
-            <div className="font-bold text-lg">Actions</div>
-            <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
+            <div className="font-bold text-lg">Triggers</div>
+            {[1, 2].map((i) => (
+                <div key={`skeleton-${i}`} className='space-y-2'>
+                    <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                </div>
+            ))}
         </div>
     }
 
@@ -28,9 +33,8 @@ export default function Triggers({ availableTriggers, isLoading, onClose }: Prop
             <div className='flex items-center justify-between mb-1'>
 
                 <div className='font-bold text-lg'>Triggers / Task</div>
-                <Button size="icon" variant="ghost" onClick={onClose} aria-label="Close task menu">
-                    <X className="size-4" />
-                </Button>
+                <CloseButton onClose={onClose} />
+
             </div>
             <div className="text-xs pb-3 text-foreground">Please <span className="font-bold">drag and drop</span> the desired trigger/task into the workflow canvas.</div>
             <div className="flex gap-2 flex-col">
