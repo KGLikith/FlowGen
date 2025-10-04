@@ -1,5 +1,6 @@
+import { useWorkflow } from '@/components/context/WorkflowProvider'
 import { Button } from '@/components/ui/button'
-import { ActionKey, TriggerKey } from '@/gql/graphql'
+import { ActionKey, TriggerKey, WorkflowStatus } from '@/gql/graphql'
 import React from 'react'
 
 type Props = {
@@ -12,8 +13,14 @@ type Props = {
 }
 
 export default function TaskButton({ taskType, taskId, trigger, taskLabel, credits }: Props) {
+    const { workflow } = useWorkflow();
+    const disabled = workflow?.status === WorkflowStatus.Active;
 
     const onDragStart = (event: React.DragEvent<HTMLButtonElement>, taskType: TriggerKey | ActionKey) => {
+        if(disabled){
+            event.preventDefault();
+            return;
+        }
         const task = {
             type: taskType,
             taskId: taskId,
@@ -27,9 +34,9 @@ export default function TaskButton({ taskType, taskId, trigger, taskLabel, credi
         <Button
             variant={"secondary"}
             className="flex justify-between items-center gap-2 border w-full cursor-grab"
-            draggable="true"
+            draggable={!disabled}
             onDragStart={e => onDragStart(e, taskType)}
-            
+            disabled={disabled}
         >
             <div className="flex gap-2 items-center">
                 {/* <task.icon size={20} /> */}

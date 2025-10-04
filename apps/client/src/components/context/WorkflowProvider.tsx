@@ -35,7 +35,6 @@ export function WorkflowContextProvider({ children }: { children: React.ReactNod
   const data = useGetAvailableActionsForTrigger(currentTriggerId)
   const { actions } = useGetAvailableActions();
   const { data: workflowData, isLoading } = useGetWorkflow(workflowId || "")
-
   useEffect(() => {
     data?.refetch()
   }, [currentTriggerId])

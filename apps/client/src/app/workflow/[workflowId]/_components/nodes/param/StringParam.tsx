@@ -10,7 +10,6 @@ export default function StringParam({
    value,
    updateNodeParamValue,
    disabled,
-   status
 }: TaskParamProps) {
    const [stringValue, setStringValue] = useState(value);
    const id = useId();
@@ -32,7 +31,7 @@ export default function StringParam({
          </Label>
          <Component
             id={id}
-            disabled={disabled|| status === WorkflowStatus.Active}
+            disabled={disabled}
             placeholder="Enter value here"
             value={stringValue}
             onChange={(e: any) => {

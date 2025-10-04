@@ -126,6 +126,7 @@ export const useGetAvailableActionsForTrigger = (
             triggerId,
           },
         });
+        console.log(res)
         return res.data?.getAvailableActionsForTrigger;
       } catch (err) {
         console.log(err);

@@ -4,8 +4,10 @@ import Stringparam from './param/StringParam'
 import { useReactFlow } from '@xyflow/react'
 import { AppNode } from '@/schema/appNode'
 import BrowserInstanceParam from './param/BrowserInstanceParam'
-import { TaskParam, TaskParamType } from '@/gql/graphql'
+import { TaskParam, TaskParamType, WorkflowStatus } from '@/gql/graphql'
 import { useWorkflow } from '@/components/context/WorkflowProvider'
+import SelectorParam from './param/SelectorParam'
+import WebhookParam from './param/WebhookParam'
 
 type Props = {
     param: TaskParam
@@ -30,9 +32,14 @@ export default function NodeParamField({ param, nodeId, disabled }: Props) {
 
     switch (param.type) {
         case TaskParamType.String:
-            return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled} status={workflow?.status} />
+            return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
         case TaskParamType.BrowserInstance:
             return <BrowserInstanceParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} />
+        case TaskParamType.Select:
+            return <SelectorParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+        case TaskParamType.WebhookParams:
+            return <WebhookParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+        
         default:
             return (
                 <div className="w-full">

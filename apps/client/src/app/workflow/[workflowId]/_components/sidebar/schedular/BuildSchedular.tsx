@@ -19,7 +19,7 @@ type Props = {
 
 type BuilderState = {
     freq: "hourly" | "daily" | "weekly" | "monthly"
-    time: string // "HH:mm"
+    time: string 
     dayOfWeek: number
     dayOfMonth: number
     date?: Date | null

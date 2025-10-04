@@ -17,7 +17,6 @@ type Props = {
 
 export default function NodeHeader({ taskType, nodeId, isTrigger }: Props) {
     const { allActions, trigger, setCurrentTriggerId, workflow } = useWorkflow();
-
     const combined = [...(allActions || []), trigger];
     const task = combined.find(item => item?.key === taskType);
 

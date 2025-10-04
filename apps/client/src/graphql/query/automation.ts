@@ -32,7 +32,7 @@ export const GET_WORKFLOW = graphql(`
       createdAt
       updatedAt
       creditsCost
-      cron 
+      cron
       nextRunAt
       lastRunAt
       lastRunId
@@ -54,9 +54,11 @@ export const GET_AVAILABLE_TRIGGERS = graphql(`
         label
         icon
         type
+        group
         isEntryPoint
         inputs {
           type
+        options
           name
           required
           variant
@@ -89,9 +91,11 @@ export const GET_AVAILABLE_ACTIONS = graphql(`
         label
         icon
         type
+        group
         isEntryPoint
         inputs {
           type
+          options
           name
           required
           variant
@@ -123,11 +127,13 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
         image
         taskInfo {
           label
+          group
           icon
           type
           isEntryPoint
           inputs {
             type
+            options
             name
             required
             variant
@@ -152,6 +158,7 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
         image
         taskInfo {
           label
+          group
           icon
           type
           isEntryPoint
@@ -160,6 +167,7 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
             name
             required
             variant
+            options
             helperText
             hideHandle
           }
@@ -178,7 +186,6 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
   }
 `);
 
-
 export const GET_WORKFLOW_EXECUTION = graphql(`
   query getWorkflowExecution($executionId: ID!) {
     getWorkflowExecution(executionId: $executionId) {
@@ -196,7 +203,7 @@ export const GET_WORKFLOW_EXECUTION = graphql(`
       phases {
         id
         status
-        number 
+        number
         data
         name
         startedAt
@@ -204,8 +211,8 @@ export const GET_WORKFLOW_EXECUTION = graphql(`
         inputs
         outputs
         creditsConsumed
-        logs{
-          logLevel 
+        logs {
+          logLevel
           message
           timestamp
         }
@@ -218,7 +225,7 @@ export const GET_WORKFLOW_EXECUTIONS = graphql(`
   query getWorkflowExecutions($workflowId: ID!) {
     getWorkflowExecutions(workflowId: $workflowId) {
       id
-      status 
+      status
       startedAt
       completedAt
       trigger
@@ -226,4 +233,3 @@ export const GET_WORKFLOW_EXECUTIONS = graphql(`
     }
   }
 `);
-      

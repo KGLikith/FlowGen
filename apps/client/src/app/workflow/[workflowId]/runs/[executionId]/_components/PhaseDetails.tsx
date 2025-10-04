@@ -46,7 +46,6 @@ export default function PhaseDetails({ phase }: PhaseDetailsProps) {
 
   return (
     <div className="p-6 space-y-5 w-full">
-      {/* Top Meta Info */}
       <div className="flex items-center flex-wrap gap-6">
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-xs px-2 py-0.5">
@@ -84,7 +83,6 @@ export default function PhaseDetails({ phase }: PhaseDetailsProps) {
         </CardContent>
       </Card>
 
-      {/* Outputs Section */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium">Outputs</CardTitle>
@@ -105,7 +103,6 @@ export default function PhaseDetails({ phase }: PhaseDetailsProps) {
         </CardContent>
       </Card>
 
-      {/* Logs Section */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium">Logs</CardTitle>
@@ -154,9 +151,8 @@ function KeyValueDisplay({ label, value }: { label: string; value: unknown }) {
   const [expanded, setExpanded] = useState(false)
   const strValue = String(value)
 
-  // Show limits
-  const PREVIEW_LIMIT = 120       // initial preview chars
-  const EXPANDED_LIMIT = 600      // max chars when expanded
+  const PREVIEW_LIMIT = 120       
+  const EXPANDED_LIMIT = 600
 
   const preview = strValue.length > PREVIEW_LIMIT
     ? strValue.slice(0, PREVIEW_LIMIT) + "..."
