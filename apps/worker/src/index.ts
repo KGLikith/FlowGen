@@ -146,7 +146,7 @@ async function main() {
           logCollector.ERROR(
             userBalanceUpdateResult.error || "Insufficient credit balance"
           );
-          success = true;
+          success = false;
         } else {
           success = await executePhase(
             phase,
@@ -182,8 +182,8 @@ async function main() {
 
           await updateWorkflowExecution(executionId, {
             status: success
-              ? WorkflowExecutionStatus.FAILED
-              : WorkflowExecutionStatus.COMPLETED,
+              ? WorkflowExecutionStatus.COMPLETED
+              : WorkflowExecutionStatus.FAILED,
             completedAt: new Date(),
             workflow: {
               update: {

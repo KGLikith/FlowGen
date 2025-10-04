@@ -110,7 +110,7 @@ function main() {
                     let success = false;
                     if (!userBalanceUpdateResult.success) {
                         logCollector.ERROR(userBalanceUpdateResult.error || "Insufficient credit balance");
-                        success = true;
+                        success = false;
                     }
                     else {
                         success = yield (0, executePhase_1.executePhase)(phase, node, environment, edges, logCollector);
@@ -137,8 +137,8 @@ function main() {
                         yield (0, executionEnvironment_1.cleanupEnvironment)(executionId);
                         yield (0, updateWorkflowExecution_1.updateWorkflowExecution)(executionId, {
                             status: success
-                                ? db_1.WorkflowExecutionStatus.FAILED
-                                : db_1.WorkflowExecutionStatus.COMPLETED,
+                                ? db_1.WorkflowExecutionStatus.COMPLETED
+                                : db_1.WorkflowExecutionStatus.FAILED,
                             completedAt: new Date(),
                             workflow: {
                                 update: {
