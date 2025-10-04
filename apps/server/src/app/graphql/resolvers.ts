@@ -163,7 +163,25 @@ const mutations = {
   ) => {
     if (!context.clerkId) throw new Error("Unauthorized");
     return await WorkflowMutationService.unpublishWorkflow(id);
-  }
+  },
+
+  updateWorkflowCron: async (
+    _: any,
+    { workflowId, cron }: { workflowId: string; cron: string },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await WorkflowMutationService.updateWorkflowCron(workflowId, cron);
+  },
+
+  deleteWorkflowCron: async (
+    _: any,
+    { workflowId }: { workflowId: string },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await WorkflowMutationService.deleteWorkflowCron(workflowId);
+  },
 };
 
 export const resolvers = {

@@ -11,6 +11,7 @@ import {
   CreateWorkflowDataPayload,
   workflowExecutionPlan,
 } from "../../schema/workflow";
+import parser from "cron-parser";
 
 export default class WorkflowMutationService {
   public static async createWorkflow(payload: CreateWorkflowDataPayload) {
@@ -217,6 +218,41 @@ export default class WorkflowMutationService {
     } catch (error) {
       console.error("Error unpublishing workflow:", error);
       throw new Error("Error unpublishing workflow. Please try again later.");
+    }
+  }
+
+  public static async updateWorkflowCron(workflowId: string, cron: string) {
+    try {
+      const interval = parser.parse(cron);
+      await prisma.workflow.update({
+        where: { id: workflowId },
+        data: {
+          cron,
+          nextRunAt: interval.next().toDate(),
+          updatedAt: new Date(),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error("Error updating workflow cron:", error);
+      throw new Error("Error updating workflow cron. Please try again later.");
+    }
+  }
+
+  public static async deleteWorkflowCron(workflowId: string) {
+    try {
+      await prisma.workflow.update({
+        where: { id: workflowId },
+        data: {
+          cron: null,
+          nextRunAt: null,
+          updatedAt: new Date(),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error("Error deleting workflow cron:", error);
+      throw new Error("Error deleting workflow cron. Please try again later.");
     }
   }
 }

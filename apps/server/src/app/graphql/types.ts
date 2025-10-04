@@ -94,6 +94,7 @@ type AvailableTrigger {
 
 enum TriggerKey {
   LAUNCH_BROWSER
+  WEBHOOK
 }
 
 type AvailableAction {
@@ -111,6 +112,10 @@ type AvailableAction {
 enum ActionKey {
   PAGE_TO_HTML
   EXTRACT_TEXT_FROM_ELEMENT
+  FILL_INPUT
+  CLICK_ELEMENT
+  WAIT_FOR_ELEMENT
+  TRIGGER_WEBHOOK
 }
 
 type TaskInfo {
@@ -118,10 +123,19 @@ type TaskInfo {
   label: String!
   icon: String
   type: String!
+  group: TaskGroup!
   isEntryPoint: Boolean!
   inputs: [TaskParam!]
   outputs: [TaskParam!]
   credits: Int!
+}
+
+enum TaskGroup {
+  DATA_EXTRACTION
+  USER_INTERACTIONS
+  BROWSER
+  TIMING
+  INTEGRATIONS
 }
 
 type TaskParam {
@@ -132,11 +146,14 @@ type TaskParam {
   variant: String
   helperText: String
   hideHandle: Boolean
+  options: [String!]
 }
 
 enum TaskParamType {
   STRING
   BROWSER_INSTANCE
+  SELECT
+  WEBHOOK_PARAMS
 }
 
 type AvailableTriggerAction {
