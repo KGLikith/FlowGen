@@ -7,4 +7,6 @@ export const mutations = `#graphql
     runWorkflow(form: runWorkflowPayload!): WorkflowExecution
     updateWorkflowCron(workflowId: ID!, cron: String!): Boolean!
     deleteWorkflowCron(workflowId: ID!): Boolean!
+    createCredential(payload: createCredentialPayload!): Boolean!
+    deleteCredential(id: ID!): Boolean!
 `

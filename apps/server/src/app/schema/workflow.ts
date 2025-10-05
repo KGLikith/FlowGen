@@ -27,3 +27,5 @@ export interface AppNodeData {
 export interface AppNode {
   data: AppNodeData;
 }
+
+export const ALG="aes-256-cbc"

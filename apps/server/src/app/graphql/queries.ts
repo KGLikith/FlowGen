@@ -9,4 +9,6 @@ export const queries = `#graphql
     getWorkflowExecutions(workflowId: ID!): [WorkflowExecution!]
     getWorkflowExecution(executionId: ID!): WorkflowExecution
     getExecutionPhaseDetails(phaseId: ID!): ExecutionPhase
+    getCredentials: [Credential!]
+    getCredential(id: ID!): Credential
 `;

@@ -116,6 +116,11 @@ enum ActionKey {
   CLICK_ELEMENT
   WAIT_FOR_ELEMENT
   TRIGGER_WEBHOOK
+  EXTRACT_DATA_WITH_AI
+  READ_PROPERTY_FROM_JSON
+  ADD_PROPERTY_TO_JSON
+  NAVIGATE_URL
+  SCROLL_TO_ELEMENT
 }
 
 type TaskInfo {
@@ -136,6 +141,7 @@ enum TaskGroup {
   BROWSER
   TIMING
   INTEGRATIONS
+  DATA_STORAGE
 }
 
 type TaskParam {
@@ -154,6 +160,7 @@ enum TaskParamType {
   BROWSER_INSTANCE
   SELECT
   WEBHOOK_PARAMS
+  CREDENTIAL
 }
 
 type AvailableTriggerAction {
@@ -318,5 +325,10 @@ input runWorkflowPayload {
 type ActionsAndTrigger {
   trigger: AvailableTrigger
   actions: [AvailableAction!]!
+}
+
+input createCredentialPayload {
+  name: String!
+  value: String!
 }
 `;

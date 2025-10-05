@@ -12,7 +12,6 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
 import { execute, subscribe } from "graphql";
 import { pubsub } from "../clients/pubsub";
-import { prisma } from "@automation/db";
 import { GraphqlData } from "./graphql";
 import userService from "./services/user";
 
@@ -69,12 +68,12 @@ export default async function initServer() {
       execute,
       subscribe,
       context: async (ctx) => {
+        //  TODO: fix the header part...
         const token = ctx.connectionParams?.authorization as string | undefined;
         let auth = null;
         if (token) {
           auth = getAuth({ headers: { authorization: token } } as any);
         }
-
         return { clerkId: auth?.userId, pubsub };
       },
     },

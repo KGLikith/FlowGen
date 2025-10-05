@@ -93,6 +93,21 @@ const queries = {
     if (!clerkId) throw new Error("Unauthorized");
     return await WorkflowQueriesService.getExecutionPhaseDetails(phaseId);
   },
+
+  getCredentials: async (_: any, __: any, context: GraphqlContext) => {
+    const clerkId = context.clerkId;
+    if (!clerkId) throw new Error("Unauthorized");
+    return await userService.getCredentials(clerkId);
+  },
+  getCredential: async (
+    _: any,
+    { id }: { id: string },
+    context: GraphqlContext
+  ) => {
+    const clerkId = context.clerkId;
+    if (!clerkId) throw new Error("Unauthorized");
+    return await userService.getCredentialById(id);
+  },
 };
 
 const mutations = {
@@ -181,6 +196,24 @@ const mutations = {
   ) => {
     if (!context.clerkId) throw new Error("Unauthorized");
     return await WorkflowMutationService.deleteWorkflowCron(workflowId);
+  },
+
+  createCredential: async (
+    _: any,
+    { payload }: { payload: { name: string; value: string } },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await userService.createCredential(payload, context.clerkId);
+  },
+
+  deleteCredential: async (
+    _: any,
+    { id }: { id: string },
+    context: GraphqlContext
+  ) => {
+    if (!context.clerkId) throw new Error("Unauthorized");
+    return await userService.deleteCredential(id);
   },
 };
 

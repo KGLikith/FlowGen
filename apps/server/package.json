@@ -20,6 +20,7 @@
     "@graphql-tools/schema": "^8.5.1",
     "altair-express-middleware": "^8.2.7",
     "apollo-server": "^3.13.0",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "cron-parser": "^5.4.0",
     "cronstrue": "^3.3.0",
