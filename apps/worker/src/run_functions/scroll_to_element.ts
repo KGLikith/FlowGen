@@ -1,6 +1,6 @@
 import { ExecutionEnvironment, PhaseEnvironment } from "../schema/environment";
 
-export const ClickElementExecutor = async (
+export const ScrollToElementExecutor = async (
   environmentio: PhaseEnvironment,
   environmentFn: ExecutionEnvironment
 ) => {
@@ -11,8 +11,15 @@ export const ClickElementExecutor = async (
       return false;
     }
 
-    await environmentFn.getPage()!.click(selector);
-    environmentFn.log.INFO(`Element clicked successfully`);
+    environmentFn.getPage()!.evaluate((selector) => {
+      const ele = document.querySelector(selector);
+      if (!ele) {
+        throw new Error("Element not found.");
+      }
+      const top = ele.getBoundingClientRect().top - window.scrollY;
+      window.scrollTo({ top });
+    }, selector);
+    environmentFn.log.INFO(`Scrolled to element successfully`);
     return true;
   } catch (err: any) {
     environmentFn.log.ERROR(err.message);

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "cheerio": "^1.1.2",
+    "openai": "^6.1.0",
     "puppeteer": "^24.22.3",
     "tsc-watch": "^7.1.1"
   }
