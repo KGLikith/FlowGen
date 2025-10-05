@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "TaskGroup" ADD VALUE 'DATA_STORAGE';

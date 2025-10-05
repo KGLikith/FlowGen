@@ -37,21 +37,21 @@ model UserBalance {
 }
 
 model Workflow {
-  id            String         @id @default(cuid())
+  id            String                   @id @default(cuid())
   userId        String
   name          String
   description   String?
   definition    String
   executionPlan String?
   cron          String?
-  status        WorkflowStatus @default(DRAFT)
+  status        WorkflowStatus           @default(DRAFT)
   creditsCost   Int
   lastRunAt     DateTime?
   lastRunId     String?
   lastRunStatus WorkflowExecutionStatus?
   nextRunAt     DateTime?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
 
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   executions WorkflowExecution[]
@@ -74,7 +74,7 @@ model WorkflowExecution {
   startedAt       DateTime?
   completedAt     DateTime?
   creditsConsumed Int
-  definition      String     @default("{}")
+  definition      String                  @default("{}")
 
   workflow        Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   user            User              @relation(fields: [userId], references: [id])
@@ -110,6 +110,7 @@ model AvailableTrigger {
 
 enum TriggerKey {
   LAUNCH_BROWSER
+  WEBHOOK
 }
 
 model AvailableAction {
@@ -128,13 +129,23 @@ model AvailableAction {
 enum ActionKey {
   PAGE_TO_HTML
   EXTRACT_TEXT_FROM_ELEMENT
+  FILL_INPUT
+  CLICK_ELEMENT
+  WAIT_FOR_ELEMENT
+  TRIGGER_WEBHOOK
+  EXTRACT_DATA_WITH_AI
+  READ_PROPERTY_FROM_JSON
+  ADD_PROPERTY_TO_JSON
+  NAVIGATE_URL
+  SCROLL_TO_ELEMENT
 }
 
 model TaskInfo {
   id               String             @id @default(cuid())
   label            String
   icon             String?
-  type             String
+  type             TaskType
+  group            TaskGroup          @default(DATA_EXTRACTION)
   isEntryPoint     Boolean            @default(false)
   inputs           TaskParam[]        @relation("TaskInfoInputs")
   outputs          TaskParam[]        @relation("TaskInfoOutputs")
@@ -143,10 +154,29 @@ model TaskInfo {
   AvailableAction  AvailableAction[]
 }
 
+enum TaskGroup {
+  DATA_EXTRACTION
+  BROWSER
+  USER_INTERACTIONS
+  TIMING
+  INTEGRATIONS
+  DATA_STORAGE
+}
+
 enum TaskType {
   LAUNCH_BROWSER
   PAGE_TO_HTML
   EXTRACT_TEXT_FROM_ELEMENT
+  FILL_INPUT
+  CLICK_ELEMENT
+  WAIT_FOR_ELEMENT
+  WEBHOOK
+  TRIGGER_WEBHOOK
+  EXTRACT_DATA_WITH_AI
+  READ_PROPERTY_FROM_JSON
+  ADD_PROPERTY_TO_JSON
+  NAVIGATE_URL
+  SCROLL_TO_ELEMENT
 }
 
 model TaskParam {
@@ -157,6 +187,7 @@ model TaskParam {
   required   Boolean       @default(false)
   hideHandle Boolean       @default(false)
   variant    String?
+  options    String[]
 
   TaskInfoInput  TaskInfo[] @relation("TaskInfoInputs")
   TaskInfoOutput TaskInfo[] @relation("TaskInfoOutputs")
@@ -165,6 +196,9 @@ model TaskParam {
 enum TaskParamType {
   STRING
   BROWSER_INSTANCE
+  SELECT
+  WEBHOOK_PARAMS
+  CREDENTIAL
 }
 
 model AvailableTriggerAction {
@@ -234,7 +268,7 @@ enum logLevel {
 model Credential {
   id        String   @id @default(cuid())
   userId    String
-  name      String
+  name      String    @unique
   value     String
   createdAt DateTime @default(now())
 

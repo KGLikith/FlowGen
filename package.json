@@ -22,7 +22,7 @@
     "server:start": "npm run start --workspace=@automation/server",
     "worker:dev": "npm run dev --workspace=@automation/worker",
     "processor:dev": "npm run dev --workspace=@automation/processor",
-    "dev": "concurrently -n client,server,worker,processor -c green,blue,yellow,magenta \"npm run client:dev\" \"npm run server:dev\" \"npm run worker:dev\" \"npm run processor:dev\""
+    "kafka:dev": "concurrently -n worker,processor -c green,yellow,magenta \"npm run worker:dev\" \"npm run processor:dev\""
   },
   "repository": {
     "type": "git",

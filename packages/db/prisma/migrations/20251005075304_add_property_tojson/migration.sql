@@ -1,0 +1,5 @@
+-- AlterEnum
+ALTER TYPE "ActionKey" ADD VALUE 'ADD_PROPERTY_TO_JSON';
+
+-- AlterEnum
+ALTER TYPE "TaskType" ADD VALUE 'ADD_PROPERTY_TO_JSON';

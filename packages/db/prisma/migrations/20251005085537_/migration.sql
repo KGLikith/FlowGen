@@ -1,0 +1,5 @@
+-- AlterEnum
+ALTER TYPE "ActionKey" ADD VALUE 'NAVIGATE_URL';
+
+-- AlterEnum
+ALTER TYPE "TaskType" ADD VALUE 'NAVIGATE_URL';
