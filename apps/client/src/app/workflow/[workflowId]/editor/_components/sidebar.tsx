@@ -11,7 +11,6 @@ type Props = {
   onSelect: (panel: ActivePanel) => void
 }
 
-
 export default function WorkflowSidebar({ active, onSelect }: Props) {
   return (
     <aside className="flex h-full w-[56px] min-w-[56px] max-w-[56px] flex-col  border-r bg-background p-2 justify-between">

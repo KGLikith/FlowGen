@@ -20,10 +20,11 @@ export const createApolloClient = (getToken: () => Promise<string | null>) => {
   });
 
   const authLink = new SetContextLink(async (prevContext, operation) => {
-    if (typeof window === "undefined") return {};
+    if (typeof window === "undefined") {
+      return {};
+    }
 
     const token = await (window as any).Clerk?.session?.getToken();
-    // const token = await getToken();
     return {
       ...prevContext,
       headers: {
@@ -72,7 +73,6 @@ export const createApolloClient = (getToken: () => Promise<string | null>) => {
         fetchPolicy: "cache-first",
         nextFetchPolicy: "cache-first",
         notifyOnNetworkStatusChange: false,
-        
       },
       query: {
         fetchPolicy: "cache-first",

@@ -8,6 +8,7 @@ import { TaskParam, TaskParamType, WorkflowStatus } from '@/gql/graphql'
 import { useWorkflow } from '@/components/context/WorkflowProvider'
 import SelectorParam from './param/SelectorParam'
 import WebhookParam from './param/WebhookParam'
+import CredentialParam from './param/CredentialParam'
 
 type Props = {
     param: TaskParam
@@ -39,7 +40,8 @@ export default function NodeParamField({ param, nodeId, disabled }: Props) {
             return <SelectorParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
         case TaskParamType.WebhookParams:
             return <WebhookParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
-        
+        case TaskParamType.Credential:
+            return <CredentialParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
         default:
             return (
                 <div className="w-full">

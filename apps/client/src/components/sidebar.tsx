@@ -114,7 +114,7 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
 
   return (
     <>
-      <div className="hidden md:fixed md:inset-y-0 md:z-50 md:flex md:w-56 md:flex-col">
+      <div className="hidden md:fixed md:inset-y-0 md:z-50 md:flex md:w-64 md:flex-col">
         <SidebarContent />
       </div>
 
@@ -128,7 +128,7 @@ export function Sidebar({ credits = { current: 649, total: 1000 } }: SidebarProp
             <Menu className="h-5 w-5 text-neutral-900 dark:text-white" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-56">
+        <SheetContent side="left" className="p-0 w-64">
           <SheetTitle className="sr-only">Sidebar</SheetTitle>
           <SidebarContent />
         </SheetContent>

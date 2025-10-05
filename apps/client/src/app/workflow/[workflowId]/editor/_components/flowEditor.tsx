@@ -22,7 +22,7 @@ const EdgeTypes = {
 }
 
 const snapGrid: [number, number] = [20, 20]
-const fitViewOptions = { padding: 1.5 };
+const fitViewOptions = { padding: 3.0, includeHiddenNodes: true };
 
 export default function FlowEditor({ }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([])
@@ -75,7 +75,7 @@ export default function FlowEditor({ }: Props) {
       x: event.clientX - reactFlowBounds.left / 2,
       y: event.clientY - reactFlowBounds.top / 2,
     });
-    
+
     const newNode = CreateFlowNode(type as ActionKey | TriggerKey, credits, pos, trigger === true ? "TRIGGER" : "ACTION", taskId)
     setNodes((nds) => nds.concat(newNode))
 
@@ -148,6 +148,8 @@ export default function FlowEditor({ }: Props) {
   return (
     <main className="h-full w-full">
       <ReactFlow
+        minZoom={0.1}
+        maxZoom={2.0}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -165,6 +167,11 @@ export default function FlowEditor({ }: Props) {
         onDrop={onDrop}
         onConnect={onConnect}
         isValidConnection={isValidConnection}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        panOnScroll={true}
+        panOnDrag={true} 
+        zoomActivationKeyCode="Control"
       >
         <Controls position="top-left" className=" text-black border border-border shadow-lg rounded-lg" />
         <Background

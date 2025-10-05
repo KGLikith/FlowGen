@@ -2,7 +2,7 @@
 import { useWorkflow } from '@/components/context/WorkflowProvider'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ActionKey, TriggerKey, WorkflowStatus } from '@/gql/graphql'
+import { ActionKey, TaskParamType, TriggerKey, WorkflowStatus } from '@/gql/graphql'
 import { CreateFlowNode } from '@/lib/workflow/createFlowNode'
 import { AppNode } from '@/schema/appNode'
 import { useReactFlow } from '@xyflow/react'
@@ -56,7 +56,7 @@ export default function NodeHeader({ taskType, nodeId, isTrigger }: Props) {
                                                 const newX = node.position.x + 100
                                                 const newY = node.position.y + 100
 
-                                                const newNode = CreateFlowNode(node.data.type, node.data.credits, { x: newX, y: newY })
+                                                const newNode = CreateFlowNode(node.data.type, node.data.credits, { x: newX, y: newY }, node.data.trigger ? "TRIGGER" : "ACTION", node.data.actionId)
 
                                                 addNodes([newNode])
                                             }}

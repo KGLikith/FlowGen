@@ -7,4 +7,5 @@ export const groupLabels: Record<TaskGroup, string> = {
     BROWSER: "Browser",
     INTEGRATIONS: "Integrations",
     TIMING: "Timing",
+    DATA_STORAGE: "Data Storage"
 }

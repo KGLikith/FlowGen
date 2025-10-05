@@ -22,6 +22,8 @@ type Documents = {
     "\n    #graphql\n    mutation UnpublishWorkflow($id: ID!) {\n        unpublishWorkflow(id: $id)\n    }\n": typeof types.UnpublishWorkflowDocument,
     "\n    #graphql\n    mutation UpdateWorkflowCron($workflowId: ID!, $cron: String!) {\n        updateWorkflowCron(workflowId: $workflowId, cron: $cron)\n    }\n": typeof types.UpdateWorkflowCronDocument,
     "\n    #graphql\n    mutation DeleteWorkflowCron($workflowId: ID!) {\n        deleteWorkflowCron(workflowId: $workflowId)\n    }\n": typeof types.DeleteWorkflowCronDocument,
+    "\n    mutation CreateCredential($payload: createCredentialPayload!) {\n        createCredential(payload: $payload) \n    }\n": typeof types.CreateCredentialDocument,
+    "\n    mutation DeleteCredential($id: ID!) {\n        deleteCredential(id: $id)\n    }\n": typeof types.DeleteCredentialDocument,
     "\n  query GetWorkflows {\n    getWorkflows {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n": typeof types.GetWorkflowsDocument,
     "\n  query GetWorkflow($id: ID!) {\n    getWorkflow(id: $id) {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      cron\n      nextRunAt\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n": typeof types.GetWorkflowDocument,
     "\n  #graphql\n  query getAvailableTriggers {\n    getAvailableTriggers {\n      id\n      name\n      key\n      image\n      taskInfo {\n        label\n        icon\n        type\n        group\n        isEntryPoint\n        inputs {\n          type\n        options\n          name\n          required\n          variant\n          helperText\n          hideHandle\n        }\n        outputs {\n          type\n          name\n          required\n          variant\n          helperText\n          hideHandle\n        }\n        credits\n      }\n    }\n  }\n": typeof types.GetAvailableTriggersDocument,
@@ -30,6 +32,8 @@ type Documents = {
     "\n  query getWorkflowExecution($executionId: ID!) {\n    getWorkflowExecution(executionId: $executionId) {\n      id\n      workflowId\n      trigger\n      status\n      createdAt\n      startedAt\n      completedAt\n      creditsConsumed\n      workflow {\n        name\n      }\n      phases {\n        id\n        status\n        number\n        data\n        name\n        startedAt\n        completedAt\n        inputs\n        outputs\n        creditsConsumed\n        logs {\n          logLevel\n          message\n          timestamp\n        }\n      }\n    }\n  }\n": typeof types.GetWorkflowExecutionDocument,
     "\n  query getWorkflowExecutions($workflowId: ID!) {\n    getWorkflowExecutions(workflowId: $workflowId) {\n      id\n      status\n      startedAt\n      completedAt\n      trigger\n      creditsConsumed\n    }\n  }\n": typeof types.GetWorkflowExecutionsDocument,
     "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n": typeof types.CurrentUserDocument,
+    "\n  query GetCredentials {\n    getCredentials {\n      id\n      name\n      value\n    }\n  }\n": typeof types.GetCredentialsDocument,
+    "\n  query GetCredential($id: ID!) {\n    getCredential(id: $id) {\n      id\n      name\n      value\n    }\n  }\n": typeof types.GetCredentialDocument,
 };
 const documents: Documents = {
     "\n    #graphql\n    mutation CreateWorkflow($payload: createWorkflowPayload!) {\n        createWorkflow(payload: $payload) {\n            id\n        }\n    }\n": types.CreateWorkflowDocument,
@@ -40,6 +44,8 @@ const documents: Documents = {
     "\n    #graphql\n    mutation UnpublishWorkflow($id: ID!) {\n        unpublishWorkflow(id: $id)\n    }\n": types.UnpublishWorkflowDocument,
     "\n    #graphql\n    mutation UpdateWorkflowCron($workflowId: ID!, $cron: String!) {\n        updateWorkflowCron(workflowId: $workflowId, cron: $cron)\n    }\n": types.UpdateWorkflowCronDocument,
     "\n    #graphql\n    mutation DeleteWorkflowCron($workflowId: ID!) {\n        deleteWorkflowCron(workflowId: $workflowId)\n    }\n": types.DeleteWorkflowCronDocument,
+    "\n    mutation CreateCredential($payload: createCredentialPayload!) {\n        createCredential(payload: $payload) \n    }\n": types.CreateCredentialDocument,
+    "\n    mutation DeleteCredential($id: ID!) {\n        deleteCredential(id: $id)\n    }\n": types.DeleteCredentialDocument,
     "\n  query GetWorkflows {\n    getWorkflows {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n": types.GetWorkflowsDocument,
     "\n  query GetWorkflow($id: ID!) {\n    getWorkflow(id: $id) {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      cron\n      nextRunAt\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n": types.GetWorkflowDocument,
     "\n  #graphql\n  query getAvailableTriggers {\n    getAvailableTriggers {\n      id\n      name\n      key\n      image\n      taskInfo {\n        label\n        icon\n        type\n        group\n        isEntryPoint\n        inputs {\n          type\n        options\n          name\n          required\n          variant\n          helperText\n          hideHandle\n        }\n        outputs {\n          type\n          name\n          required\n          variant\n          helperText\n          hideHandle\n        }\n        credits\n      }\n    }\n  }\n": types.GetAvailableTriggersDocument,
@@ -48,6 +54,8 @@ const documents: Documents = {
     "\n  query getWorkflowExecution($executionId: ID!) {\n    getWorkflowExecution(executionId: $executionId) {\n      id\n      workflowId\n      trigger\n      status\n      createdAt\n      startedAt\n      completedAt\n      creditsConsumed\n      workflow {\n        name\n      }\n      phases {\n        id\n        status\n        number\n        data\n        name\n        startedAt\n        completedAt\n        inputs\n        outputs\n        creditsConsumed\n        logs {\n          logLevel\n          message\n          timestamp\n        }\n      }\n    }\n  }\n": types.GetWorkflowExecutionDocument,
     "\n  query getWorkflowExecutions($workflowId: ID!) {\n    getWorkflowExecutions(workflowId: $workflowId) {\n      id\n      status\n      startedAt\n      completedAt\n      trigger\n      creditsConsumed\n    }\n  }\n": types.GetWorkflowExecutionsDocument,
     "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n": types.CurrentUserDocument,
+    "\n  query GetCredentials {\n    getCredentials {\n      id\n      name\n      value\n    }\n  }\n": types.GetCredentialsDocument,
+    "\n  query GetCredential($id: ID!) {\n    getCredential(id: $id) {\n      id\n      name\n      value\n    }\n  }\n": types.GetCredentialDocument,
 };
 
 /**
@@ -99,6 +107,14 @@ export function graphql(source: "\n    #graphql\n    mutation DeleteWorkflowCron
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    mutation CreateCredential($payload: createCredentialPayload!) {\n        createCredential(payload: $payload) \n    }\n"): (typeof documents)["\n    mutation CreateCredential($payload: createCredentialPayload!) {\n        createCredential(payload: $payload) \n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation DeleteCredential($id: ID!) {\n        deleteCredential(id: $id)\n    }\n"): (typeof documents)["\n    mutation DeleteCredential($id: ID!) {\n        deleteCredential(id: $id)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetWorkflows {\n    getWorkflows {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n"): (typeof documents)["\n  query GetWorkflows {\n    getWorkflows {\n      id\n      name\n      status\n      definition\n      description\n      executionPlan\n      createdAt\n      updatedAt\n      creditsCost\n      lastRunAt\n      lastRunId\n      nextRunAt\n      userId\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -128,6 +144,14 @@ export function graphql(source: "\n  query getWorkflowExecutions($workflowId: ID
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n"): (typeof documents)["\n  query CurrentUser {\n    getCurrentUser {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetCredentials {\n    getCredentials {\n      id\n      name\n      value\n    }\n  }\n"): (typeof documents)["\n  query GetCredentials {\n    getCredentials {\n      id\n      name\n      value\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetCredential($id: ID!) {\n    getCredential(id: $id) {\n      id\n      name\n      value\n    }\n  }\n"): (typeof documents)["\n  query GetCredential($id: ID!) {\n    getCredential(id: $id) {\n      id\n      name\n      value\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

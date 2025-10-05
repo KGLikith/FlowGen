@@ -7,3 +7,23 @@ export const CURRENT_USER = graphql(`
     }
   }
 `);
+
+export const GET_CREDENTIALS = graphql(`
+  query GetCredentials {
+    getCredentials {
+      id
+      name
+      value
+    }
+  }
+`);
+
+export const GET_CREDENTIAL = graphql(`
+  query GetCredential($id: ID!) {
+    getCredential(id: $id) {
+      id
+      name
+      value
+    }
+  }
+`);
