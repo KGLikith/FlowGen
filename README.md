@@ -29,20 +29,20 @@ It bridges triggers, actions, and data flow between services — turning complex
 
 ---
 
-## 🧠 Core Concepts
+## Core Concepts
 
-### 🔔 Triggers
+### Triggers
 Define when a workflow starts — Scheduled task.
 
-### ⚡ Actions
+### Actions
 Tasks that execute after a trigger fires — send an email, call an API, update a database, or automate browser actions.
 
-### 🔗 Workflows
+### Workflows
 A chain of triggers and actions connected visually to represent logic flow and data movement.
 
 --- 
 
-## 🛣️ Roadmap
+## Roadmap
 
 - [ ] Workflow templates & marketplace  
 - [ ] Multi-user collaboration  
