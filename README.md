@@ -1,7 +1,13 @@
 # FlowGen — Visual Workflow Automation
+## (Work in progress)
 
 **FlowGen** is a visual workflow automation platform that lets you design, execute, and monitor automations using a drag-and-drop interface.  
 It bridges triggers, actions, and data flow between services — turning complex backend automation into a visual experience.
+
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/fd47cf58-6316-4e32-9332-40b7c6ee9ab5" />
+
+<img width="1866" height="902" alt="image" src="https://github.com/user-attachments/assets/63223ad8-bba7-48c6-8774-7834929eb58d" />
+
 
 ---
 
