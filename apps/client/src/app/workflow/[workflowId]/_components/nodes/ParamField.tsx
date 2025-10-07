@@ -9,39 +9,34 @@ import { useWorkflow } from '@/components/context/WorkflowProvider'
 import SelectorParam from './param/SelectorParam'
 import WebhookParam from './param/WebhookParam'
 import CredentialParam from './param/CredentialParam'
+import useFlowValidation from '@/hooks/useFlowValidation'
 
 type Props = {
     param: TaskParam
     nodeId: string
     disabled?: boolean
+    hasErrors: boolean
+    value: string
+  onChange: (newValue: string) => void
 }
 
-export default function NodeParamField({ param, nodeId, disabled }: Props) {
-    const { updateNodeData, getNode } =  useReactFlow();
-    const { workflow} = useWorkflow();
+export default function NodeParamField({hasErrors, param, nodeId, disabled, value, onChange }: Props) {
+    const { updateNodeData, getNode } = useReactFlow();
+    const { workflow } = useWorkflow();
     const node = getNode(nodeId) as AppNode;
-    const value = node?.data.inputs?.[param.name] || ''
 
-    const updateNodeParamvalue  = useCallback((newValue: string)=>{
-        updateNodeData(nodeId, {
-            inputs: {
-                ...node?.data.inputs,
-                [param.name]: newValue
-            }
-        })
-    },[nodeId, updateNodeData, param.name, node?.data.inputs])
 
     switch (param.type) {
         case TaskParamType.String:
-            return <Stringparam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+            return <Stringparam error={hasErrors} param={param} value={value} updateNodeParamValue={onChange} disabled={disabled || workflow?.status === WorkflowStatus.Active} />
         case TaskParamType.BrowserInstance:
-            return <BrowserInstanceParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} />
+            return <BrowserInstanceParam error={hasErrors} param={param} value={value} updateNodeParamValue={onChange} />
         case TaskParamType.Select:
-            return <SelectorParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+            return <SelectorParam error={hasErrors} param={param} value={value} updateNodeParamValue={onChange} disabled={disabled || workflow?.status === WorkflowStatus.Active} />
         case TaskParamType.WebhookParams:
-            return <WebhookParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+            return <WebhookParam error={hasErrors} param={param} value={value} updateNodeParamValue={onChange} disabled={disabled || workflow?.status === WorkflowStatus.Active} />
         case TaskParamType.Credential:
-            return <CredentialParam param={param} value={value} updateNodeParamValue={updateNodeParamvalue} disabled={disabled || workflow?.status===WorkflowStatus.Active} />
+            return <CredentialParam error={hasErrors} param={param} value={value} updateNodeParamValue={onChange} disabled={disabled || workflow?.status === WorkflowStatus.Active} />
         default:
             return (
                 <div className="w-full">

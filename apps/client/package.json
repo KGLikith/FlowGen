@@ -35,9 +35,11 @@
     "apollo-cache-persist": "^0.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "cron-parser": "^5.4.0",
     "cronstrue": "^3.3.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.23.22",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
     "lucide-react": "^0.544.0",
@@ -52,6 +54,7 @@
     "rxjs": "^7.8.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "vaul": "^1.1.2",
     "zod": "^4.1.8"
   },
   "devDependencies": {

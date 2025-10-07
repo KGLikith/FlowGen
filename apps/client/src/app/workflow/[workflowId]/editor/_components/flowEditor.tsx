@@ -2,12 +2,14 @@ import { useWorkflow } from "@/components/context/WorkflowProvider"
 import { ActionKey, TriggerKey, User, Workflow } from "@/gql/graphql"
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode"
 import { AppNode } from "@/schema/appNode"
-import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
+import { addEdge, Background, BackgroundVariant, Connection, Controls, Edge, getOutgoers, Panel, ReactFlow, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { useCallback, useEffect } from "react"
 import { toast } from "sonner"
 import NodeComponent from "@/app/workflow/[workflowId]/_components/nodes/Component"
 import DeletableEdge from "@/app/workflow/[workflowId]/_components/edges/deletableEdge"
+import NodeInspectorPanel from "./conifgPanel"
+import { NodeDialogProvider } from "@/components/context/nodeDialogContext"
 
 type Props = {
   currentUser: User
@@ -146,40 +148,46 @@ export default function FlowEditor({ }: Props) {
   }, [edges, nodes, actions, trigger]);
 
   return (
-    <main className="h-full w-full">
-      <ReactFlow
-        minZoom={0.1}
-        maxZoom={2.0}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        className="bg-background"
-        aria-label={`Flow editor for workflow: ${workflow?.name}`}
-        role="application"
-        nodeTypes={nodeTypes}
-        edgeTypes={EdgeTypes}
-        fitView
-        fitViewOptions={fitViewOptions}
-        snapToGrid
-        snapGrid={snapGrid}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onConnect={onConnect}
-        isValidConnection={isValidConnection}
-        zoomOnScroll={true}
-        zoomOnPinch={true}
-        panOnScroll={true}
-        panOnDrag={true} 
-        zoomActivationKeyCode="Control"
-      >
-        <Controls position="top-left" className=" text-black border border-border shadow-lg rounded-lg" />
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={12}
-          size={1}
-        />
-      </ReactFlow>
-    </main>
+    <NodeDialogProvider>
+      <main className="h-full w-full flex overflow-hidden relative">
+        <NodeInspectorPanel allActions={actions} trigger={trigger} />
+        <ReactFlow
+          minZoom={0.3}
+          maxZoom={2.0}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          className="bg-background"
+          aria-label={`Flow editor for workflow: ${workflow?.name}`}
+          role="application"
+          nodeTypes={nodeTypes}
+          edgeTypes={EdgeTypes}
+          fitView
+          fitViewOptions={fitViewOptions}
+          snapToGrid
+          snapGrid={snapGrid}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onConnect={onConnect}
+          isValidConnection={isValidConnection}
+          zoomOnScroll={true}
+          zoomOnPinch={true}
+          panOnScroll={true}
+          panOnDrag={true}
+          zoomActivationKeyCode="Control"
+        >
+          <Controls position="top-left" className=" text-black border border-border shadow-lg rounded-lg" />
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={12}
+            size={1}
+          />
+          <Panel position="top-right" className="rounded-md border bg-card px-2 py-1 text-xs font-semibold">
+            Click a node to edit its parameters.
+          </Panel>
+        </ReactFlow>
+      </main>
+    </NodeDialogProvider>
   )
 }

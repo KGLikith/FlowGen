@@ -28,6 +28,7 @@ export enum ActionKey {
   NavigateUrl = 'NAVIGATE_URL',
   PageToHtml = 'PAGE_TO_HTML',
   ReadPropertyFromJson = 'READ_PROPERTY_FROM_JSON',
+  ScrollToElement = 'SCROLL_TO_ELEMENT',
   TriggerWebhook = 'TRIGGER_WEBHOOK',
   WaitForElement = 'WAIT_FOR_ELEMENT'
 }

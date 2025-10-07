@@ -37,11 +37,10 @@ export default function UserWorkflows() {
           key={workflow.id}
           className="border-border/60 bg-card transition-colors hover:bg-muted/40 hover:shadow-sm cursor-pointer group"
           onClick={() => {
-            // navigate to editor on card click
             router.push(`/workflow/${workflow.id}/editor`)
           }}
         >
-          <CardContent className="p-4 md:p-5">
+          <CardContent className="p-4 py-0 md:p-5 md:py-1">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="mt-0.5 h-9 w-9 rounded-full bg-muted/70 group-hover:bg-muted flex items-center justify-center shrink-0 transition-colors">

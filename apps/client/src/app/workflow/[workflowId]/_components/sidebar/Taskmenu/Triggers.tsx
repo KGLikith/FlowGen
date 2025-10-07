@@ -53,7 +53,7 @@ export default function Triggers({ availableTriggers, isLoading, onClose }: Prop
                         <AccordionTrigger className="font-bold cursor-pointer">
                             {groupLabels[group as TaskGroup]}
                         </AccordionTrigger>
-                        <AccordionContent className='flex flex-col gap-1'>
+                        <AccordionContent className='flex flex-col gap-2'>
                             {groupTriggers.map(trigger => (
                                 <TaskButton
                                     key={trigger.id}

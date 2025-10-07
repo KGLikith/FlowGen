@@ -56,7 +56,7 @@ export default function EditorLayout({
           <Panel onClose={() => setActivePanel(null)}  />
         </div>
       )}
-      <div className="flex-1">
+      <div className="flex-1 ">
         <FlowEditor currentUser={currentUser} />
       </div>
     </div>

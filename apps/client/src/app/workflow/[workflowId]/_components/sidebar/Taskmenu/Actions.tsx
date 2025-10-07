@@ -39,7 +39,8 @@ export default function Actions({ actions, isLoading, onClose }: Props) {
   }
 
   return (
-    <Accordion type="multiple" className='w-full' defaultValue={["DATA_EXTRACTION"]}>
+
+    <Accordion type="multiple" className='w-full' defaultValue={["DATA_EXTRACTION", "USER_INTERACTIONS", "TIMING", "INTEGRATIONS", "DATA_STORAGE"]}>
       <div className='flex items-center justify-between mb-1'>
         <div className='font-bold text-lg'>Actions</div>
         <CloseButton onClose={onClose} />
@@ -53,7 +54,7 @@ export default function Actions({ actions, isLoading, onClose }: Props) {
           <AccordionTrigger className="font-bold cursor-pointer">
             {groupLabels[group as TaskGroup]}
           </AccordionTrigger>
-          <AccordionContent className='flex flex-col gap-1'>
+          <AccordionContent className='flex flex-col gap-2'>
             {groupActions.map(action => (
               <TaskButton
                 key={action.id}
