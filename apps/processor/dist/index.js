@@ -31,7 +31,7 @@ function main() {
                     yield new Promise((r) => setTimeout(r, 3000));
                     continue;
                 }
-                console.log("📦 Pending rows", outbox.length);
+                console.log(outbox.length);
                 yield producer.send({
                     topic: TOPIC_NAME,
                     messages: outbox.map((ex) => ({

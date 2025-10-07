@@ -25,8 +25,8 @@ async function main() {
         continue;
       }
 
-      console.log("📦 Pending rows", outbox.length);
 
+      console.log(outbox.length);
       await producer.send({
         topic: TOPIC_NAME,
         messages: outbox.map((ex) => ({
