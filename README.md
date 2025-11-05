@@ -48,7 +48,7 @@ A chain of triggers and actions connected visually to represent logic flow and d
 
 --- 
 
-## Roadmap
+## TO-DO
 
 - [ ] Workflow templates & marketplace  
 - [ ] Multi-user collaboration  
