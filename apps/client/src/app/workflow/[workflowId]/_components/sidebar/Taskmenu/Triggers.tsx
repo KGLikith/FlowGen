@@ -57,12 +57,10 @@ export default function Triggers({ availableTriggers, isLoading, onClose }: Prop
                             {groupTriggers.map(trigger => (
                                 <TaskButton
                                     key={trigger.id}
-                                    credits={trigger.taskInfo.credits}
+                                    taskInfo={trigger.taskInfo}
                                     taskType={trigger.key}
                                     taskId={trigger.id}
                                     trigger={true}
-                                    taskIcon={trigger.taskInfo.icon as string}
-                                    taskLabel={trigger.taskInfo.label}
                                 />
                             ))}
                         </AccordionContent>

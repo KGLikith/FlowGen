@@ -12,6 +12,7 @@
     "db:generate": "npm run generate --workspace=@automation/db",
     "db:migrate": "npm run migrate --workspace=@automation/db",
     "db:studio": "npm run studio --workspace=@automation/db",
+    "db:seed" : "npm run seed --workspace=@automation/db",
     "client:dev": "npm run dev --workspace=@automation/client",
     "client:build": "npm run build --workspace=@automation/client",
     "client:start": "npm run start --workspace=@automation/client",
@@ -22,6 +23,9 @@
     "server:start": "npm run start --workspace=@automation/server",
     "worker:dev": "npm run dev --workspace=@automation/worker",
     "processor:dev": "npm run dev --workspace=@automation/processor",
+    "worker:build": "npm run build --workspace=@automation/worker",
+    "processor:build": "npm run build --workspace=@automation/processor",
+    "build": "concurrently -n client,server,worker,processor -c blue,green,yellow,magenta \"npm run client:build\" \"npm run server:build\" \"npm run worker:build\" \"npm run processor:build\"",
     "kafka:dev": "concurrently -n worker,processor -c green,yellow,magenta \"npm run worker:dev\" \"npm run processor:dev\""
   },
   "repository": {

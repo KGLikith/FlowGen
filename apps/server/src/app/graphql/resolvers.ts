@@ -217,7 +217,18 @@ const mutations = {
   },
 };
 
+const subscriptions = {
+  webhookEvent: {
+    subscribe: async (_: any, { id }: { id: string }, context: GraphqlContext) => {
+      if (!context.clerkId) throw new Error("Unauthorized");
+      return context.pubsub.asyncIterableIterator([`WEBHOOK_${id}`]);
+    },
+    resolve: (payload: any) => payload
+  }
+}
+
 export const resolvers = {
   queries,
   mutations,
+  subscriptions
 };

@@ -27,8 +27,7 @@ function main() {
                     take: 10,
                 });
                 if (outbox.length === 0) {
-                    // nothing to process, wait a bit
-                    yield new Promise((r) => setTimeout(r, 3000));
+                    yield new Promise((r) => setTimeout(r, 4000));
                     continue;
                 }
                 console.log(outbox.length);

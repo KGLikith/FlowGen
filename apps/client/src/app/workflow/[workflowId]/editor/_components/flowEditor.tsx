@@ -10,6 +10,7 @@ import NodeComponent from "@/app/workflow/[workflowId]/_components/nodes/Compone
 import DeletableEdge from "@/app/workflow/[workflowId]/_components/edges/deletableEdge"
 import NodeInspectorPanel from "./conifgPanel"
 import { NodeDialogProvider } from "@/components/context/nodeDialogContext"
+import { convertOffsetToTimes } from "framer-motion"
 
 type Props = {
   currentUser: User
@@ -57,7 +58,7 @@ export default function FlowEditor({ }: Props) {
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     const data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
-    const { type, taskId, trigger, credits } = data;
+    const { type, taskId, trigger, credits, event: events, connection } = data;
 
     if (typeof type === 'undefined' || !type) {
       return;
@@ -78,7 +79,15 @@ export default function FlowEditor({ }: Props) {
       y: event.clientY - reactFlowBounds.top / 2,
     });
 
-    const newNode = CreateFlowNode(type as ActionKey | TriggerKey, credits, pos, trigger === true ? "TRIGGER" : "ACTION", taskId)
+    const newNode = CreateFlowNode(
+      type as ActionKey | TriggerKey,
+      credits,
+      pos,
+      trigger === true ? "TRIGGER" : "ACTION",
+      taskId,
+      [events ? "event" : "", ""],
+      [connection ? "connection" : "", ""]
+    );
     setNodes((nds) => nds.concat(newNode))
 
   }, [screenToFlowPosition, setNodes])
@@ -93,6 +102,7 @@ export default function FlowEditor({ }: Props) {
     if (!node) return;
 
     const nodeInputs = node.data.inputs
+    console.log(nodeInputs, "nodeInputs onConnect", connection.targetHandle)
 
     delete nodeInputs[connection.targetHandle]
 

@@ -40,6 +40,7 @@ export default class WorkflowQueriesService {
             include: {
               inputs: true,
               outputs: true,
+              events: true,
             },
           },
         },
@@ -61,6 +62,7 @@ export default class WorkflowQueriesService {
             include: {
               inputs: true,
               outputs: true,
+              events: true,
             },
           },
         },
@@ -87,6 +89,7 @@ export default class WorkflowQueriesService {
                 include: {
                   inputs: true,
                   outputs: true,
+                  events: true,
                 },
               },
             },
@@ -97,6 +100,7 @@ export default class WorkflowQueriesService {
                 include: {
                   inputs: true,
                   outputs: true,
+                  events: true,
                 },
               },
             },
@@ -171,6 +175,4 @@ export default class WorkflowQueriesService {
       );
     }
   }
-
-  
 }

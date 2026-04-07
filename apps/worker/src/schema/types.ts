@@ -13,7 +13,7 @@ import { AddPropertyToJSONExecutor } from "../run_functions/add_property_to_json
 import { NavigateURLExecutor } from "../run_functions/navigate_url";
 import { ScrollToElementExecutor } from "../run_functions/scroll_to_element";
 
-export const ExecutorRegistry = {
+export const ExecutorRegistry: Record<string, any> = {
   LAUNCH_BROWSER: LaunchBrowserExecutor,
   PAGE_TO_HTML: PageToHtmlExecutor,
   EXTRACT_TEXT_FROM_ELEMENT: ExtractTextFromElementExecutor,
@@ -26,7 +26,7 @@ export const ExecutorRegistry = {
   READ_PROPERTY_FROM_JSON: ReadPropertyFromJSONExecutor,
   ADD_PROPERTY_TO_JSON: AddPropertyToJSONExecutor,
   NAVIGATE_URL: NavigateURLExecutor,
-  SCROLL_ELEMENT: ScrollToElementExecutor,
+  SCROLL_TO_ELEMENT: ScrollToElementExecutor,
 
 };
 

@@ -14,6 +14,8 @@ import { execute, subscribe } from "graphql";
 import { pubsub } from "../clients/pubsub";
 import { GraphqlData } from "./graphql";
 import userService from "./services/user";
+import webhookrouter from "./routes/webhook";
+import { verifyToken } from "@clerk/backend";
 
 EventEmitter.defaultMaxListeners = 100;
 
@@ -26,6 +28,8 @@ export default async function initServer() {
   // type Mutation {
   //   ${User.mutations}
   // }
+
+  app.use('/webhook', webhookrouter)
 
   const schema = makeExecutableSchema({
     typeDefs: `
@@ -42,6 +46,10 @@ export default async function initServer() {
         ${GraphqlData.mutations}
       }
 
+      type Subscription {
+        ${GraphqlData.subscriptions}
+      }
+
     `,
     resolvers: {
       DateTime: DateTimeResolver,
@@ -51,6 +59,9 @@ export default async function initServer() {
       },
       Mutation: {
         ...GraphqlData.resolvers.mutations,
+      },
+      Subscription: {
+        ...GraphqlData.resolvers.subscriptions,
       },
     },
   });
@@ -62,23 +73,36 @@ export default async function initServer() {
     path: "/subscriptions",
   });
 
-  const serverCleanup = useServer(
-    {
-      schema,
-      execute,
-      subscribe,
-      context: async (ctx) => {
-        //  TODO: fix the header part...
-        const token = ctx.connectionParams?.authorization as string | undefined;
-        let auth = null;
-        if (token) {
-          auth = getAuth({ headers: { authorization: token } } as any);
+  
+const serverCleanup = useServer(
+  {
+    schema,
+    execute: async (args) => execute(args),
+    subscribe: async (args) => subscribe(args),
+    context: async (ctx) => {
+      const token =
+        typeof ctx.connectionParams?.headers === "object"
+          ? (ctx.connectionParams.headers as Record<string, any>)?.authorization
+          : undefined;
+
+      let clerkId = null;
+
+      if (token) {
+        try {
+          const verifiedToken = await verifyToken(token.replace("Bearer ", ""), {
+            secretKey: process.env.CLERK_SECRET_KEY!,
+          });
+          clerkId = verifiedToken.sub;
+        } catch (err) {
+          console.error("❌ Clerk token verification failed:", (err as Error).message);
         }
-        return { clerkId: auth?.userId, pubsub };
-      },
+      }
+
+      return { clerkId, pubsub };
     },
-    wsServer
-  );
+  },
+  wsServer
+);
 
   const gqlserver = new ApolloServer({
     schema,

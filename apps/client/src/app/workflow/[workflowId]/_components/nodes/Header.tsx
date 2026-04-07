@@ -7,11 +7,13 @@ import { useReactFlow } from '@xyflow/react'
 import { CreateFlowNode } from '@/lib/workflow/createFlowNode'
 import { AppNode } from '@/schema/appNode'
 import { getTaskIcon } from './icons'
+import { useNodeDialog } from '@/components/context/nodeDialogContext'
 
 export default function NodeHeader({ taskType, nodeId, isTrigger }: any) {
   const { allActions, trigger, setCurrentTriggerId, workflow } = useWorkflow()
-  const { deleteElements, getNode, addNodes } = useReactFlow()
+  const { deleteElements, getNode, addNodes, setNodes } = useReactFlow()
   const task = [...(allActions || []), trigger].find((t) => t?.key === taskType)
+  const { setCurrentNodeId, currentNodeId } = useNodeDialog();
 
   if (!task) return null
 
@@ -29,9 +31,13 @@ export default function NodeHeader({ taskType, nodeId, isTrigger }: any) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation()
                 deleteElements({ nodes: [{ id: nodeId }] })
-              }
+                setNodes((nds) => nds.filter((n) => n.id !== nodeId))
+                if(currentNodeId === nodeId) setCurrentNodeId(undefined)
+                if (isTrigger) setCurrentTriggerId(undefined)
+              }}
               className="text-destructive"
             >
               <TrashIcon size={12} />
@@ -39,14 +45,17 @@ export default function NodeHeader({ taskType, nodeId, isTrigger }: any) {
             {!isTrigger && <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 const node = getNode(nodeId) as AppNode
                 const newNode = CreateFlowNode(
                   node.data.type,
                   node.data.credits,
                   { x: node.position.x + 120, y: node.position.y + 80 },
                   node.data.trigger ? 'TRIGGER' : 'ACTION',
-                  node.data.actionId
+                  node.data.actionId,
+                  node.data.event,
+                  node.data.connection
                 )
                 addNodes([newNode])
               }}
@@ -57,7 +66,6 @@ export default function NodeHeader({ taskType, nodeId, isTrigger }: any) {
               <GripVerticalIcon size={16} />
             </Button>
           </>
-
         )}
       </div>
     </div>

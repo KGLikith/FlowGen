@@ -58,12 +58,10 @@ export default function Actions({ actions, isLoading, onClose }: Props) {
             {groupActions.map(action => (
               <TaskButton
                 key={action.id}
-                credits={action.taskInfo.credits}
                 taskType={action.key}
                 taskId={action.id}
                 trigger={false}
-                taskIcon={action.taskInfo.icon as string}
-                taskLabel={action.taskInfo.label}
+                taskInfo={action.taskInfo}
               />
             ))}
           </AccordionContent>

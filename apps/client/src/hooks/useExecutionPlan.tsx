@@ -23,9 +23,13 @@ const useExecutionPlan = () => {
                 setInvalidInputs(error.invalidElements || []);
                 break;
             case FlowToExecutionPlanTypeErrorType.INVALID_NODES:
-                toast.error("Some nodes are not compatible with the trigger. ",{
+                toast.error("Some nodes are not compatible with the trigger. ", {
                     description: "Please remove or replace the invalid nodes."
                 })
+                setInvalidNodes(error.invalidNodes || []);
+                break;
+            case FlowToExecutionPlanTypeErrorType.INVALID_ENTRY_POINT:
+                toast.error("The entry point node is not connected. Please check its configuration.")
                 setInvalidNodes(error.invalidNodes || []);
                 break;
             default:

@@ -5,7 +5,8 @@ export function CreateFlowNode(
   credits: number,
   position?: { x: number; y: number },
   type: "TRIGGER" | "ACTION" = "ACTION",
-  taskId?: string
+  taskId?: string,
+  ...extraInputs: [key: string, value: any][]
 ) {
   return {
     id: crypto.randomUUID(),
@@ -16,6 +17,10 @@ export function CreateFlowNode(
       trigger: type === "TRIGGER",
       triggerId: type === "TRIGGER" ? taskId : undefined,
       actionId: type === "ACTION" ? taskId : undefined,
+      ...extraInputs.reduce((acc: { [key: string]: any }, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {}),
     },
     dragHandle: ".drag-handle",
     type: "Node",

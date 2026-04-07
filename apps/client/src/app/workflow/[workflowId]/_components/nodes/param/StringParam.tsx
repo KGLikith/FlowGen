@@ -11,7 +11,6 @@ export default function StringParam({ param, value, updateNodeParamValue, disabl
 
   const [stringValue, setStringValue] = useState(value)
   const id = useId()
-  console.log(param, value, disabled, error)
   
   useEffect(() => {
     setStringValue(value)
@@ -34,13 +33,12 @@ export default function StringParam({ param, value, updateNodeParamValue, disabl
         placeholder="Enter value here"
         value={stringValue}
         onChange={(e: any) => {
-          setStringValue(e.target.value)
+          updateNodeParamValue(e.target.value)
         }}
         onBlur={(e: any) => {
           updateNodeParamValue(e.target.value)
         }}
         className={cn("text-xs font-medium bg-white", {
-          "border-red-500": param.required && !stringValue && !disabled, 
           "opacity-50 cursor-not-allowed": disabled,
           "border-2 border-red-500": error && !disabled
         })}

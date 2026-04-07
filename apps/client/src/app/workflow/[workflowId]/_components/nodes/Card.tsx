@@ -12,8 +12,7 @@ type Props = {
 }
 
 export default function NodeCard({ children, nodeId, isSelected }: Props) {
-
-  const { getNode, setCenter } = useReactFlow();
+  const { getNode, setCenter, setNodes } = useReactFlow();
   const { setCurrentNodeId } = useNodeDialog();
   const { invalidInputs, invalidNodes } = useFlowValidation();
   const hasInvalidInputs = invalidInputs.some(input => input.nodeId === nodeId);
@@ -35,9 +34,16 @@ export default function NodeCard({ children, nodeId, isSelected }: Props) {
       //     duration: 500
       //   });
       // }}
-      onClick={() => {
-        console.log("hello", nodeId)
+      onClick={(e) => {
+        e.stopPropagation()
         setCurrentNodeId(nodeId)
+
+        setNodes((nodes) =>
+          nodes.map((n) => ({
+            ...n,
+            selected: n.id === nodeId,
+          }))
+        );
       }}
       className={cn(`rounded-lg rounded-b-none cursor-pointer bg-background border-2 border-separate w-[400px] text-xs  flex flex-col `,
         { "border-primary": isSelected, "border-border": !isSelected },

@@ -20,8 +20,7 @@ async function main() {
       });
 
       if (outbox.length === 0) {
-        // nothing to process, wait a bit
-        await new Promise((r) => setTimeout(r, 3000));
+        await new Promise((r) => setTimeout(r, 4000));
         continue;
       }
 
@@ -45,6 +44,7 @@ async function main() {
           },
         },
       });
+      
     }
   } catch (err) {
     console.error("❌ Error in producer loop:", err);

@@ -14,6 +14,7 @@ export enum FlowToExecutionPlanTypeErrorType {
   NO_ENTRY_POINT = "NO_ENTRY_POINT",
   INVALID_INPUTS = "INVALID_INPUTS",
   INVALID_NODES = "INVALID_NODES",
+  INVALID_ENTRY_POINT = "INVALID_ENTRY_POINT",
 }
 
 type FlowToExecutionPlanType = {
@@ -42,6 +43,16 @@ export function FlowToExecutionPlan(
       },
     };
   }
+  const outgoingEdgesEntry = edges.filter((ed) => ed.source === entryPoint.id);
+  if (outgoingEdgesEntry.length === 0) {
+    return {
+      error: {
+        type: FlowToExecutionPlanTypeErrorType.INVALID_ENTRY_POINT,
+        invalidNodes: [{ nodeId: entryPoint.id }],
+      },
+    };
+  }
+
 
   const invalidActions = nodes.filter(
     (nd) =>
@@ -141,7 +152,7 @@ export function FlowToExecutionPlan(
   };
 }
 
-function getInvalidInputs(
+export function getInvalidInputs(
   node: AppNode,
   edges: Edge[],
   planned: Set<string>,

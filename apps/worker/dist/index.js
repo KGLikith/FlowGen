@@ -103,7 +103,6 @@ function main() {
                     });
                     let creditsConsumed = 0;
                     creditsConsumed = node.data.credits || 0;
-                    // TODO
                     const userBalanceUpdateResult = yield (0, updateUserBalance_1.decrementUserBalance)(executionWithPhases.userId, creditsConsumed);
                     const environment = (0, executionEnvironment_1.getEnvironment)(executionId);
                     const logCollector = (0, log_1.createLogCollector)();

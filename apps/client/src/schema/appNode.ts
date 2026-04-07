@@ -16,7 +16,7 @@ export interface AppNode extends Node {
     data: AppNodeData;
 }
 
-export type AppNodeMissingInputs = {     
+export type AppNodeMissingInputs = {
     nodeId: string;
     inputs: string[];
 }

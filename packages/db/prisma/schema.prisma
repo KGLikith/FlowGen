@@ -75,6 +75,8 @@ model WorkflowExecution {
   completedAt     DateTime?
   creditsConsumed Int
   definition      String                  @default("{}")
+  connection      Connections?            @relation(fields: [connectionId], references: [id])
+  connectionId    String?
 
   workflow        Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   user            User              @relation(fields: [userId], references: [id])
@@ -141,17 +143,45 @@ enum ActionKey {
 }
 
 model TaskInfo {
-  id               String             @id @default(cuid())
-  label            String
-  icon             String?
-  type             TaskType
-  group            TaskGroup          @default(DATA_EXTRACTION)
-  isEntryPoint     Boolean            @default(false)
-  inputs           TaskParam[]        @relation("TaskInfoInputs")
-  outputs          TaskParam[]        @relation("TaskInfoOutputs")
-  credits          Int
-  AvailableTrigger AvailableTrigger[]
-  AvailableAction  AvailableAction[]
+  id                 String             @id @default(cuid())
+  label              String
+  icon               String?
+  type               TaskType
+  group              TaskGroup          @default(DATA_EXTRACTION)
+  isEntryPoint       Boolean            @default(false)
+  inputs             TaskParam[]        @relation("TaskInfoInputs")
+  outputs            TaskParam[]        @relation("TaskInfoOutputs")
+  credits            Int
+  events             TaskEvent[]
+  testingAvailable   Boolean            @default(false)
+  requiredConnection TPConnections      @default(NONE)
+  AvailableTrigger   AvailableTrigger[]
+  AvailableAction    AvailableAction[]
+}
+
+enum TPConnections {
+  NONE
+  SLACK
+  DISCORD
+  NOTION
+  GOOGLE_DOCS
+}
+
+model TaskEvent {
+  id          String        @id @default(cuid())
+  label       String
+  description String?
+  event       TaskEventEnum
+  inputs       Json[] 
+  outputs     Json[] 
+  TaskInfo    TaskInfo?     @relation(fields: [taskInfoId], references: [id])
+  taskInfoId  String?
+}
+
+enum TaskEventEnum {
+  CATCH_HOOK
+  CATCH_RAW_HOOK
+  RETRIEVE_POOL
 }
 
 enum TaskGroup {
@@ -268,7 +298,7 @@ enum logLevel {
 model Credential {
   id        String   @id @default(cuid())
   userId    String
-  name      String    @unique
+  name      String   @unique
   value     String
   createdAt DateTime @default(now())
 
@@ -334,16 +364,17 @@ model GoogleDocs {
 }
 
 model Connections {
-  id             String          @id @default(uuid())
-  type           String // "slack" | "discord" | "notion" | "googleDocs"
-  discordId      String?
-  slackId        String?
-  notionId       String?
-  googleDocsId   String?
-  userId         String?
-  user           User?           @relation(fields: [userId], references: [id])
-  DiscordWebhook DiscordWebhook? @relation(fields: [discordId], references: [id])
-  Slack          Slack?          @relation(fields: [slackId], references: [id])
-  Notion         Notion?         @relation(fields: [notionId], references: [id])
-  GoogleDocs     GoogleDocs?     @relation(fields: [googleDocsId], references: [id])
+  id                String              @id @default(uuid())
+  type              TPConnections
+  discordId         String?
+  slackId           String?
+  notionId          String?
+  googleDocsId      String?
+  userId            String?
+  user              User?               @relation(fields: [userId], references: [id])
+  DiscordWebhook    DiscordWebhook?     @relation(fields: [discordId], references: [id])
+  Slack             Slack?              @relation(fields: [slackId], references: [id])
+  Notion            Notion?             @relation(fields: [notionId], references: [id])
+  GoogleDocs        GoogleDocs?         @relation(fields: [googleDocsId], references: [id])
+  WorkflowExecution WorkflowExecution[]
 }

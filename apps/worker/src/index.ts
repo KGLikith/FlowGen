@@ -130,7 +130,6 @@ async function main() {
 
         creditsConsumed = node.data.credits || 0;
 
-        // TODO
         const userBalanceUpdateResult = await decrementUserBalance(
           executionWithPhases.userId,
           creditsConsumed

@@ -17,14 +17,33 @@ type Props = {
     disabled?: boolean
     hasErrors: boolean
     value: string
-  onChange: (newValue: string) => void
+    onChange: (newValue: string) => void
 }
 
-export default function NodeParamField({hasErrors, param, nodeId, disabled, value, onChange }: Props) {
+export default function NodeParamField({ hasErrors, param, nodeId, disabled, value, onChange: onValueChange }: Props) {
     const { updateNodeData, getNode } = useReactFlow();
     const { workflow } = useWorkflow();
     const node = getNode(nodeId) as AppNode;
+    const { setInvalidInputs, setInvalidNodes, invalidInputs } = useFlowValidation()
 
+    const onChange = (newValue: string) => {
+        setInvalidInputs(prev =>
+            prev.map(item =>
+                item.nodeId === node.id
+                    ? { ...item, inputs: item.inputs.filter(i => i !== param.name) }
+                    : item
+            )
+        );
+        setInvalidNodes(prev => prev.filter((node) => {
+            console.log(node, nodeId, invalidInputs, "node in setInvalidNodes")
+            if(node.nodeId === nodeId) {
+                const found = invalidInputs.find(i => i.nodeId === node.nodeId);
+                console.log(found, "found in setInvalidNodes")
+                return found !== undefined && found.inputs.length > 1;
+            }
+        }));
+        onValueChange(newValue);
+    }
 
     switch (param.type) {
         case TaskParamType.String:

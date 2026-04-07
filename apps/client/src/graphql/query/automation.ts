@@ -56,9 +56,19 @@ export const GET_AVAILABLE_TRIGGERS = graphql(`
         type
         group
         isEntryPoint
+        testingAvailable
+        requiredConnection
+        events {
+          id
+          label
+          description
+          event
+          inputs
+          outputs
+        }
         inputs {
           type
-        options
+          options
           name
           required
           variant
@@ -93,6 +103,16 @@ export const GET_AVAILABLE_ACTIONS = graphql(`
         type
         group
         isEntryPoint
+        testingAvailable
+        requiredConnection
+        events {
+          id
+          label
+          description
+          event
+          inputs
+          outputs
+        }
         inputs {
           type
           options
@@ -131,6 +151,16 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
           icon
           type
           isEntryPoint
+          testingAvailable
+          requiredConnection
+          events {
+            id
+            label
+            description
+            event
+            inputs
+            outputs
+          }
           inputs {
             type
             options
@@ -162,6 +192,16 @@ export const GET_AVAILABLE_ACTIONS_FOR_TRIGGERS = graphql(`
           icon
           type
           isEntryPoint
+          testingAvailable
+          requiredConnection
+          events {
+            id
+            label
+            description
+            event
+            outputs
+            inputs
+          }
           inputs {
             type
             name

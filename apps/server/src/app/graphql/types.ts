@@ -61,6 +61,8 @@ type WorkflowExecution {
   startedAt: DateTime
   completedAt: DateTime
   creditsConsumed: Int!
+  connection: Connections
+  connectionId: String
 
   workflow: Workflow
   user: User
@@ -133,6 +135,9 @@ type TaskInfo {
   inputs: [TaskParam!]
   outputs: [TaskParam!]
   credits: Int!
+  events: [TaskEvent!]
+  testingAvailable: Boolean!
+  requiredConnection: TPConnections!
 }
 
 enum TaskGroup {
@@ -155,12 +160,36 @@ type TaskParam {
   options: [String!]
 }
 
+enum TPConnections {
+  NONE
+  SLACK
+  DISCORD
+  NOTION
+  GOOGLE_DOCS
+}
+
+
 enum TaskParamType {
   STRING
   BROWSER_INSTANCE
   SELECT
   WEBHOOK_PARAMS
   CREDENTIAL
+}
+
+type TaskEvent {
+  id: ID!
+  label: String!
+  description: String
+  event:TaskEventEnum!
+  inputs:[JSON]
+  outputs:[JSON]
+}
+
+enum TaskEventEnum {
+  CATCH_HOOK
+  CATCH_RAW_HOOK
+  RETRIEVE_POOL
 }
 
 type AvailableTriggerAction {
